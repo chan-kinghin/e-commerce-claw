@@ -1,0 +1,43 @@
+{
+  "dag_id": "research_only",
+  "name": "Research Only - VOC Analysis",
+  "description": "Single-agent delegation: market analysis via VOC analyst only. No content creation or social seeding.",
+  "intent": "research_only",
+  "waves": [
+    {
+      "wave": 1,
+      "name": "Market Research",
+      "description": "VOC analyst performs full market analysis. Lead formats result as Feishu card.",
+      "tasks": [
+        {
+          "task_ref": "w1_voc",
+          "target": "voc-analyst",
+          "template": "voc-full-analysis.json",
+          "depends_on": [],
+          "timeout_seconds": 300,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": true
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "Reporting",
+      "description": "Lead formats VOC report as Feishu card and delivers to human.",
+      "tasks": [
+        {
+          "task_ref": "w2_report",
+          "target": "lead",
+          "action": "format_and_report",
+          "depends_on": ["w1_voc"],
+          "timeout_seconds": 30,
+          "max_retries": 0,
+          "critical_path": true
+        }
+      ]
+    }
+  ],
+  "estimated_total_time_minutes": 6,
+  "on_partial_failure": "escalate_to_human"
+}

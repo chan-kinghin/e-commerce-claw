@@ -1,0 +1,22 @@
+{
+  "tag": "column_set",
+  "flex_mode": "none",
+  "background_style": "default",
+  "columns": [
+    {
+      "tag": "column",
+      "width": "weighted",
+      "weight": 3,
+      "vertical_align": "top",
+      "elements": [
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "**Overall Progress: {{percentage}}%**"
+          }
+        }
+      ]
+    }
+  ]
+}

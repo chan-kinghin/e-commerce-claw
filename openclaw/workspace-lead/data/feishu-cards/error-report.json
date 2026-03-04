@@ -1,0 +1,35 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "header": {
+      "title": { "tag": "plain_text", "content": "Partial Failure: Camping Folding Bed Campaign" },
+      "template": "red"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Issue**: TikTok video generation timed out after 2 attempts.\n\n**Completed Tasks**:\n- VOC Analysis: Done\n- GEO Content: Done (blog + listing)\n- Reddit Comments: Done (2 posted)\n\n**Failed Tasks**:\n- TikTok Video: TIMEOUT after 25 minutes total\n\n**Recommendation**: TikTok video generation can be retried manually. All other deliverables are ready."
+        }
+      },
+      {
+        "tag": "action",
+        "actions": [
+          {
+            "tag": "button",
+            "text": { "tag": "plain_text", "content": "Retry TikTok Video" },
+            "type": "primary",
+            "value": { "action": "retry_tiktok", "request_id": "req_20260305_001" }
+          },
+          {
+            "tag": "button",
+            "text": { "tag": "plain_text", "content": "Skip TikTok, Deliver Report" },
+            "type": "default",
+            "value": { "action": "skip_tiktok", "request_id": "req_20260305_001" }
+          }
+        ]
+      }
+    ]
+  }
+}

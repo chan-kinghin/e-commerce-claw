@@ -1,0 +1,22 @@
+{
+  "request_id": "req_{{date}}_{{seq}}",
+  "source": "lead",
+  "target": "voc-analyst",
+  "task_type": "full_analysis",
+  "priority": "{{priority|normal}}",
+  "timeout_seconds": 300,
+  "payload": {
+    "category": "{{category}}",
+    "keywords": "{{keywords}}",
+    "target_market": "{{target_market|US}}",
+    "competitor_asins": "{{competitor_asins|[]}}",
+    "platforms": "{{platforms|[\"amazon\", \"reddit\", \"youtube\", \"google_maps\"]}}",
+    "subreddits": "{{subreddits|[]}}",
+    "time_range": "{{time_range|6months}}"
+  },
+  "callback_expectations": {
+    "format": "VOCReport JSON",
+    "key_fields": ["pain_points", "market_overview", "recommendation"],
+    "downstream_consumers": ["geo-optimizer", "tiktok-director", "reddit-spec"]
+  }
+}

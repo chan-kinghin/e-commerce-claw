@@ -1,0 +1,103 @@
+{
+  "agent_id": "tiktok-director",
+  "version": "1.0",
+  "input_schema": {
+    "video_production": {
+      "type": "object",
+      "required": ["product", "video_requirements"],
+      "properties": {
+        "product": {
+          "type": "object",
+          "required": ["name", "category"],
+          "properties": {
+            "name": { "type": "string" },
+            "category": { "type": "string" },
+            "key_features": { "type": "array", "items": { "type": "string" } },
+            "target_audience": { "type": "string" },
+            "price": { "type": "number" },
+            "currency": { "type": "string" }
+          }
+        },
+        "video_requirements": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "type": "string", "enum": ["ugc", "manga_drama"], "description": "Video production type" },
+            "style": {
+              "type": "string",
+              "enum": ["standard", "realistic_render", "anime_cel", "chibi_pop", "ink_wash", "cyberpunk_neon", "retro_pixel", "watercolor_dream", "dark_gothic"],
+              "description": "Visual style (manga_drama only)"
+            },
+            "duration": { "type": "number", "description": "Target duration in seconds" },
+            "quantity": { "type": "number", "description": "Number of primary videos" },
+            "a_b_variants": { "type": "number", "description": "Number of A/B test variants to generate" }
+          }
+        },
+        "script": {
+          "type": "object",
+          "description": "Script details for manga drama",
+          "properties": {
+            "scenario": { "type": "string" },
+            "characters": { "type": "array", "items": { "type": "object" } },
+            "pain_point_angle": { "type": "string" },
+            "resolution_product": { "type": "string" }
+          }
+        },
+        "pain_points_for_script": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pain_point": { "type": "string", "description": "Pain point description" },
+              "visual_demo": { "type": "string", "description": "How to visually demonstrate this pain point" },
+              "second_marker": { "type": "string", "description": "When in the video to show this (e.g., 'Show at second 2-4')" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "output_schema": {
+    "VideoProduction": {
+      "type": "object",
+      "properties": {
+        "primary_video": { "type": "string", "description": "File path to the primary video" },
+        "variants": { "type": "number", "description": "Number of A/B variants generated" },
+        "variant_paths": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "File paths to each variant"
+        },
+        "qa_score": { "type": "number", "minimum": 0, "maximum": 10, "description": "Video QA score from volcengine" },
+        "qa_details": {
+          "type": "object",
+          "properties": {
+            "visual_quality": { "type": "number" },
+            "audio_sync": { "type": "number" },
+            "pacing": { "type": "number" },
+            "hook_strength": { "type": "number" },
+            "cta_clarity": { "type": "number" }
+          }
+        },
+        "thumbnails": { "type": "number", "description": "Number of thumbnail images generated" },
+        "thumbnail_paths": { "type": "array", "items": { "type": "string" } },
+        "storyboard": {
+          "type": "object",
+          "properties": {
+            "grid_count": { "type": "number", "description": "Number of storyboard grids (usually 25)" },
+            "file_path": { "type": "string" }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "duration_seconds": { "type": "number" },
+            "resolution": { "type": "string" },
+            "fps": { "type": "number" },
+            "file_size_mb": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}

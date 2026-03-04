@@ -1,0 +1,34 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "header": {
+      "title": { "tag": "plain_text", "content": "Task Received" },
+      "template": "blue"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Product Category**: Camping Folding Bed\n**Task Type**: Full Pipeline\n**Estimated Time**: 15-20 minutes"
+        }
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Execution Plan**:\n1. VOC market analysis + Reddit post search (parallel, ~3 min)\n2. GEO content + TikTok video + Reddit comments (parallel, ~10 min)\n3. Aggregate results and deliver report (~1 min)"
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "note",
+        "elements": [
+          { "tag": "plain_text", "content": "Agents dispatched. Next update when Wave 1 completes." }
+        ]
+      }
+    ]
+  }
+}

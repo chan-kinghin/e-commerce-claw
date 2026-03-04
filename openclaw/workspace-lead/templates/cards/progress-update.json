@@ -1,0 +1,87 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "config": {
+      "wide_screen_mode": true
+    },
+    "header": {
+      "title": {
+        "tag": "plain_text",
+        "content": "Task Progress: Camping Cot Analysis"
+      },
+      "template": "orange"
+    },
+    "elements": [
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "background_style": "default",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "weight": 3,
+            "vertical_align": "top",
+            "elements": [
+              {
+                "tag": "div",
+                "text": {
+                  "tag": "lark_md",
+                  "content": "**Overall Progress: 60%**"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "fields": [
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**VOC Analyst**\nComplete"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**GEO Optimizer**\nWriting blog..."
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Reddit Specialist**\nSearching old posts..."
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**TikTok Director**\nPending (waiting for VOC)"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "note",
+        "elements": [
+          {
+            "tag": "plain_text",
+            "content": "Estimated completion: ~12 minutes remaining"
+          }
+        ]
+      }
+    ]
+  }
+}

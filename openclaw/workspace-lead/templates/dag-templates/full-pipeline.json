@@ -1,0 +1,96 @@
+{
+  "dag_id": "full_pipeline",
+  "name": "Full Pipeline - All 4 Agents",
+  "description": "End-to-end: market research + content creation + social seeding + video production. 3 waves with DAG-ordered dependencies.",
+  "intent": "full_pipeline",
+  "waves": [
+    {
+      "wave": 1,
+      "name": "Research & Discovery",
+      "description": "VOC market analysis and Reddit post search run in parallel (no dependencies)",
+      "tasks": [
+        {
+          "task_ref": "w1_voc",
+          "target": "voc-analyst",
+          "template": "voc-full-analysis.json",
+          "depends_on": [],
+          "timeout_seconds": 300,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": true
+        },
+        {
+          "task_ref": "w1_reddit_search",
+          "target": "reddit-spec",
+          "template": "reddit-campaign.json",
+          "template_overrides": {
+            "payload.campaign_type": "search_posts"
+          },
+          "depends_on": [],
+          "timeout_seconds": 180,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": false
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "Content Creation & Social Seeding",
+      "description": "GEO content, TikTok video, and Reddit comments run in parallel. All depend on Wave 1 VOC output for pain point data.",
+      "tasks": [
+        {
+          "task_ref": "w2_geo",
+          "target": "geo-optimizer",
+          "template": "geo-blog-generation.json",
+          "depends_on": ["w1_voc"],
+          "data_transform": "voc_to_geo",
+          "timeout_seconds": 480,
+          "retry_timeout_seconds": 300,
+          "max_retries": 1,
+          "critical_path": false
+        },
+        {
+          "task_ref": "w2_tiktok",
+          "target": "tiktok-director",
+          "template": "tiktok-ugc-video.json",
+          "depends_on": ["w1_voc"],
+          "data_transform": "voc_to_tiktok",
+          "timeout_seconds": 900,
+          "retry_timeout_seconds": 600,
+          "max_retries": 1,
+          "critical_path": false
+        },
+        {
+          "task_ref": "w2_reddit_comment",
+          "target": "reddit-spec",
+          "template": "reddit-traffic-hijack.json",
+          "depends_on": ["w1_voc", "w1_reddit_search"],
+          "data_transform": "voc_to_reddit",
+          "timeout_seconds": 600,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": false
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "name": "Aggregation & Reporting",
+      "description": "Lead aggregates all Wave 2 outputs into a unified Feishu report card.",
+      "tasks": [
+        {
+          "task_ref": "w3_aggregate",
+          "target": "lead",
+          "action": "aggregate_and_report",
+          "depends_on": ["w2_geo", "w2_tiktok", "w2_reddit_comment"],
+          "timeout_seconds": 30,
+          "max_retries": 0,
+          "critical_path": true
+        }
+      ]
+    }
+  ],
+  "estimated_total_time_minutes": 20,
+  "on_partial_failure": "deliver_available_results"
+}

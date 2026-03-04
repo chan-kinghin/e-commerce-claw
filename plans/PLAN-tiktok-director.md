@@ -1,15 +1,15 @@
-# PLAN: TikTok Director Agent (`tiktok-director`)
+# 方案：TikTok 导演 Agent（`tiktok-director`）
 
 **Agent ID**: `tiktok-director`
-**Model**: doubao-seed-2.0-code (multimodal understanding, Agent orchestration, VLM capabilities)
-**Workspace**: `~/.openclaw/workspace-tiktok/`
-**Status**: Not Started
+**模型**: doubao-seed-2.0-code（多模态理解、Agent 编排、VLM 能力）
+**工作区**: `~/.openclaw/workspace-tiktok/`
+**状态**: 未开始
 
 ---
 
-## 1. Agent Configuration
+## 1. Agent 配置
 
-### 1.1 SOUL.md (Agent Identity & Creative Principles)
+### 1.1 SOUL.md（Agent 身份与创作原则）
 
 ```markdown
 # SOUL.md - TikTok Director (tiktok-director)
@@ -80,41 +80,41 @@ Every video must follow the 25-grid storyboard system and pass automated QA befo
 - Report progress to Lead via sessions_send; Lead handles Feishu reporting
 ```
 
-### 1.2 Workspace Directory Structure
+### 1.2 工作区目录结构
 
 ```
 ~/.openclaw/workspace-tiktok/
-├── SOUL.md                          # Agent identity (above)
-├── skills/                          # Agent-specific skills
-│   ├── manga-style-video/           # 8 manga style presets
-│   ├── manga-drama/                 # Storyboard-to-video pipeline
-│   └── volcengine-video-understanding/  # Video QA
+├── SOUL.md                          # Agent 身份（见上方）
+├── skills/                          # Agent 专属 Skills
+│   ├── manga-style-video/           # 8 种漫画风格预设
+│   ├── manga-drama/                 # 分镜到视频的流水线
+│   └── volcengine-video-understanding/  # 视频质量检测
 ├── templates/
-│   ├── storyboard-25grid.json       # 25-grid storyboard template
-│   ├── storyboard-ugc.json          # Standard UGC video template
-│   ├── storyboard-manga.json        # Manga drama template
-│   └── camera-notation.md           # Camera movement reference
+│   ├── storyboard-25grid.json       # 25 格分镜模板
+│   ├── storyboard-ugc.json          # 标准 UGC 视频模板
+│   ├── storyboard-manga.json        # 漫画剧情模板
+│   └── camera-notation.md           # 镜头运动参考
 ├── data/
-│   ├── projects/                    # Per-product project folders
+│   ├── projects/                    # 按产品分的项目文件夹
 │   │   └── {product-slug}/
-│   │       ├── brief.json           # Product brief from Lead
-│   │       ├── voc-data.json        # Pain points from VOC Analyst
-│   │       ├── storyboard.json      # 25-grid storyboard
-│   │       ├── images/              # Generated images (nano-banana-pro)
-│   │       ├── videos/              # Generated video clips (Seedance)
-│   │       ├── final/               # QA-approved final videos
-│   │       └── qa-report.json       # volcengine QA results
-│   ├── style-library/               # Validated style prompt snippets
-│   └── performance-log.json         # Historical QA scores and render times
-├── output/                          # Delivery-ready assets
-│   ├── videos/                      # Final approved videos
-│   ├── thumbnails/                  # Cover images for A/B testing
-│   └── metadata/                    # Video metadata for distribution
+│   │       ├── brief.json           # 来自 Lead 的产品简报
+│   │       ├── voc-data.json        # 来自 VOC Analyst 的痛点数据
+│   │       ├── storyboard.json      # 25 格分镜
+│   │       ├── images/              # 生成的图片（nano-banana-pro）
+│   │       ├── videos/              # 生成的视频片段（Seedance）
+│   │       ├── final/               # 通过 QA 的最终视频
+│   │       └── qa-report.json       # volcengine QA 结果
+│   ├── style-library/               # 已验证的风格 prompt 片段
+│   └── performance-log.json         # 历史 QA 评分和渲染时间
+├── output/                          # 交付就绪的素材
+│   ├── videos/                      # 最终审批通过的视频
+│   ├── thumbnails/                  # 用于 A/B 测试的封面图
+│   └── metadata/                    # 视频元数据（用于分发）
 └── config/
-    └── model-config.json            # Model parameters and API settings
+    └── model-config.json            # 模型参数和 API 设置
 ```
 
-### 1.3 Model Configuration
+### 1.3 模型配置
 
 ```json
 {
@@ -149,60 +149,60 @@ Every video must follow the 25-grid storyboard system and pass automated QA befo
 
 ---
 
-## 2. Skills Required
+## 2. 所需 Skills
 
-### 2.1 Global Skills (installed in `~/.openclaw/skills/`)
+### 2.1 全局 Skills（安装在 `~/.openclaw/skills/`）
 
-| Skill | Purpose | Install Command |
-|-------|---------|-----------------|
-| `nano-banana-pro` | High-fidelity image generation for storyboard frames | `clawhub install nano-banana-pro --global` |
-| `seedance-video` | Video generation (text-to-video, image-to-video) with Seedance 1.5 Pro audio | `clawhub install canghe-seedance-video --global` |
-| `canghe-image-gen` | Character image generation (supports Google API, third-party APIs) | `clawhub install canghe-image-gen --global` |
+| Skill | 用途 | 安装命令 |
+|-------|------|---------|
+| `nano-banana-pro` | 高保真图片生成，用于分镜关键帧 | `clawhub install nano-banana-pro --global` |
+| `seedance-video` | 视频生成（文字转视频、图片转视频），Seedance 1.5 Pro 含音频 | `clawhub install canghe-seedance-video --global` |
+| `canghe-image-gen` | 角色图片生成（支持 Google API、第三方 API） | `clawhub install canghe-image-gen --global` |
 
-### 2.2 Agent-Specific Skills (installed in `~/.openclaw/workspace-tiktok/skills/`)
+### 2.2 Agent 专属 Skills（安装在 `~/.openclaw/workspace-tiktok/skills/`）
 
-| Skill | Purpose | Install Command |
-|-------|---------|-----------------|
-| `manga-style-video` | 8 manga style presets with built-in professional prompts | `clawhub install manga-style-video --workspace workspace-tiktok` |
-| `manga-drama` | Storyboard-to-video pipeline: single character image to multi-scene drama | `clawhub install manga-drama --workspace workspace-tiktok` |
-| `volcengine-video-understanding` | Video content analysis, QA, emotion detection, scene recognition | `clawhub install volcengine-video-understanding --workspace workspace-tiktok` |
+| Skill | 用途 | 安装命令 |
+|-------|------|---------|
+| `manga-style-video` | 8 种漫画风格预设，内置专业 prompt | `clawhub install manga-style-video --workspace workspace-tiktok` |
+| `manga-drama` | 分镜到视频流水线：单张角色图生成多场景剧情 | `clawhub install manga-drama --workspace workspace-tiktok` |
+| `volcengine-video-understanding` | 视频内容分析、QA、情感检测、场景识别 | `clawhub install volcengine-video-understanding --workspace workspace-tiktok` |
 
-### 2.3 Installation Sequence
+### 2.3 安装顺序
 
 ```bash
-# Step 1: Install global shared skills
+# 第 1 步：安装全局共享 Skills
 clawhub install nano-banana-pro --global
 clawhub install canghe-seedance-video --global
 clawhub install canghe-image-gen --global
 
-# Step 2: Install agent-specific skills
+# 第 2 步：安装 Agent 专属 Skills
 clawhub install manga-style-video --workspace workspace-tiktok
 clawhub install manga-drama --workspace workspace-tiktok
 clawhub install volcengine-video-understanding --workspace workspace-tiktok
 
-# Step 3: Verify installation
+# 第 3 步：验证安装
 clawhub list --workspace workspace-tiktok
 clawhub list --global
 ```
 
-### 2.4 Skill Dependencies and API Requirements
+### 2.4 Skill 依赖与 API 要求
 
-| Skill | API/Backend | Cost Model | Notes |
-|-------|-------------|------------|-------|
-| `nano-banana-pro` | Google API / third-party | Per-image | Supports Seedream 5.0 as fallback |
-| `seedance-video` | Volcengine (ByteDance) | Per-video via Coding Plan | 1.5 Pro includes audio generation |
-| `canghe-image-gen` | Multiple backends | Per-image | Used for character generation in manga-drama |
-| `manga-style-video` | Built on seedance-video | Inherits seedance cost | 8 preset prompt templates |
-| `manga-drama` | Orchestrates canghe-image-gen + manga-style-video + seedance | Combined | Most token-intensive workflow |
-| `volcengine-video-understanding` | Volcengine (doubao-seed-2.0-code VLM) | Per-analysis via Coding Plan | Max 512MB video input |
+| Skill | API/后端 | 计费模型 | 备注 |
+|-------|---------|---------|------|
+| `nano-banana-pro` | Google API / 第三方 | 按图计费 | 支持 Seedream 5.0 作为备选 |
+| `seedance-video` | 火山引擎（字节跳动） | 按视频计费（通过 Coding Plan） | 1.5 Pro 含音频生成 |
+| `canghe-image-gen` | 多后端 | 按图计费 | 用于 manga-drama 中的角色生成 |
+| `manga-style-video` | 基于 seedance-video | 继承 seedance 费用 | 8 套预设 prompt 模板 |
+| `manga-drama` | 编排 canghe-image-gen + manga-style-video + seedance | 综合计费 | Token 消耗最大的工作流 |
+| `volcengine-video-understanding` | 火山引擎（doubao-seed-2.0-code VLM） | 按分析计费（通过 Coding Plan） | 最大视频输入 512MB |
 
 ---
 
-## 3. 25-Grid Storyboard System
+## 3. 25 格分镜系统
 
-### 3.1 Template Format
+### 3.1 模板格式
 
-The 25-grid storyboard is a structured JSON document that maps every second of a 15-second video to a specific visual, audio, and camera instruction.
+25 格分镜是一个结构化 JSON 文档，将 15 秒视频的每一秒映射到具体的画面、音频和镜头指令。
 
 ```json
 {
@@ -236,84 +236,84 @@ The 25-grid storyboard is a structured JSON document that maps every second of a
 }
 ```
 
-### 3.2 Grid Categories
+### 3.2 分格类别
 
-The 25 grids are distributed across 5 categories, each serving a specific conversion function:
+25 个分格分布在 5 个类别中，每个类别服务于特定的转化功能：
 
-| Category | Grid Count | Time Range | Purpose |
-|----------|-----------|------------|---------|
-| **Emotional Hook** | 3 grids | 0.0s - 2.0s | Grab attention with relatable scenario. First-person POV, breathing movement camera. |
-| **Pain Point Display** | 5 grids | 2.0s - 5.0s | Show the problem the product solves. Slow push-in, frustration moments. |
-| **Product Close-Up** | 7 grids | 5.0s - 9.0s | Product hero shots. Detail textures, key features, tactile interactions (pressing, folding, clicking). |
-| **Usage Scenario** | 6 grids | 9.0s - 12.5s | Product in real-world context. Outdoor scene, family using it, before/after comparison. |
-| **CTA (Call to Action)** | 4 grids | 12.5s - 15.0s | Price reveal, "link in bio", freeze frame with product name. Pull-back shot. |
+| 类别 | 分格数 | 时间范围 | 用途 |
+|------|--------|---------|------|
+| **情感钩子** | 3 格 | 0.0s - 2.0s | 用引起共鸣的场景吸引注意力。第一人称 POV，呼吸运动镜头。 |
+| **痛点展示** | 5 格 | 2.0s - 5.0s | 直观展示产品所解决的问题。慢推镜头，展示挫折瞬间。 |
+| **产品特写** | 7 格 | 5.0s - 9.0s | 产品主角时刻。细节纹理、关键功能、触觉互动（按压、折叠、点击）。 |
+| **使用场景** | 6 格 | 9.0s - 12.5s | 产品在真实场景中的应用。户外场景、家庭使用、使用前后对比。 |
+| **行动号召（CTA）** | 4 格 | 12.5s - 15.0s | 价格揭示、"链接在简介"、带产品名的定格画面。拉远镜头。 |
 
-### 3.3 Example Storyboard: Camping Cot (15 seconds)
+### 3.3 分镜示例：露营行军床（15 秒）
 
-| Grid | Time | Category | Visual Description | Camera | Audio |
-|------|------|----------|--------------------|--------|-------|
-| 1 | 0.0-0.6 | Hook | POV walking to campsite, tent blurry in background | BM | Outdoor ambience |
-| 2 | 0.6-1.2 | Hook | Hand reaching for old cot, fabric visibly sagging | BM+SPI | Disappointed "ugh" |
-| 3 | 1.2-2.0 | Hook | Quick cut: new cot being unboxed, hands tearing packaging | BM | Packaging crinkle |
-| 4 | 2.0-2.6 | Pain Point | Old cot close-up: springs poking through fabric | SPI | "My back can't take this" |
-| 5 | 2.6-3.2 | Pain Point | Side view: person sinking into old cot, visible sag | TILT | Creaking metal sound |
-| 6 | 3.2-3.8 | Pain Point | Phone showing 1-star Amazon review text overlay | CU | Silent |
-| 7 | 3.8-4.4 | Pain Point | Hands struggling to fold old cot, frustration visible | PAN | Frustrated exhale |
-| 8 | 4.4-5.0 | Pain Point | Old cot crammed into car trunk, barely fitting | PB | "There has to be something better" |
-| 9 | 5.0-5.6 | Product | New cot unfolded in one motion, satisfying snap | CU | Click-snap sound |
-| 10 | 5.6-6.2 | Product | Hand pressing down on cot surface, showing bounce-back | CU+RF | "450 pounds capacity" |
-| 11 | 6.2-6.8 | Product | Close-up of reinforced aluminum frame joint | CU | Metallic ping |
-| 12 | 6.8-7.4 | Product | Fabric texture close-up, water-resistant coating visible | CU | Finger sliding on fabric |
-| 13 | 7.4-8.0 | Product | Side-by-side: old cot frame vs new cot frame thickness | CU+PAN | "Aircraft-grade aluminum" |
-| 14 | 8.0-8.6 | Product | Cot being folded: 3-second fold demonstration | CU | Mechanical folding sounds |
-| 15 | 8.6-9.0 | Product | Folded cot next to a water bottle for size comparison | CU+PB | "Fits in your backpack" |
-| 16 | 9.0-9.6 | Scenario | Person lying on cot at campsite, sunset in background | PB | Relaxed exhale |
-| 17 | 9.6-10.2 | Scenario | Overhead shot: person sleeping comfortably on cot | TILT | Cricket sounds, gentle breeze |
-| 18 | 10.2-10.8 | Scenario | Morning scene: person sitting up on cot, stretching | BM | Birds chirping |
-| 19 | 10.8-11.4 | Scenario | Person folding cot in 5 seconds flat, casual smile | PAN | "Ready in 5 seconds" |
-| 20 | 11.4-12.0 | Scenario | Cot being tossed into car trunk with room to spare | PB | Trunk closing thud |
-| 21 | 12.0-12.5 | Scenario | Family around campfire, cot visible in background | PB | Campfire crackle, laughter |
-| 22 | 12.5-13.0 | CTA | Price text overlay "$49.99" with strike-through "$89.99" | FF | Price reveal sound |
-| 23 | 13.0-13.6 | CTA | "Link in bio" text with pointing finger emoji | FF | "Link in bio!" |
-| 24 | 13.6-14.2 | CTA | Quick montage: fold, press, carry (3 micro-clips) | PAN | Upbeat beat drop |
-| 25 | 14.2-15.0 | CTA | Final freeze: product beauty shot with brand name | FF | Trending sound fadeout |
+| 格 | 时间 | 类别 | 画面描述 | 镜头 | 音频 |
+|----|------|------|---------|------|------|
+| 1 | 0.0-0.6 | 钩子 | POV 走向营地，帐篷在背景中模糊 | BM | 户外环境音 |
+| 2 | 0.6-1.2 | 钩子 | 手伸向旧行军床，面料明显下陷 | BM+SPI | 失望的"唉" |
+| 3 | 1.2-2.0 | 钩子 | 快切：新行军床开箱，双手撕开包装 | BM | 包装撕裂声 |
+| 4 | 2.0-2.6 | 痛点 | 旧行军床特写：弹簧穿透面料 | SPI | "我的腰受不了了" |
+| 5 | 2.6-3.2 | 痛点 | 侧面视角：人陷入旧行军床，明显下陷 | TILT | 金属吱嘎声 |
+| 6 | 3.2-3.8 | 痛点 | 手机屏幕显示亚马逊一星差评文字叠加 | CU | 静音 |
+| 7 | 3.8-4.4 | 痛点 | 双手费力折叠旧行军床，可见的挫折感 | PAN | 沮丧的呼气 |
+| 8 | 4.4-5.0 | 痛点 | 旧行军床塞进后备箱，勉强塞进去 | PB | "一定有更好的" |
+| 9 | 5.0-5.6 | 产品 | 新行军床一步展开，令人满足的咔嚓声 | CU | 卡扣声 |
+| 10 | 5.6-6.2 | 产品 | 手按压行军床表面，展示回弹 | CU+RF | "450 磅承重" |
+| 11 | 6.2-6.8 | 产品 | 加强铝合金框架关节特写 | CU | 金属碰撞声 |
+| 12 | 6.8-7.4 | 产品 | 面料纹理特写，可见防水涂层 | CU | 手指滑过面料 |
+| 13 | 7.4-8.0 | 产品 | 并排对比：旧框架 vs 新框架粗细 | CU+PAN | "航空级铝合金" |
+| 14 | 8.0-8.6 | 产品 | 行军床折叠：3 秒折叠演示 | CU | 机械折叠声 |
+| 15 | 8.6-9.0 | 产品 | 折叠后的行军床与水瓶放在一起做大小对比 | CU+PB | "放得进背包" |
+| 16 | 9.0-9.6 | 场景 | 人躺在营地行军床上，背景是日落 | PB | 放松的呼气 |
+| 17 | 9.6-10.2 | 场景 | 俯拍：人在行军床上舒适地睡觉 | TILT | 蟋蟀声、微风 |
+| 18 | 10.2-10.8 | 场景 | 清晨场景：人在行军床上坐起来伸懒腰 | BM | 鸟鸣声 |
+| 19 | 10.8-11.4 | 场景 | 人 5 秒内折好行军床，随意微笑 | PAN | "5 秒搞定" |
+| 20 | 11.4-12.0 | 场景 | 行军床扔进后备箱还有空间 | PB | 后备箱关闭声 |
+| 21 | 12.0-12.5 | 场景 | 一家人围在篝火旁，行军床在背景中可见 | PB | 篝火噼啪声、笑声 |
+| 22 | 12.5-13.0 | CTA | 价格文字叠加 "$49.99"，划线价 "$89.99" | FF | 价格揭示音效 |
+| 23 | 13.0-13.6 | CTA | "Link in bio" 文字配手指表情 | FF | "Link in bio!" |
+| 24 | 13.6-14.2 | CTA | 快速蒙太奇：折叠、按压、携带（3 个微片段） | PAN | 欢快的节拍落点 |
+| 25 | 14.2-15.0 | CTA | 最终定格：产品美拍加品牌名 | FF | 流行音乐渐弱 |
 
-### 3.4 Grid-to-Timestamp Mapping Logic
+### 3.4 分格-时间戳映射逻辑
 
-Each of the 25 grids maps to a 0.6-second window within the 15-second video (15s / 25 = 0.6s per grid). The storyboard generator allocates grids by category priority:
+25 个分格中每个对应 15 秒视频中 0.6 秒的窗口（15s / 25 = 0.6s 每格）。分镜生成器按类别优先级分配分格：
 
 ```
-Seconds 0.0  - 2.0  : Grids 1-3   (Emotional Hook)      -- 3 grids
-Seconds 2.0  - 5.0  : Grids 4-8   (Pain Point Display)   -- 5 grids
-Seconds 5.0  - 9.0  : Grids 9-15  (Product Close-Up)     -- 7 grids
-Seconds 9.0  - 12.5 : Grids 16-21 (Usage Scenario)        -- 6 grids
-Seconds 12.5 - 15.0 : Grids 22-25 (CTA)                   -- 4 grids
+第 0.0  - 2.0 秒：格 1-3   (情感钩子)      -- 3 格
+第 2.0  - 5.0 秒：格 4-8   (痛点展示)      -- 5 格
+第 5.0  - 9.0 秒：格 9-15  (产品特写)      -- 7 格
+第 9.0  - 12.5 秒：格 16-21 (使用场景)      -- 6 格
+第 12.5 - 15.0 秒：格 22-25 (CTA)          -- 4 格
 ```
 
-The grid count per category reflects conversion psychology: the product close-up section gets the most grids (7) because tactile demonstration is the primary conversion driver on TikTok commerce.
+各类别的分格数量反映了转化心理学：产品特写部分获得最多分格（7 格），因为触觉演示是 TikTok 电商的首要转化驱动力。
 
-### 3.5 Camera Movement Notation System
+### 3.5 镜头运动标记系统
 
-Each grid's `camera` field uses the notation codes defined in SOUL.md section "Camera Notation System." Combinations are expressed with `+` (e.g., `BM+SPI` means breathing movement while slowly pushing in). The notation is consumed by the Seedance prompt generator to construct appropriate motion descriptions.
+每个分格的 `camera` 字段使用 SOUL.md "Camera Notation System" 章节中定义的标记代码。组合用 `+` 表示（如 `BM+SPI` 意为呼吸运动的同时慢慢推进）。该标记由 Seedance prompt 生成器消费，用于构建适当的运动描述。
 
 ---
 
-## 4. Video Production Workflows
+## 4. 视频制作工作流
 
-### 4.1 Workflow A: Standard UGC Video
+### 4.1 工作流 A：标准 UGC 视频
 
-This is the primary workflow for product marketing videos.
+这是产品营销视频的主要工作流。
 
 ```mermaid
 graph TD
-    A["INPUT<br/>Product brief + VOC pain points<br/>(via sessions_send from Lead)"] --> B["Step 1: Analyze Pain Points<br/>doubao-seed-2.0-code<br/>Rank pain points by severity"]
-    B --> C["Step 2: Design 25-Grid Storyboard<br/>doubao-seed-2.0-code<br/>Map pain points to grid categories"]
-    C --> D["Step 3: Generate Key Frame Images<br/>nano-banana-pro<br/>One image per critical grid (8-12 images)"]
-    D --> E["Step 4: Generate Video Segments<br/>Seedance 1.5 Pro<br/>Image-to-video for each segment"]
-    E --> F["Step 5: Assemble Final Video<br/>Concatenate segments<br/>Add text overlays + audio"]
-    F --> G["Step 6: QA Review<br/>volcengine-video-understanding<br/>Automated quality scoring"]
-    G -->|Pass| H["OUTPUT<br/>Final video + storyboard + QA report<br/>(via sessions_send to Lead)"]
-    G -->|Fail| I["Revision Loop<br/>Identify failed grids<br/>Regenerate specific segments"]
+    A["输入<br/>产品简报 + VOC 痛点<br/>（通过 sessions_send 来自 Lead）"] --> B["第 1 步：分析痛点<br/>doubao-seed-2.0-code<br/>按严重程度排序痛点"]
+    B --> C["第 2 步：设计 25 格分镜<br/>doubao-seed-2.0-code<br/>将痛点映射到分格类别"]
+    C --> D["第 3 步：生成关键帧图片<br/>nano-banana-pro<br/>每个关键分格一张图（8-12 张）"]
+    D --> E["第 4 步：生成视频片段<br/>Seedance 1.5 Pro<br/>图片转视频"]
+    E --> F["第 5 步：组装最终视频<br/>拼接片段<br/>添加文字叠加 + 音频"]
+    F --> G["第 6 步：QA 审查<br/>volcengine-video-understanding<br/>自动化质量评分"]
+    G -->|通过| H["输出<br/>最终视频 + 分镜 + QA 报告<br/>（通过 sessions_send 发送给 Lead）"]
+    G -->|未通过| I["修订循环<br/>定位未通过的分格<br/>重新生成特定片段"]
     I --> E
 
     style A fill:#FFE0B2
@@ -321,380 +321,380 @@ graph TD
     style I fill:#FFCDD2
 ```
 
-**Detailed Timing Breakdown:**
+**各时间段详细策略**：
 
-| Video Seconds | Content Strategy | Conversion Role |
-|---------------|------------------|-----------------|
-| 0-2s (Hook) | First-person POV with breathing movement. Show relatable frustration or curiosity. Never show the product yet. | Stop the scroll. TikTok gives you 1.5 seconds before users swipe. |
-| 2-5s (Problem) | Reveal the pain point viscerally. Show the old/bad solution failing. Use close-ups of defects, user frustration. | Build emotional investment. "I've been there too." |
-| 5-10s (Solution) | Product hero moment. Tactile demonstrations -- pressing, folding, clicking, pouring. Quantitative claims as text overlay. | Demonstrate value. The product must feel tangible through the screen. |
-| 10-15s (CTA) | Product in happy context. Price reveal with anchor (crossed-out original price). "Link in bio" with urgency. | Drive click-through. End with a loop-friendly freeze frame. |
+| 视频时间 | 内容策略 | 转化作用 |
+|---------|---------|---------|
+| 0-2s（钩子） | 第一人称 POV 配呼吸运动。展示引起共鸣的挫折或好奇。此时不展示产品。 | 阻止滑动。TikTok 给你 1.5 秒时间让用户决定是否继续看。 |
+| 2-5s（问题） | 直观呈现痛点。展示旧方案/差方案的失败。使用缺陷特写、用户挫折感。 | 建立情感投入。"我也经历过。" |
+| 5-10s（解决方案） | 产品高光时刻。触觉演示——按压、折叠、点击、倒水。数据指标作为文字叠加。 | 展示价值。产品必须隔着屏幕也能感受到实感。 |
+| 10-15s（CTA） | 产品在愉快场景中。价格揭示带锚定效应（划线原价）。"Link in bio"配紧迫感。 | 驱动点击。以适合循环播放的定格画面结尾。 |
 
-### 4.2 Workflow B: Manga Drama
+### 4.2 工作流 B：漫画剧情
 
-For creative storytelling content (brand building, viral potential).
+用于创意叙事内容（品牌建设、病毒传播潜力）。
 
 ```mermaid
 graph TD
-    A["INPUT<br/>Product theme + character concept"] --> B["Step 1: Script Generation<br/>doubao-seed-2.0-code<br/>Generate multi-scene storyboard script"]
-    B --> C["Step 2: Character Image Generation<br/>canghe-image-gen<br/>Generate protagonist image"]
-    C --> D["Step 3: Style Selection<br/>manga-style-video<br/>Choose from 8 manga styles"]
-    D --> E["Step 4: Scene Generation<br/>manga-drama skill<br/>Auto-generate multi-scene storyboard"]
-    E --> F["Step 5: Video Generation<br/>Seedance 1.5 Pro<br/>Convert each scene to video with audio"]
-    F --> G["Step 6: QA Review<br/>volcengine-video-understanding<br/>Check emotion, scene coherence, quality"]
-    G -->|Pass| H["OUTPUT<br/>Complete manga drama video<br/>Multiple scene files + combined video"]
-    G -->|Fail| I["Revision: Regenerate failed scenes"]
+    A["输入<br/>产品主题 + 角色概念"] --> B["第 1 步：剧本生成<br/>doubao-seed-2.0-code<br/>生成多场景分镜脚本"]
+    B --> C["第 2 步：角色图片生成<br/>canghe-image-gen<br/>生成主角图片"]
+    C --> D["第 3 步：风格选择<br/>manga-style-video<br/>从 8 种漫画风格中选择"]
+    D --> E["第 4 步：场景生成<br/>manga-drama skill<br/>自动生成多场景分镜"]
+    E --> F["第 5 步：视频生成<br/>Seedance 1.5 Pro<br/>将每个场景转为带音频的视频"]
+    F --> G["第 6 步：QA 审查<br/>volcengine-video-understanding<br/>检查情感、场景连贯性、质量"]
+    G -->|通过| H["输出<br/>完整漫画剧情视频<br/>多场景文件 + 合并视频"]
+    G -->|未通过| I["修订：重新生成未通过的场景"]
     I --> F
 
     style A fill:#FFE0B2
     style H fill:#C8E6C9
 ```
 
-**Built-in Scene Types (from manga-drama):**
-1. Protagonist Entrance -- establishing shot, character introduction
-2. Action Scene -- dynamic movement, conflict or demonstration
-3. Emotional Expression -- close-up on reaction, sentiment peak
-4. Interaction Scene -- product interaction, before/after comparison
-5. Ending Freeze -- final pose, brand moment, CTA
+**内置场景类型（来自 manga-drama）**：
+1. 主角登场——建立镜头，角色介绍
+2. 动作场景——动态运动，冲突或演示
+3. 情感表达——反应特写，情绪高峰
+4. 互动场景——产品互动，使用前后对比
+5. 结尾定格——最终姿势，品牌时刻，CTA
 
-### 4.3 Workflow C: A/B Testing Matrix
+### 4.3 工作流 C：A/B 测试矩阵
 
-For generating multiple versions of the same product video to distribute across matrix accounts.
+用于生成同一产品视频的多个版本，分发到矩阵账号。
 
 ```mermaid
 graph TD
-    A["Base Storyboard<br/>(25-grid for Product X)"] --> B["Variant Generator"]
-    B --> C1["Variant A: Hook Swap<br/>Different first 2 seconds<br/>(frustration hook vs curiosity hook)"]
-    B --> C2["Variant B: Style Swap<br/>Same storyboard, different manga style<br/>(japanese vs ghibli)"]
-    B --> C3["Variant C: CTA Swap<br/>Different price framing<br/>(discount vs value comparison)"]
-    B --> C4["Variant D: Cover Image<br/>3 different thumbnail options<br/>(face close-up vs product hero vs text-heavy)"]
+    A["基础分镜<br/>（产品 X 的 25 格）"] --> B["变体生成器"]
+    B --> C1["变体 A：钩子替换<br/>不同的前 2 秒<br/>（挫折钩子 vs 好奇钩子）"]
+    B --> C2["变体 B：风格替换<br/>同一分镜，不同漫画风格<br/>（日式 vs 吉卜力）"]
+    B --> C3["变体 C：CTA 替换<br/>不同的价格框架<br/>（折扣 vs 价值对比）"]
+    B --> C4["变体 D：封面图<br/>3 个不同的缩略图选项<br/>（面部特写 vs 产品主图 vs 文字密集）"]
 
-    C1 --> D["Generate All Variants<br/>nano-banana-pro + Seedance"]
+    C1 --> D["生成所有变体<br/>nano-banana-pro + Seedance"]
     C2 --> D
     C3 --> D
     C4 --> D
 
-    D --> E["QA All Variants<br/>volcengine-video-understanding"]
-    E --> F["OUTPUT<br/>4+ video variants ready for matrix distribution"]
+    D --> E["QA 所有变体<br/>volcengine-video-understanding"]
+    E --> F["输出<br/>4+ 个视频变体可供矩阵分发"]
 
     style A fill:#FFE0B2
     style F fill:#C8E6C9
 ```
 
-**Variant Dimensions:**
-| Dimension | Options | Purpose |
-|-----------|---------|---------|
-| Hook (0-2s) | Frustration / Curiosity / Shock / Question | Test which hook type drives highest retention |
-| Style | UGC real / Japanese manga / Ghibli / Chinese ink | Test which aesthetic resonates with target audience |
-| CTA framing | Discount (was/now) / Value comparison / Scarcity ("only 50 left") / Social proof ("10K sold") | Test which CTA drives highest click-through |
-| Cover image | Face close-up / Product hero / Text overlay | Test which thumbnail earns highest impressions |
+**变体维度**：
+| 维度 | 选项 | 用途 |
+|------|------|------|
+| 钩子（0-2s） | 挫折 / 好奇 / 震惊 / 提问 | 测试哪种钩子类型带来最高留存率 |
+| 风格 | UGC 真实 / 日式漫画 / 吉卜力 / 中国水墨 | 测试哪种美学与目标受众共鸣 |
+| CTA 框架 | 折扣（原价/现价） / 价值对比 / 稀缺性（"仅剩 50 个"） / 社会证明（"已售 10K"） | 测试哪种 CTA 驱动最高点击率 |
+| 封面图 | 面部特写 / 产品主图 / 文字叠加 | 测试哪个缩略图赢得最高曝光量 |
 
 ---
 
-## 5. 8 Manga Styles Guide
+## 5. 8 种漫画风格指南
 
-### 5.1 Japanese Healing Style (`japanese`)
+### 5.1 日式治愈风格（`japanese`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Soft pastel color palette, warm diffused lighting, gentle gradients. Characters have large expressive eyes, clean line work. Backgrounds are detailed but dreamy -- sakura trees, cozy rooms, cafe interiors. |
-| **Best Product Categories** | Skincare, beauty, food/beverage, home decor, lifestyle accessories, stationery |
-| **Example Prompt Snippet** | `"Japanese healing anime style, soft pastel colors, warm lighting, gentle atmosphere, detailed background with cherry blossoms, clean linework, Studio CoMix Wave aesthetic"` |
-| **When to Use** | Products that sell on emotion and aesthetic appeal. Anything "cozy" or "self-care" related. Female-skewing audiences 18-35. |
-| **When to Avoid** | Industrial products, tech hardware, outdoor/rugged gear, B2B products |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 柔和粉彩色调，温暖的漫射光照，柔和渐变。角色有大而富有表现力的眼睛，干净的线条。背景细致但梦幻——樱花树、温馨的房间、咖啡厅内景。 |
+| **最佳产品类别** | 护肤品、美妆、食品饮料、家居装饰、生活方式配件、文具 |
+| **Prompt 示例** | `"Japanese healing anime style, soft pastel colors, warm lighting, gentle atmosphere, detailed background with cherry blossoms, clean linework, Studio CoMix Wave aesthetic"` |
+| **适用场景** | 依靠情感和美学吸引力销售的产品。任何"温馨"或"自我关爱"相关的产品。18-35 岁偏女性受众。 |
+| **不适用** | 工业产品、科技硬件、户外/硬核装备、B2B 产品 |
 
-### 5.2 Studio Ghibli Style (`ghibli`)
+### 5.2 吉卜力风格（`ghibli`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Rich watercolor-like textures, lush natural environments, warm earth tones. Detailed cloud formations, grass movement, wind effects. Characters have rounded, approachable features. |
-| **Best Product Categories** | Outdoor/camping gear, natural/organic products, children's items, eco-friendly products, garden tools |
-| **Example Prompt Snippet** | `"Studio Ghibli inspired, lush green landscapes, watercolor textures, warm earth tones, detailed clouds and wind effects, gentle character design, Miyazaki aesthetic"` |
-| **When to Use** | Products connected to nature, sustainability, or nostalgia. High viral potential due to recognizable aesthetic. |
-| **When to Avoid** | Urban/modern products, luxury goods, minimalist design products |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 丰富的水彩质感，郁郁葱葱的自然环境，温暖的大地色调。细致的云层形态、草地运动、风效果。角色有圆润、亲切的特征。 |
+| **最佳产品类别** | 户外/露营装备、天然/有机产品、儿童用品、环保产品、园艺工具 |
+| **Prompt 示例** | `"Studio Ghibli inspired, lush green landscapes, watercolor textures, warm earth tones, detailed clouds and wind effects, gentle character design, Miyazaki aesthetic"` |
+| **适用场景** | 与自然、可持续发展或怀旧相关的产品。因为辨识度高，病毒传播潜力大。 |
+| **不适用** | 都市/现代产品、奢侈品、极简设计产品 |
 
-### 5.3 Chinese Ink Wash Style (`chinese`)
+### 5.3 中国水墨风格（`chinese`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Traditional ink wash painting aesthetic. Limited color palette (black, white, ink gray with selective red/gold accents). Flowing brush strokes, mountain-water compositions, calligraphic elements. |
-| **Best Product Categories** | Tea, traditional Chinese products, martial arts equipment, calligraphy supplies, silk/textile, cultural artifacts, herbal medicine |
-| **Example Prompt Snippet** | `"Chinese ink wash painting style, traditional shanshui composition, flowing brush strokes, limited palette with selective red accents, misty mountains, elegant simplicity"` |
-| **When to Use** | Products targeting Chinese diaspora or sinophile audiences. Products with cultural heritage angle. Wuxia/martial arts themed content. |
-| **When to Avoid** | Modern tech products, Western-style goods, anything requiring photorealistic detail |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 传统水墨画美学。有限的色调（黑、白、水墨灰，配以选择性的红/金点缀）。流畅的笔触、山水构图、书法元素。 |
+| **最佳产品类别** | 茶叶、传统中国产品、武术器材、书法用品、丝绸/纺织品、文化工艺品、中药 |
+| **Prompt 示例** | `"Chinese ink wash painting style, traditional shanshui composition, flowing brush strokes, limited palette with selective red accents, misty mountains, elegant simplicity"` |
+| **适用场景** | 面向海外华人或中国文化爱好者的产品。具有文化传承角度的产品。武侠/古风主题内容。 |
+| **不适用** | 现代科技产品、西式商品、任何需要照片级细节的产品 |
 
-### 5.4 American Cartoon Style (`cartoon`)
+### 5.4 美式卡通风格（`cartoon`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Bold outlines, bright saturated colors, exaggerated proportions and expressions. Clean vector-like fills, dynamic poses. Disney/Pixar-influenced character design. |
-| **Best Product Categories** | Pet products, children's toys, party supplies, fun food items, novelty gifts, family products |
-| **Example Prompt Snippet** | `"American cartoon style, bright saturated colors, bold outlines, exaggerated expressions, Disney Pixar inspired, clean vector aesthetic, dynamic poses, fun energetic atmosphere"` |
-| **When to Use** | Products targeting families, children, or pet owners. Anything that benefits from a "fun" tone. Great for humor-driven hooks. |
-| **When to Avoid** | Luxury/premium products, professional/B2B, medical/health products |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 粗线条、明亮饱和色彩、夸张的比例和表情。干净的矢量填充、动感姿势。迪士尼/皮克斯影响的角色设计。 |
+| **最佳产品类别** | 宠物产品、儿童玩具、派对用品、趣味食品、新奇礼品、家庭产品 |
+| **Prompt 示例** | `"American cartoon style, bright saturated colors, bold outlines, exaggerated expressions, Disney Pixar inspired, clean vector aesthetic, dynamic poses, fun energetic atmosphere"` |
+| **适用场景** | 面向家庭、儿童或宠物主人的产品。任何受益于"有趣"基调的产品。适合幽默驱动的钩子。 |
+| **不适用** | 奢侈品/高端产品、专业/B2B、医疗/健康产品 |
 
-### 5.5 Pencil Sketch Style (`sketch`)
+### 5.5 铅笔素描风格（`sketch`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Monochromatic or limited color. Visible pencil/graphite texture, cross-hatching for shadows, architectural precision for products. Clean but hand-drawn feel. |
-| **Best Product Categories** | Tech gadgets, design tools, architecture products, minimalist accessories, stationery, professional equipment |
-| **Example Prompt Snippet** | `"Pencil sketch illustration, graphite texture, cross-hatching shadows, architectural precision, monochromatic with selective color accent, hand-drawn aesthetic, technical illustration feel"` |
-| **When to Use** | Products that sell on engineering/design merit. Audiences that appreciate craftsmanship. "How it works" explainer content. |
-| **When to Avoid** | Colorful lifestyle products, food, beauty, anything requiring vibrant visuals |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 单色或有限色彩。可见铅笔/石墨纹理，交叉阴影线，产品的建筑级精确度。干净但手绘感。 |
+| **最佳产品类别** | 科技小工具、设计工具、建筑产品、极简配件、文具、专业设备 |
+| **Prompt 示例** | `"Pencil sketch illustration, graphite texture, cross-hatching shadows, architectural precision, monochromatic with selective color accent, hand-drawn aesthetic, technical illustration feel"` |
+| **适用场景** | 依靠工程/设计价值销售的产品。欣赏工艺的受众。"工作原理"解说类内容。 |
+| **不适用** | 色彩丰富的生活方式产品、食品、美妆、任何需要鲜艳视觉的产品 |
 
-### 5.6 Watercolor Style (`watercolor`)
+### 5.6 水彩风格（`watercolor`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Transparent washes of color, visible paper texture, soft bleeding edges, spontaneous color mixing. Light and airy composition, floral and botanical elements. |
-| **Best Product Categories** | Art supplies, handmade/artisan goods, wedding accessories, floral products, ceramics, home textiles, fashion accessories |
-| **Example Prompt Snippet** | `"Watercolor hand-painted style, transparent color washes, visible paper texture, soft bleeding edges, floral botanical elements, light airy composition, artisan aesthetic"` |
-| **When to Use** | Products with artisan/handmade positioning. Wedding/celebration content. Audiences who value craftsmanship and aesthetics over function. |
-| **When to Avoid** | Mass-produced goods, tech products, anything requiring sharp detail or precision |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 透明的色彩渲染，可见纸张纹理，柔和的渗透边缘，自然的色彩混合。轻盈通透的构图，花卉和植物元素。 |
+| **最佳产品类别** | 美术用品、手工/匠人商品、婚礼配件、花卉产品、陶瓷、家居纺织品、时尚配件 |
+| **Prompt 示例** | `"Watercolor hand-painted style, transparent color washes, visible paper texture, soft bleeding edges, floral botanical elements, light airy composition, artisan aesthetic"` |
+| **适用场景** | 定位为匠人/手工的产品。婚礼/庆典内容。重视工艺和美学甚于功能的受众。 |
+| **不适用** | 大规模量产商品、科技产品、任何需要清晰细节或精确度的产品 |
 
-### 5.7 Japanese Manga Comic Style (`manga_comic`)
+### 5.7 日式漫画风格（`manga_comic`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | High contrast black and white with screen tones. Speed lines for action, dramatic panel layouts, intense expressions. Shonen/seinen influenced aesthetics with detailed backgrounds. |
-| **Best Product Categories** | Gaming peripherals, electronics, sports equipment, energy drinks, streetwear, collectibles, action figures |
-| **Example Prompt Snippet** | `"Japanese manga comic style, high contrast black and white, screen tones, speed lines, dramatic expressions, shonen manga aesthetic, detailed dynamic composition, panel layout feel"` |
-| **When to Use** | Products targeting young male audiences (16-30). Action/energy/competition themes. Gaming and esports crossovers. |
-| **When to Avoid** | Calm/relaxing products, elderly audiences, formal/professional contexts |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 高对比黑白配网点纸。速度线表现动感，戏剧性分镜布局，激烈的表情。少年/青年漫画美学，配以详细背景。 |
+| **最佳产品类别** | 游戏外设、电子产品、运动装备、功能饮料、街头服饰、收藏品、手办 |
+| **Prompt 示例** | `"Japanese manga comic style, high contrast black and white, screen tones, speed lines, dramatic expressions, shonen manga aesthetic, detailed dynamic composition, panel layout feel"` |
+| **适用场景** | 面向年轻男性受众（16-30 岁）的产品。动作/能量/竞技主题。游戏和电竞跨界。 |
+| **不适用** | 平静/放松类产品、老年受众、正式/专业场合 |
 
-### 5.8 Chibi/Q-Version Cute Style (`chibi`)
+### 5.8 Q 版萌系风格（`chibi`）
 
-| Attribute | Details |
-|-----------|---------|
-| **Visual Characteristics** | Super-deformed proportions (large head, small body, 2-3 head ratio). Oversized sparkling eyes, simplified features, pastel backgrounds. Kawaii aesthetic with sparkle/star effects. |
-| **Best Product Categories** | Snacks/candy, plush toys, phone accessories, small collectibles, IP merchandise, children's clothing, cute stationery |
-| **Example Prompt Snippet** | `"Chibi Q-version style, super deformed proportions, large sparkling eyes, kawaii aesthetic, pastel colors, sparkle effects, cute simplified features, 2-3 head body ratio"` |
-| **When to Use** | Products that are inherently "cute." Gift-oriented content. Young female audiences. Products where unboxing/discovery is the hook. |
-| **When to Avoid** | Serious/professional products, high-ticket items, products requiring trust/authority |
+| 属性 | 详情 |
+|------|------|
+| **视觉特征** | 超变形比例（大头小身，2-3 头身比）。超大闪亮眼睛，简化特征，粉彩背景。卡哇伊美学配闪光/星星效果。 |
+| **最佳产品类别** | 零食/糖果、毛绒玩具、手机配件、小型收藏品、IP 周边、童装、萌系文具 |
+| **Prompt 示例** | `"Chibi Q-version style, super deformed proportions, large sparkling eyes, kawaii aesthetic, pastel colors, sparkle effects, cute simplified features, 2-3 head body ratio"` |
+| **适用场景** | 天生"可爱"的产品。送礼导向内容。年轻女性受众。以开箱/发现为钩子的产品。 |
+| **不适用** | 严肃/专业产品、高客单价商品、需要建立信任/权威感的产品 |
 
 ---
 
-## 6. Video QA Pipeline
+## 6. 视频 QA 流水线
 
-### 6.1 volcengine-video-understanding Integration
+### 6.1 volcengine-video-understanding 集成
 
-The QA pipeline uses the `volcengine-video-understanding` skill powered by doubao-seed-2.0-code's VLM capabilities. It accepts video files up to 512MB and performs multi-dimensional analysis.
+QA 流水线使用 `volcengine-video-understanding` Skill，由 doubao-seed-2.0-code 的 VLM 能力驱动。接受最大 512MB 的视频文件，执行多维度分析。
 
-**QA Invocation Flow:**
+**QA 调用流程**：
 
 ```
-1. Video file generated by Seedance
-2. tiktok-director calls volcengine-video-understanding with video path + analysis prompt
-3. Skill extracts frames at configurable FPS (default: 0.5 fps)
-4. doubao-seed-2.0-code analyzes frames + audio
-5. Returns structured QA report
+1. Seedance 生成视频文件
+2. tiktok-director 调用 volcengine-video-understanding，传入视频路径 + 分析 prompt
+3. Skill 以可配置 FPS 提取帧（默认：0.5 fps）
+4. doubao-seed-2.0-code 分析帧 + 音频
+5. 返回结构化 QA 报告
 ```
 
-### 6.2 Automated Quality Checks
+### 6.2 自动化质量检查
 
-| Check Category | Specific Tests | Method |
-|----------------|---------------|--------|
-| **Scene Transitions** | No jarring hard cuts in first 5 seconds; smooth motion continuity between segments; no black frames between clips | Frame-by-frame analysis at transition points |
-| **Audio Sync** | Narration aligns with visual action; no audio lag > 200ms; audio levels consistent across segments | Audio-visual correlation analysis |
-| **Visual Quality** | No artifacting or distortion; consistent color grading; no resolution drops between segments; proper 9:16 framing | Per-frame quality scoring |
-| **Brand Consistency** | Product appears accurately across all product grids; color of product matches reference image; no hallucinated features | Reference image comparison |
-| **Hook Effectiveness** | First 2 seconds contain motion (no static frames); breathing movement present; no brand logos in first 3 seconds | First-N-frames analysis |
-| **Text Overlay** | Overlays are legible; max 6 words per overlay; positioned in bottom third; high contrast against background | OCR + layout analysis |
-| **Content Completeness** | All 5 storyboard categories represented; CTA present in final 3 seconds; product visible in at least 7 grids | Semantic scene classification |
+| 检查类别 | 具体测试 | 方法 |
+|---------|---------|------|
+| **场景转场** | 前 5 秒无突兀硬切；片段间运动连贯；片段间无黑帧 | 转场点逐帧分析 |
+| **音频同步** | 旁白与画面动作对齐；音频延迟 < 200ms；各片段音频电平一致 | 音视频相关性分析 |
+| **视觉质量** | 无伪影或失真；色彩分级一致；片段间无分辨率下降；正确的 9:16 取景 | 逐帧质量评分 |
+| **品牌一致性** | 产品在所有产品分格中准确呈现；产品颜色与参考图匹配；无幻觉特征 | 参考图对比 |
+| **钩子效果** | 前 2 秒包含运动（无静态帧）；呼吸运动存在；前 3 秒无品牌 logo | 首 N 帧分析 |
+| **文字叠加** | 叠加文字清晰可读；每个叠加最多 6 个词；位于画面下三分之一；与背景高对比 | OCR + 布局分析 |
+| **内容完整性** | 全部 5 个分镜类别都有体现；CTA 出现在最后 3 秒；产品至少在 7 个分格中可见 | 语义场景分类 |
 
-### 6.3 Quality Scoring Rubric
+### 6.3 质量评分标准
 
-| Dimension | Weight | Pass Threshold | Scoring Criteria |
-|-----------|--------|---------------|------------------|
-| Hook Quality (0-2s) | 25% | >= 7/10 | Motion present, no static frames, breathing movement detected, no branding |
-| Visual Coherence | 20% | >= 6/10 | Consistent color grading, no artifacts, smooth transitions |
-| Audio Sync | 15% | >= 7/10 | Audio aligns with action, no lag, consistent levels |
-| Product Accuracy | 20% | >= 8/10 | Product matches reference, no hallucinated features, correct colors |
-| CTA Effectiveness | 10% | >= 6/10 | Price visible, CTA text present, link mention included |
-| Overall Polish | 10% | >= 6/10 | Professional feel, no jarring errors, proper framing |
+| 维度 | 权重 | 通过阈值 | 评分标准 |
+|------|------|---------|---------|
+| 钩子质量（0-2s） | 25% | >= 7/10 | 有运动，无静态帧，检测到呼吸运动，无品牌标识 |
+| 视觉连贯性 | 20% | >= 6/10 | 色彩分级一致，无伪影，转场流畅 |
+| 音频同步 | 15% | >= 7/10 | 音频与动作对齐，无延迟，电平一致 |
+| 产品准确性 | 20% | >= 8/10 | 产品与参考匹配，无幻觉特征，颜色正确 |
+| CTA 效果 | 10% | >= 6/10 | 价格可见，CTA 文字存在，包含链接提及 |
+| 整体质感 | 10% | >= 6/10 | 专业感，无突兀错误，取景正确 |
 
-**Composite Score**: Weighted average of all dimensions.
-- **Pass**: Composite >= 7.0/10 AND no individual dimension below its threshold
-- **Conditional Pass**: Composite >= 6.0/10 but one dimension below threshold (human review required)
-- **Fail**: Composite < 6.0/10 OR two+ dimensions below threshold (automatic regeneration)
+**综合评分**：所有维度的加权平均。
+- **通过**：综合分 >= 7.0/10 且无任何维度低于其阈值
+- **有条件通过**：综合分 >= 6.0/10 但有一个维度低于阈值（需人工审查）
+- **未通过**：综合分 < 6.0/10 或两个以上维度低于阈值（自动重新生成）
 
-### 6.4 Human Review Triggers
+### 6.4 人工审查触发条件
 
-The following conditions escalate to human review (reported to Lead via sessions_send):
+以下情况会升级至人工审查（通过 sessions_send 报告给 Lead）：
 
-1. **Conditional Pass**: Video passes overall but fails one specific dimension
-2. **Third Regeneration Attempt**: Same segment has been regenerated 3 times without passing
-3. **Content Sensitivity**: QA detects faces, text in foreign languages, or brand logos from competitors
-4. **Style Mismatch**: Requested manga style does not match output (e.g., requested `ghibli` but output looks `cartoon`)
-5. **Cost Threshold**: Total generation cost for one product exceeds configured budget limit
+1. **有条件通过**：视频整体通过但某一维度未达标
+2. **第三次重新生成尝试**：同一片段已重新生成 3 次仍未通过
+3. **内容敏感性**：QA 检测到人脸、外语文字或竞品品牌 logo
+4. **风格不匹配**：请求的漫画风格与输出不符（如请求 `ghibli` 但输出看起来像 `cartoon`）
+5. **成本阈值**：单个产品的总生成成本超过配置的预算限额
 
 ---
 
-## 7. Test Scenarios
+## 7. 测试场景
 
-### Test 1: Standard UGC Video -- Camping Cot
+### 测试 1：标准 UGC 视频——露营行军床
 
-| Field | Details |
-|-------|---------|
-| **Name** | Standard UGC Video: Camping Cot with Weight Capacity Pain Point |
-| **Input** | Product: Camping Cot X500. Pain points (from VOC): "weight capacity too low" (rank 1), "hard to fold" (rank 2), "too heavy to carry" (rank 3). Style: Standard UGC (not manga). |
-| **Expected Output** | 25-grid storyboard JSON with all 5 categories populated. 10-12 key frame images (1080x1920, PNG). One 15-second video file (1080p, 9:16, MP4, with narration audio). QA report JSON. |
-| **Validation** | Storyboard: All 25 grids present with proper category distribution (3/5/7/6/4). Hook: First 2 seconds show breathing movement camera, no product branding. Product grids: At least one grid shows mattress press-and-bounce demonstration. QA: Composite score >= 7.0. Rendering: Video file < 50MB, duration exactly 15s (+/- 0.5s). |
+| 字段 | 详情 |
+|------|------|
+| **名称** | 标准 UGC 视频：以承重能力痛点为核心的露营行军床 |
+| **输入** | 产品：Camping Cot X500。痛点（来自 VOC）："承重能力太低"（排名 1）、"难以折叠"（排名 2）、"太重不便携带"（排名 3）。风格：标准 UGC（非漫画）。 |
+| **预期输出** | 包含全部 5 个类别的 25 格分镜 JSON。10-12 张关键帧图片（1080x1920，PNG）。一个 15 秒视频文件（1080p，9:16，MP4，带旁白音频）。QA 报告 JSON。 |
+| **验证** | 分镜：全部 25 格存在且类别分布正确（3/5/7/6/4）。钩子：前 2 秒有呼吸运动镜头，无产品品牌。产品分格：至少一格展示床垫按压回弹演示。QA：综合分 >= 7.0。渲染：视频文件 < 50MB，时长恰好 15s（+/- 0.5s）。 |
 
-### Test 2: Manga Drama -- Wuxia Theme Product Storytelling
+### 测试 2：漫画剧情——武侠主题产品叙事
 
-| Field | Details |
-|-------|---------|
-| **Name** | Manga Drama: Chinese Ink Wash Wuxia Story for Tea Product |
-| **Input** | Product: Premium Pu-erh Tea Set. Theme: "A wandering swordsman discovers a tea house in the mountains." Style: `chinese` (ink wash). Scenes: 3 (protagonist entrance, tea preparation action, ending freeze). |
-| **Expected Output** | 3-scene storyboard script. 1 protagonist character image (swordsman). 3 scene images in Chinese ink wash style. 3 video segments (8-10 seconds each). Combined manga drama video (24-30 seconds). QA report. |
-| **Validation** | Character consistency: Swordsman appears recognizably similar across all 3 scenes. Style consistency: All scenes use ink wash aesthetic (limited palette, brush stroke textures). Audio: Each scene has appropriate ambient audio. QA: Each scene passes individually >= 6.5/10. Combined flow: Scenes feel like a continuous story. |
+| 字段 | 详情 |
+|------|------|
+| **名称** | 漫画剧情：中国水墨武侠风格茶产品故事 |
+| **输入** | 产品：高端普洱茶具套装。主题："一位游侠在山中发现了一间茶馆。"风格：`chinese`（水墨）。场景数：3（主角登场、泡茶动作、结尾定格）。 |
+| **预期输出** | 3 场景分镜脚本。1 张主角角色图片（游侠）。3 张中国水墨风格场景图。3 个视频片段（各 8-10 秒）。合并后的漫画剧情视频（24-30 秒）。QA 报告。 |
+| **验证** | 角色一致性：游侠在全部 3 个场景中外观可辨识地相似。风格一致性：所有场景使用水墨美学（有限色调、笔触纹理）。音频：每个场景有适当的环境音。QA：每个场景单独通过 >= 6.5/10。整体流畅度：场景感觉像连贯的故事。 |
 
-### Test 3: A/B Testing Matrix -- Multiple Hook Variants
+### 测试 3：A/B 测试矩阵——多钩子变体
 
-| Field | Details |
-|-------|---------|
-| **Name** | A/B Matrix: 4 Hook Variants for Portable Blender |
-| **Input** | Product: Portable USB Blender. Pain point: "regular blenders are too bulky for travel." Base storyboard: Standard UGC 25-grid. Variant dimension: Hook type (0-2 seconds). |
-| **Expected Output** | 1 base storyboard. 4 variant videos, each with different first 2 seconds: (A) frustration hook -- struggling with big blender in hotel room, (B) curiosity hook -- mystery item pulled from bag, (C) shock hook -- blender fitting inside a shoe, (D) question hook -- text overlay "Can this replace your kitchen blender?" Shared seconds 2-15 across all variants. |
-| **Validation** | All 4 videos share identical content from second 2 onward. Each hook variant has distinct visual and audio. All 4 pass QA >= 6.5/10. File sizes within 20% of each other (consistent encoding). Variants correctly labeled in metadata for distribution tracking. |
+| 字段 | 详情 |
+|------|------|
+| **名称** | A/B 矩阵：便携式搅拌机的 4 种钩子变体 |
+| **输入** | 产品：便携式 USB 搅拌机。痛点："普通搅拌机旅行时太笨重。"基础分镜：标准 UGC 25 格。变体维度：钩子类型（0-2 秒）。 |
+| **预期输出** | 1 个基础分镜。4 个变体视频，各有不同的前 2 秒：(A) 挫折钩子——在酒店房间与大搅拌机搏斗，(B) 好奇钩子——从包里拿出神秘物品，(C) 震惊钩子——搅拌机放进鞋子里，(D) 提问钩子——文字叠加"这能取代你的厨房搅拌机吗？"第 2-15 秒所有变体共享。 |
+| **验证** | 全部 4 个视频从第 2 秒开始内容完全相同。每个钩子变体有独特的视觉和音频。全部 4 个通过 QA >= 6.5/10。文件大小相差在 20% 以内（一致的编码）。变体在元数据中正确标注以便分发追踪。 |
 
-### Test 4: Ghibli Style Video -- Eco-Friendly Product
+### 测试 4：吉卜力风格视频——环保产品
 
-| Field | Details |
-|-------|---------|
-| **Name** | Style Test: Ghibli Aesthetic for Bamboo Toothbrush |
-| **Input** | Product: Biodegradable Bamboo Toothbrush Set. Pain points: "plastic waste guilt" (rank 1), "bristles fall out" (rank 2). Style: `ghibli`. Duration: 10 seconds (shorter format test). |
-| **Expected Output** | 17-grid storyboard (scaled from 25-grid for 10-second format: 10/15 * 25 = ~17). 6-8 key frame images in Ghibli style. One 10-second video with lush nature backgrounds. QA report. |
-| **Validation** | Visual style: Watercolor textures, earth tones, nature environments present. Grid scaling: Categories maintain proper ratio (2/3/5/4/3 for 17 grids). Product integration: Bamboo toothbrush appears in nature context (not bathroom). Emotion: volcengine analysis detects "positive/hopeful" sentiment. QA composite >= 7.0. |
+| 字段 | 详情 |
+|------|------|
+| **名称** | 风格测试：竹牙刷的吉卜力美学 |
+| **输入** | 产品：可降解竹牙刷套装。痛点："塑料垃圾内疚"（排名 1）、"刷毛脱落"（排名 2）。风格：`ghibli`。时长：10 秒（短格式测试）。 |
+| **预期输出** | 17 格分镜（从 25 格按 10 秒比例缩放：10/15 * 25 = ~17）。6-8 张吉卜力风格关键帧图片。一个 10 秒视频，背景为郁郁葱葱的自然环境。QA 报告。 |
+| **验证** | 视觉风格：存在水彩纹理、大地色调、自然环境。分格缩放：类别维持正确比例（17 格为 2/3/5/4/3）。产品融入：竹牙刷出现在自然环境中（非浴室）。情感：volcengine 分析检测到"积极/充满希望"的情感。QA 综合分 >= 7.0。 |
 
-### Test 5: Video QA Failure and Regeneration Loop
+### 测试 5：视频 QA 失败与重新生成循环
 
-| Field | Details |
-|-------|---------|
-| **Name** | QA Pipeline: Deliberate Failure Detection and Recovery |
-| **Input** | Product: Wireless Earbuds. Pain points: "earbuds fall out during exercise." Generate initial video with intentionally minimal prompt detail to trigger QA issues. |
-| **Expected Output** | First attempt: Video generated but expected to fail QA on at least one dimension (e.g., product accuracy if prompt is too vague). QA report identifying specific failed dimensions. Second attempt: Targeted regeneration of failed segments with enhanced prompts. Second QA pass. |
-| **Validation** | QA correctly identifies deficiencies (not false positives). Regeneration targets only failed segments (not entire video). Second attempt improves scores on previously failed dimensions. Total regeneration loop completes in <= 3 attempts. Cost tracking accurately reflects multi-attempt generation. |
-
----
-
-## 8. Success Metrics
-
-### 8.1 Production Metrics
-
-| Metric | Target | Measurement Method |
-|--------|--------|-------------------|
-| **Video Completion Rate** (storyboard to final video) | >= 85% | `completed_videos / storyboards_created` |
-| **QA First-Pass Rate** | >= 70% | `videos_passing_qa_first_attempt / videos_submitted_to_qa` |
-| **Style Consistency Score** | >= 8/10 | volcengine analysis: requested style vs detected style match |
-| **Average Rendering Time** (end-to-end for one product) | <= 15 minutes | Timestamp from brief receipt to final video delivery |
-| **Hook Effectiveness Score** | >= 7/10 | volcengine first-2-second analysis: motion detection + engagement proxy |
-
-### 8.2 Cost Metrics
-
-| Metric | Target | Calculation |
-|--------|--------|-------------|
-| **Cost Per UGC Video** | <= 5 RMB | (image generation tokens + video generation tokens + QA tokens) per final video |
-| **Cost Per Manga Drama** | <= 15 RMB | Full manga-drama pipeline cost including character gen + multi-scene + QA |
-| **Cost Per A/B Variant Set** | <= 12 RMB for 4 variants | Shared base + marginal cost per variant |
-| **Regeneration Overhead** | <= 30% of initial cost | Additional cost from QA failures requiring re-generation |
-
-### 8.3 Quality Metrics
-
-| Metric | Target | Source |
-|--------|--------|--------|
-| **QA Composite Score** (average across all videos) | >= 7.5/10 | volcengine-video-understanding weighted rubric |
-| **Human Override Rate** | <= 15% | Videos requiring manual human review / total videos |
-| **Defect-Free Rate** | >= 90% | Videos with zero QA dimension below threshold |
-
-### 8.4 Operational Metrics
-
-| Metric | Target | Notes |
-|--------|--------|-------|
-| **Storyboard Generation Time** | <= 60 seconds | doubao-seed-2.0-code script generation |
-| **Image Generation Time** (per frame) | <= 30 seconds | nano-banana-pro single image |
-| **Video Generation Time** (per segment) | <= 120 seconds | Seedance 1.5 Pro per 5-10s clip |
-| **QA Analysis Time** | <= 60 seconds | volcengine per video |
+| 字段 | 详情 |
+|------|------|
+| **名称** | QA 流水线：故意触发失败检测与恢复 |
+| **输入** | 产品：无线耳机。痛点："运动时耳机掉落。"使用刻意模糊的 prompt 生成初始视频以触发 QA 问题。 |
+| **预期输出** | 第一次尝试：视频生成但预期在至少一个维度上未通过 QA（如 prompt 太模糊导致产品准确性不足）。QA 报告识别具体未通过的维度。第二次尝试：使用增强 prompt 针对性重新生成未通过的片段。第二次 QA 通过。 |
+| **验证** | QA 正确识别缺陷（非误报）。重新生成仅针对未通过的片段（非整个视频）。第二次尝试在之前未通过的维度上分数提升。总重新生成循环在 <= 3 次内完成。成本追踪准确反映多次尝试的生成费用。 |
 
 ---
 
-## 9. TikTok Matrix Distribution
+## 8. 成功指标
 
-### 9.1 Creating Multiple Versions from One Storyboard
+### 8.1 生产指标
 
-The base storyboard serves as the "master template." Variants are created by swapping specific grid ranges while keeping the core product demonstration (grids 9-15) constant.
+| 指标 | 目标 | 测量方法 |
+|------|------|---------|
+| **视频完成率**（分镜到最终视频） | >= 85% | `已完成视频 / 已创建分镜` |
+| **QA 首次通过率** | >= 70% | `首次通过 QA 的视频 / 提交 QA 的视频` |
+| **风格一致性得分** | >= 8/10 | volcengine 分析：请求风格 vs 检测风格匹配度 |
+| **平均渲染时间**（单个产品端到端） | <= 15 分钟 | 从收到简报到最终视频交付的时间戳 |
+| **钩子效果得分** | >= 7/10 | volcengine 前 2 秒分析：运动检测 + 互动代理指标 |
 
-**Swappable Zones:**
+### 8.2 成本指标
 
-| Zone | Grids | What Changes | What Stays |
-|------|-------|-------------|------------|
-| Hook Zone | 1-3 | Opening scenario, first-person context | Camera notation (always BM) |
-| Problem Zone | 4-8 | Specific pain point emphasized | Product category reference |
-| Demo Zone | 9-15 | **LOCKED** -- never changes across variants | All product close-ups |
-| Context Zone | 16-21 | Usage scenario, setting, lifestyle | Product interaction pattern |
-| CTA Zone | 22-25 | Price framing, urgency language, cover image | Link-in-bio reference |
+| 指标 | 目标 | 计算方式 |
+|------|------|---------|
+| **每条 UGC 视频成本** | <= 5 元 | （图片生成 Token + 视频生成 Token + QA Token）/ 每条最终视频 |
+| **每条漫画剧情成本** | <= 15 元 | 完整 manga-drama 流水线成本，含角色生成 + 多场景 + QA |
+| **每组 A/B 变体成本** | 4 个变体 <= 12 元 | 共享基础 + 每个变体的边际成本 |
+| **重新生成开销** | <= 初始成本的 30% | QA 未通过导致重新生成的额外成本 |
 
-### 9.2 Account Matrix Strategy (3-5 Accounts)
+### 8.3 质量指标
 
-| Account | Persona | Content Focus | Posting Schedule |
-|---------|---------|---------------|-----------------|
-| **Account 1** (Primary) | Authentic reviewer | UGC-style real product demos | Daily, 7pm local time |
-| **Account 2** (Niche) | Category expert | In-depth comparison, pain-point focused | 3x/week, 12pm |
-| **Account 3** (Creative) | Manga/animation style | Manga drama storytelling content | 2x/week, 9pm |
-| **Account 4** (Deal hunter) | Bargain-focused | Price-comparison, deal alerts, CTA-heavy | Daily, 6am (early shoppers) |
-| **Account 5** (Lifestyle) | Aspirational context | Product in beautiful lifestyle settings | 3x/week, 8pm |
+| 指标 | 目标 | 来源 |
+|------|------|------|
+| **QA 综合评分**（所有视频平均） | >= 7.5/10 | volcengine-video-understanding 加权评分标准 |
+| **人工审查率** | <= 15% | 需要人工审查的视频 / 总视频数 |
+| **零缺陷率** | >= 90% | 无任何 QA 维度低于阈值的视频 |
 
-**Content Distribution Rule**: No two accounts post the same base storyboard. Each account gets a unique variant of each product's video. Cross-account posting of identical content triggers TikTok's duplicate detection.
+### 8.4 运营指标
 
-### 9.3 A/B Testing Framework
+| 指标 | 目标 | 备注 |
+|------|------|------|
+| **分镜生成时间** | <= 60 秒 | doubao-seed-2.0-code 脚本生成 |
+| **图片生成时间**（每帧） | <= 30 秒 | nano-banana-pro 单张图片 |
+| **视频生成时间**（每段） | <= 120 秒 | Seedance 1.5 Pro 每个 5-10s 片段 |
+| **QA 分析时间** | <= 60 秒 | volcengine 每条视频 |
 
-**Test Variables (prioritized):**
+---
 
-1. **Cover Image** (highest impact on impressions): Test 3 thumbnails per video
-   - Face close-up with emotion
-   - Product hero shot with text
-   - Before/after split frame
+## 9. TikTok 矩阵分发
 
-2. **Hook Type** (highest impact on retention): Test 2-4 hook variants
-   - Frustration hook ("Don't buy THIS")
-   - Curiosity hook ("Wait for it...")
-   - Shock hook (unexpected size/price reveal)
-   - Question hook ("Does this actually work?")
+### 9.1 从一个分镜创建多个版本
 
-3. **CTA Framing** (highest impact on click-through):
-   - Discount anchor ("Was $89, now $49")
-   - Value comparison ("Cheaper than one dinner out")
-   - Scarcity ("Only 200 left at this price")
-   - Social proof ("50,000 sold this month")
+基础分镜作为"主模板"。通过替换特定分格范围来创建变体，同时保持核心产品演示（格 9-15）不变。
 
-**Test Protocol:**
+**可替换区域**：
+
+| 区域 | 分格 | 变化内容 | 固定内容 |
+|------|------|---------|---------|
+| 钩子区 | 1-3 | 开场场景、第一人称背景 | 镜头标记（始终为 BM） |
+| 问题区 | 4-8 | 强调的具体痛点 | 产品类别引用 |
+| 演示区 | 9-15 | **锁定**——跨变体永不改变 | 所有产品特写 |
+| 场景区 | 16-21 | 使用场景、环境、生活方式 | 产品互动模式 |
+| CTA 区 | 22-25 | 价格框架、紧迫性用语、封面图 | "Link in bio" 引用 |
+
+### 9.2 账号矩阵策略（3-5 个账号）
+
+| 账号 | 人设 | 内容重点 | 发布计划 |
+|------|------|---------|---------|
+| **账号 1**（主力） | 真实评测者 | UGC 风格真实产品演示 | 每天，当地时间 19:00 |
+| **账号 2**（垂直） | 品类专家 | 深度对比、痛点聚焦 | 每周 3 次，12:00 |
+| **账号 3**（创意） | 漫画/动画风格 | 漫画剧情叙事内容 | 每周 2 次，21:00 |
+| **账号 4**（捡漏） | 优惠猎人 | 价格对比、优惠提醒、CTA 密集 | 每天，06:00（早鸟购物者） |
+| **账号 5**（生活方式） | 向往型背景 | 产品在精美生活场景中 | 每周 3 次，20:00 |
+
+**内容分发规则**：任何两个账号不发布同一基础分镜的视频。每个账号获得每个产品视频的独特变体。跨账号发布相同内容会触发 TikTok 的重复内容检测。
+
+### 9.3 A/B 测试框架
+
+**测试变量（按优先级排序）**：
+
+1. **封面图**（对曝光量影响最大）：每条视频测试 3 个缩略图
+   - 带情感的面部特写
+   - 产品主图配文字
+   - 使用前后拆分画面
+
+2. **钩子类型**（对留存率影响最大）：测试 2-4 种钩子变体
+   - 挫折钩子（"别买这个"）
+   - 好奇钩子（"等一下..."）
+   - 震惊钩子（意外的尺寸/价格揭示）
+   - 提问钩子（"这个真的有用吗？"）
+
+3. **CTA 框架**（对点击率影响最大）：
+   - 折扣锚定（"原价 $89，现价 $49"）
+   - 价值对比（"比一顿晚餐还便宜"）
+   - 稀缺性（"这个价格仅剩 200 个"）
+   - 社会证明（"本月已售 50,000 件"）
+
+**测试协议**：
 ```
-1. Generate base video + 3-4 variants
-2. Distribute one variant per matrix account
-3. Monitor for 48 hours:
-   - Impressions (cover image effectiveness)
-   - Average watch time (hook effectiveness)
-   - Click-through rate (CTA effectiveness)
-   - Completion rate (overall content quality)
-4. Identify winner per variable
-5. Feed winning patterns back into storyboard template library
+1. 生成基础视频 + 3-4 个变体
+2. 每个矩阵账号分发一个变体
+3. 监控 48 小时：
+   - 曝光量（封面图效果）
+   - 平均观看时长（钩子效果）
+   - 点击率（CTA 效果）
+   - 完播率（整体内容质量）
+4. 按变量维度识别胜出者
+5. 将胜出模式反馈到分镜模板库
 ```
 
-### 9.4 Performance Feedback Loop
+### 9.4 效果反馈循环
 
 ```mermaid
 graph TD
-    A["Generate Videos<br/>(4 variants)"] --> B["Distribute to<br/>Matrix Accounts"]
-    B --> C["Monitor 48h<br/>Impressions, Watch Time,<br/>CTR, Completion Rate"]
-    C --> D["Identify Winners<br/>Best hook, cover, CTA"]
-    D --> E["Update Template Library<br/>Winning patterns become defaults"]
-    E --> F["Next Product<br/>Uses updated templates"]
+    A["生成视频<br/>（4 个变体）"] --> B["分发到<br/>矩阵账号"]
+    B --> C["监控 48h<br/>曝光量、观看时长、<br/>点击率、完播率"]
+    C --> D["识别胜出者<br/>最佳钩子、封面、CTA"]
+    D --> E["更新模板库<br/>胜出模式成为默认"]
+    E --> F["下一个产品<br/>使用更新后的模板"]
     F --> A
 
-    C --> G["Identify Losers<br/>Patterns to avoid"]
-    G --> H["Negative Pattern List<br/>Anti-patterns for storyboard gen"]
+    C --> G["识别失败者<br/>需避免的模式"]
+    G --> H["负面模式列表<br/>分镜生成的反面案例"]
     H --> F
 
     style A fill:#E3F2FD
@@ -702,24 +702,24 @@ graph TD
     style G fill:#FFCDD2
 ```
 
-**Metrics that feed back into creative strategy:**
+**反馈到创意策略的指标**：
 
-| TikTok Metric | Indicates | Action on Template Library |
-|---------------|-----------|---------------------------|
-| < 30% 2-second retention | Hook failed | Remove hook pattern; test alternatives |
-| > 70% 2-second retention | Hook succeeded | Promote hook pattern to default for category |
-| < 1% CTR | CTA failed | Adjust CTA framing; test new price anchoring |
-| > 3% CTR | CTA succeeded | Promote CTA pattern to default |
-| > 50% completion rate | Overall content strong | Mark storyboard as "validated template" |
-| < 20% completion rate | Content loses viewers mid-video | Analyze drop-off point; restructure weak zone |
+| TikTok 指标 | 含义 | 对模板库的操作 |
+|------------|------|---------------|
+| < 30% 的 2 秒留存 | 钩子失败 | 移除该钩子模式；测试替代方案 |
+| > 70% 的 2 秒留存 | 钩子成功 | 将该钩子模式提升为该品类的默认 |
+| < 1% 点击率 | CTA 失败 | 调整 CTA 框架；测试新的价格锚定 |
+| > 3% 点击率 | CTA 成功 | 将该 CTA 模式提升为默认 |
+| > 50% 完播率 | 整体内容质量高 | 将该分镜标记为"已验证模板" |
+| < 20% 完播率 | 视频中段流失观众 | 分析流失节点；重新结构化薄弱区域 |
 
 ---
 
-## 10. Integration Points
+## 10. 集成接口
 
-### 10.1 Input from VOC Analyst
+### 10.1 来自 VOC Analyst 的输入
 
-**Data Format (received via sessions_send):**
+**数据格式（通过 sessions_send 接收）**：
 
 ```json
 {
@@ -763,9 +763,9 @@ graph TD
 }
 ```
 
-### 10.2 Input from Lead
+### 10.2 来自 Lead 的输入
 
-**Product Brief Format (received via sessions_send):**
+**产品简报格式（通过 sessions_send 接收）**：
 
 ```json
 {
@@ -794,9 +794,9 @@ graph TD
 }
 ```
 
-### 10.3 Output Format
+### 10.3 输出格式
 
-**Delivered to Lead via sessions_send:**
+**通过 sessions_send 交付给 Lead**：
 
 ```json
 {
@@ -873,42 +873,42 @@ graph TD
 }
 ```
 
-### 10.4 sessions_send Communication Protocol
+### 10.4 sessions_send 通信协议
 
-| Direction | Message Type | Trigger | Content |
-|-----------|-------------|---------|---------|
-| Lead -> TikTok | Task Assignment | New product brief | Product brief JSON (10.2 format) |
-| VOC -> TikTok | Pain Point Data | VOC analysis complete | Pain point JSON (10.1 format) |
-| TikTok -> Lead | Progress Update | Each pipeline stage complete | Stage name + ETA for next stage |
-| TikTok -> Lead | QA Escalation | Conditional pass or 3rd regeneration | QA report + specific failed dimensions |
-| TikTok -> Lead | Task Complete | Final video ready | Full deliverable JSON (10.3 format) |
-| Lead -> TikTok | A/B Feedback | TikTok performance data available | Winning/losing patterns to update templates |
+| 方向 | 消息类型 | 触发条件 | 内容 |
+|------|---------|---------|------|
+| Lead -> TikTok | 任务分配 | 新产品简报 | 产品简报 JSON（10.2 格式） |
+| VOC -> TikTok | 痛点数据 | VOC 分析完成 | 痛点 JSON（10.1 格式） |
+| TikTok -> Lead | 进度更新 | 每个流水线阶段完成 | 阶段名称 + 下一阶段 ETA |
+| TikTok -> Lead | QA 升级 | 有条件通过或第 3 次重新生成 | QA 报告 + 具体未通过维度 |
+| TikTok -> Lead | 任务完成 | 最终视频就绪 | 完整交付 JSON（10.3 格式） |
+| Lead -> TikTok | A/B 反馈 | TikTok 效果数据可用 | 胜出/失败模式以更新模板 |
 
 ---
 
-## Implementation Stages
+## 实施阶段
 
-### Stage 1: Foundation Setup
-**Goal**: Workspace, SOUL.md, and skill installation
-**Success Criteria**: `clawhub list --workspace workspace-tiktok` shows all 6 skills installed; SOUL.md file exists and is valid markdown
-**Status**: Not Started
+### 阶段 1：基础搭建
+**目标**：工作区、SOUL.md 和 Skill 安装
+**成功标准**：`clawhub list --workspace workspace-tiktok` 显示全部 6 个 Skills 已安装；SOUL.md 文件存在且为有效 markdown
+**状态**：未开始
 
-### Stage 2: Storyboard System
-**Goal**: 25-grid storyboard template and generation logic
-**Success Criteria**: Given a product brief, agent generates a valid 25-grid JSON storyboard with all 5 categories properly distributed
-**Status**: Not Started
+### 阶段 2：分镜系统
+**目标**：25 格分镜模板和生成逻辑
+**成功标准**：给定产品简报，Agent 生成包含全部 5 个类别且分布正确的有效 25 格 JSON 分镜
+**状态**：未开始
 
-### Stage 3: Video Pipeline
-**Goal**: End-to-end image generation -> video generation -> assembly
-**Success Criteria**: A single product storyboard produces a 15-second MP4 with audio
-**Status**: Not Started
+### 阶段 3：视频流水线
+**目标**：端到端的图片生成 -> 视频生成 -> 组装
+**成功标准**：单个产品分镜产出一条 15 秒带音频的 MP4 视频
+**状态**：未开始
 
-### Stage 4: QA Pipeline
-**Goal**: Automated quality scoring and regeneration loop
-**Success Criteria**: volcengine-video-understanding analyzes a video and returns structured scores; failed videos trigger targeted regeneration
-**Status**: Not Started
+### 阶段 4：QA 流水线
+**目标**：自动化质量评分和重新生成循环
+**成功标准**：volcengine-video-understanding 分析视频并返回结构化评分；未通过的视频触发针对性重新生成
+**状态**：未开始
 
-### Stage 5: Integration & Matrix
-**Goal**: sessions_send communication, A/B variant generation, matrix distribution metadata
-**Success Criteria**: Full round-trip: Lead sends brief -> TikTok produces variants -> delivers to Lead with QA reports
-**Status**: Not Started
+### 阶段 5：集成与矩阵
+**目标**：sessions_send 通信、A/B 变体生成、矩阵分发元数据
+**成功标准**：完整闭环：Lead 发送简报 -> TikTok 生产变体 -> 附带 QA 报告交付给 Lead
+**状态**：未开始

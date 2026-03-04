@@ -1,0 +1,302 @@
+[
+  {
+    "test_id": "INT-3.1",
+    "test_name": "Lead -> VOC Analyst: Task Dispatch and Result Collection",
+    "description": "Lead sends a full_analysis task to VOC via sessions_send for 'camping folding bed'. Validates round-trip communication, response schema, request_id matching, and Lead's ability to parse results for downstream routing.",
+    "agent": "lead",
+    "target_agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "target": "voc-analyst",
+      "task_type": "full_analysis",
+      "category": "camping folding bed",
+      "keywords": ["camping cot", "portable bed", "folding cot outdoor"],
+      "target_market": "US",
+      "platforms": ["amazon", "reddit", "youtube", "google_maps"],
+      "subreddits": ["r/Camping", "r/BuyItForLife", "r/CampingGear"],
+      "time_range": "6months",
+      "priority": "normal",
+      "request_id": "int_test_lead_voc_001"
+    },
+    "expected_output": {
+      "schema": "VOCReport",
+      "required_fields": ["request_id", "data_sources", "pain_points", "metadata"],
+      "request_id_matches": "int_test_lead_voc_001",
+      "data_sources_has_entries_for": ["amazon", "reddit", "youtube", "google_maps"],
+      "pain_points_non_empty": true,
+      "metadata_flags": ["needs_geo_optimization", "needs_tiktok_content"],
+      "confidence": ["HIGH", "MEDIUM"],
+      "files_saved_to": "~/.openclaw/workspace-voc/data/reports/"
+    },
+    "timeout_seconds": 360,
+    "validation_criteria": [
+      "Lead receives response within 5 minutes",
+      "Response JSON validates against VOCReport schema",
+      "request_id matches 'int_test_lead_voc_001'",
+      "confidence is HIGH or MEDIUM (at least 3 sources succeeded)",
+      "Lead can parse and extract pain_points_summary for downstream routing",
+      "data_sources has entries for each requested platform",
+      "pain_points array is non-empty",
+      "Report files saved to workspace-voc/data/reports/"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "INT-3.2",
+    "test_name": "Lead -> GEO Optimizer: Content Generation Request and Delivery",
+    "description": "Lead sends content generation request to GEO with VOC pain points for camping cot. Validates blog and Amazon listing output, GEO scores, and HARD FAIL rule compliance.",
+    "agent": "lead",
+    "target_agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "target": "geo-optimizer",
+      "task": "generate_product_content",
+      "source_report": "voc_test_camping_cot",
+      "pain_points_summary": [
+        {
+          "issue": "Insufficient weight capacity",
+          "data_point": "68% of negative reviews",
+          "design_solution": "450lb capacity"
+        },
+        {
+          "issue": "Difficult storage",
+          "data_point": "42% of negative reviews",
+          "design_solution": "One-fold mechanism"
+        }
+      ],
+      "competitive_positioning": {
+        "price_range": "$59.99 - $79.99",
+        "key_differentiators": ["450lb capacity", "one-fold design"],
+        "authority_citations": ["OutdoorGearLab", "Wirecutter"]
+      },
+      "target_content": ["independent_site_blog", "amazon_listing"],
+      "request_id": "int_test_lead_geo_002"
+    },
+    "expected_output": {
+      "status": "completed",
+      "outputs_count": 2,
+      "output_types": ["independent_site_blog", "amazon_listing"],
+      "all_geo_scores_min": 80,
+      "hard_fail_rules_passed": true,
+      "files_saved_to": "~/.openclaw/workspace-geo/data/output/"
+    },
+    "timeout_seconds": 720,
+    "validation_criteria": [
+      "Lead receives response within 10 minutes",
+      "Blog output contains quantitative data from pain_points_summary (e.g., '68%', '450')",
+      "Amazon listing title contains numeric spec",
+      "Both outputs have GEO score >= 80",
+      "No HARD FAIL rule violations",
+      "quality_summary.all_hard_fail_rules_passed is true",
+      "Files saved to workspace-geo/data/output/"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "INT-3.3",
+    "test_name": "Lead -> Reddit Specialist: Campaign Assignment and Status Reporting",
+    "description": "Lead sends a reddit_campaign task to Reddit specialist for UltraRest Pro Camping Cot. Validates acknowledgment, eligible account listing, and campaign plan.",
+    "agent": "lead",
+    "target_agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "target": "reddit-spec",
+      "task_type": "reddit_campaign",
+      "product": {
+        "name": "UltraRest Pro Camping Cot",
+        "category": "outdoor/camping",
+        "key_features": ["450lb capacity", "2-minute setup"],
+        "price_range": "$89-$129"
+      },
+      "target_subreddits": ["r/Camping", "r/BuyItForLife"],
+      "voc_pain_points": [
+        "Competitors: cots collapse under heavy users (200+ lbs)",
+        "Competitors: setup takes 10+ minutes"
+      ],
+      "campaign_type": "traffic_hijack",
+      "request_id": "int_test_lead_reddit_003"
+    },
+    "expected_output": {
+      "status": "in_progress",
+      "eligible_accounts_listed": true,
+      "eligible_accounts_min_stage": "W4",
+      "target_posts_found_min": 1,
+      "estimated_posting_window_days": [3, 7]
+    },
+    "timeout_seconds": 180,
+    "validation_criteria": [
+      "Lead receives acknowledgment within 2 minutes",
+      "Response lists only W4+ accounts as eligible",
+      "Target posts found > 0",
+      "Estimated posting window is realistic (3-7 days)",
+      "Campaign plan includes post evaluation scores",
+      "No blockers reported (or specific blocker reasons if accounts not ready)"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "INT-3.4",
+    "test_name": "Lead -> TikTok Director: Video Generation Request and Asset Delivery",
+    "description": "Lead sends video production request to TikTok Director for UltraLight Camping Cot X500. Validates full asset delivery including storyboard, images, video, and QA report.",
+    "agent": "lead",
+    "target_agent": "tiktok-director",
+    "input": {
+      "source": "lead",
+      "target": "tiktok-director",
+      "task_type": "video_production",
+      "product": {
+        "name": "UltraLight Camping Cot X500",
+        "category": "outdoor-camping",
+        "key_features": ["450lb capacity", "3-second fold"],
+        "target_audience": "outdoor enthusiasts, 25-45, US market",
+        "price": 49.99
+      },
+      "video_requirements": {
+        "type": "ugc",
+        "style": "standard",
+        "duration": 15,
+        "quantity": 1
+      },
+      "priority": "high",
+      "request_id": "int_test_lead_tiktok_004"
+    },
+    "expected_output": {
+      "status": "completed",
+      "deliverables": {
+        "storyboard": {
+          "format": "JSON",
+          "grids": 25,
+          "category_distribution": "3/5/7/6/4"
+        },
+        "images": {
+          "count_range": [10, 12],
+          "format": "PNG",
+          "resolution": "1080x1920"
+        },
+        "video": {
+          "format": "MP4",
+          "duration_seconds": 15,
+          "aspect_ratio": "9:16",
+          "max_size_mb": 50
+        },
+        "qa_report": {
+          "composite_score_min": 7.0
+        }
+      },
+      "cost_breakdown_present": true
+    },
+    "timeout_seconds": 1080,
+    "validation_criteria": [
+      "Lead receives final deliverables within 15 minutes",
+      "Video file exists and is playable (MP4, < 50MB)",
+      "QA composite score >= 7.0",
+      "Storyboard categories match 3/5/7/6/4 distribution",
+      "10-12 PNG images at 1080x1920",
+      "Cost breakdown present with all token counts",
+      "All deliverables accessible from workspace-tiktok/data/"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "INT-3.5",
+    "test_name": "VOC -> GEO Data Flow (via Lead)",
+    "description": "End-to-end test: Lead dispatches to VOC, receives pain point report, extracts and forwards structured data to GEO, GEO produces content using VOC data. Validates data integrity across the full pipeline.",
+    "agent": "lead",
+    "target_agents": ["voc-analyst", "geo-optimizer"],
+    "input": {
+      "source": "lead",
+      "test_flow": "voc_to_geo_via_lead",
+      "step_1_voc_request": {
+        "target": "voc-analyst",
+        "task_type": "full_analysis",
+        "category": "camping folding bed",
+        "keywords": ["camping cot", "portable bed"],
+        "target_market": "US",
+        "platforms": ["amazon", "reddit", "youtube", "google_maps"],
+        "subreddits": ["r/Camping", "r/BuyItForLife"],
+        "time_range": "6months",
+        "request_id": "int_test_voc_geo_flow_005a"
+      },
+      "step_2_lead_transforms": "Lead extracts pain_points_summary and competitive_positioning from VOCReport",
+      "step_3_geo_request": {
+        "target": "geo-optimizer",
+        "task": "generate_product_content",
+        "target_content": ["independent_site_blog"],
+        "request_id": "int_test_voc_geo_flow_005b"
+      },
+      "request_id": "int_test_voc_geo_flow_005"
+    },
+    "expected_output": {
+      "voc_report_received": true,
+      "data_transformation_accurate": true,
+      "geo_content_references_voc_data": true,
+      "no_fabricated_data": true,
+      "end_to_end_time_max_minutes": 15
+    },
+    "timeout_seconds": 1080,
+    "validation_criteria": [
+      "GEO content references specific pain point data from VOC (e.g., '68% of negative reviews')",
+      "GEO blog comparison table includes competitor data from VOC report",
+      "GEO content does not fabricate pain points not present in VOC data",
+      "Data transformation from VOCReport to GEO input preserves accuracy",
+      "End-to-end time from VOC dispatch to GEO output < 15 minutes",
+      "Lead correctly extracts and forwards pain_points_summary",
+      "Lead correctly extracts and forwards competitive_positioning"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "INT-3.6",
+    "test_name": "VOC -> TikTok Data Flow (via Lead)",
+    "description": "End-to-end test: Lead dispatches to VOC, receives pain point report, extracts pain_points_for_script with visual demos and second markers, forwards to TikTok Director. Validates that storyboard and video reflect actual VOC issues.",
+    "agent": "lead",
+    "target_agents": ["voc-analyst", "tiktok-director"],
+    "input": {
+      "source": "lead",
+      "test_flow": "voc_to_tiktok_via_lead",
+      "step_1_voc_request": {
+        "target": "voc-analyst",
+        "task_type": "full_analysis",
+        "category": "camping folding bed",
+        "keywords": ["camping cot", "portable bed"],
+        "target_market": "US",
+        "platforms": ["amazon", "reddit", "youtube", "google_maps"],
+        "subreddits": ["r/Camping", "r/BuyItForLife"],
+        "time_range": "6months",
+        "request_id": "int_test_voc_tiktok_flow_006a"
+      },
+      "step_2_lead_transforms": "Lead extracts pain_points_for_script with visual_demo and second_marker fields",
+      "step_3_tiktok_request": {
+        "target": "tiktok-director",
+        "task_type": "video_production",
+        "video_requirements": {
+          "type": "ugc",
+          "style": "standard",
+          "duration": 15,
+          "quantity": 1
+        },
+        "request_id": "int_test_voc_tiktok_flow_006b"
+      },
+      "request_id": "int_test_voc_tiktok_flow_006"
+    },
+    "expected_output": {
+      "voc_report_received": true,
+      "pain_points_mapped_to_storyboard": true,
+      "first_pain_point_at_second_2_4": true,
+      "product_specs_in_cta": true,
+      "video_qa_confirms_pain_point_display": true,
+      "end_to_end_time_max_minutes": 20
+    },
+    "timeout_seconds": 1320,
+    "validation_criteria": [
+      "TikTok storyboard pain_point grids (4-8) reference actual VOC issues",
+      "First pain point maps to 'Show at second 2-4' in storyboard",
+      "Product specs from VOC data appear in CTA text overlays",
+      "Video QA confirms pain point display category is present",
+      "End-to-end time from VOC dispatch to video delivery < 20 minutes",
+      "Lead correctly transforms VOC pain_points into pain_points_for_script format",
+      "Visual demo descriptions from Lead match storyboard grid content"
+    ],
+    "priority": "P1"
+  }
+]

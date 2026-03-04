@@ -1,0 +1,241 @@
+[
+  {
+    "test_id": "V1",
+    "test_name": "Full Cross-Validation Analysis",
+    "description": "End-to-end multi-source category analysis for 'portable blender' across 4 platforms (Amazon, Reddit, YouTube, Google Maps). Validates JSON report schema, pain point cross-validation (source_count >= 2), confidence level, and markdown report generation.",
+    "agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "task_type": "full_analysis",
+      "category": "portable blender",
+      "keywords": ["portable blender", "travel blender", "USB blender", "personal blender"],
+      "target_market": "US",
+      "platforms": ["amazon", "reddit", "youtube", "google_maps"],
+      "subreddits": ["r/BuyItForLife", "r/Cooking", "r/MealPrepSunday"],
+      "time_range": "6months",
+      "priority": "normal",
+      "request_id": "unit_test_voc_v1"
+    },
+    "expected_output": {
+      "schema": "VOCReport",
+      "required_fields": ["request_id", "category", "data_sources", "pain_points", "price_range", "confidence", "metadata"],
+      "data_sources_count": 4,
+      "pain_points_min_count": 3,
+      "pain_point_cross_validation": {
+        "min_source_count": 2
+      },
+      "confidence": ["HIGH", "MEDIUM"],
+      "metadata_flags": ["needs_geo_optimization", "needs_tiktok_content"],
+      "files_generated": ["reports/*.json", "reports/*.md"]
+    },
+    "timeout_seconds": 300,
+    "validation_criteria": [
+      "Response JSON validates against VOCReport schema",
+      "request_id matches 'unit_test_voc_v1'",
+      "data_sources has entries for amazon, reddit, youtube, google_maps",
+      "pain_points array has >= 3 entries",
+      "Each pain point with source_count >= 2 is marked as cross-validated",
+      "confidence is HIGH or MEDIUM",
+      "Markdown report generated in workspace-voc/data/reports/",
+      "metadata.needs_geo_optimization and metadata.needs_tiktok_content flags present"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "V2",
+    "test_name": "Single-Platform Quick Query",
+    "description": "Reddit-only quick sentiment check for '4K TV'. Validates response within 120s, at least 10 posts analyzed, confidence marked LOW (single source).",
+    "agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "task_type": "quick_query",
+      "category": "4K TV",
+      "keywords": ["4K TV", "4K television", "UHD TV"],
+      "target_market": "US",
+      "platforms": ["reddit"],
+      "subreddits": ["r/4kTV", "r/hometheater", "r/BuyItForLife"],
+      "time_range": "3months",
+      "priority": "high",
+      "request_id": "unit_test_voc_v2"
+    },
+    "expected_output": {
+      "schema": "VOCReport",
+      "required_fields": ["request_id", "category", "data_sources", "pain_points", "confidence"],
+      "data_sources_count": 1,
+      "posts_analyzed_min": 10,
+      "confidence": ["LOW"]
+    },
+    "timeout_seconds": 120,
+    "validation_criteria": [
+      "Response received within 120 seconds",
+      "data_sources contains only reddit",
+      "At least 10 posts analyzed (check metadata.posts_analyzed)",
+      "confidence is LOW (single source)",
+      "request_id matches 'unit_test_voc_v2'",
+      "pain_points array is present (may be short)"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "V3",
+    "test_name": "Price Monitoring Detection",
+    "description": "Seeds price_memory.txt with known prices, runs price monitor, detects price changes and generates alerts. Validates price_memory.txt update and price_history file creation.",
+    "agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "task_type": "price_monitor",
+      "seed_data": {
+        "products": [
+          {
+            "asin": "B0TEST001",
+            "title": "Test Portable Blender A",
+            "last_known_price": 29.99,
+            "currency": "USD"
+          },
+          {
+            "asin": "B0TEST002",
+            "title": "Test Portable Blender B",
+            "last_known_price": 45.99,
+            "currency": "USD"
+          },
+          {
+            "asin": "B0TEST003",
+            "title": "Test Portable Blender C",
+            "last_known_price": 19.99,
+            "currency": "USD"
+          }
+        ]
+      },
+      "detect_threshold_percent": 5,
+      "request_id": "unit_test_voc_v3"
+    },
+    "expected_output": {
+      "required_fields": ["request_id", "price_changes", "products_checked", "alerts"],
+      "files_updated": ["data/price_memory.txt"],
+      "files_created": ["data/price_history/*.jsonl"]
+    },
+    "timeout_seconds": 180,
+    "validation_criteria": [
+      "price_memory.txt is updated with current prices",
+      "price_history file created with timestamped entries",
+      "Price changes exceeding 5% threshold generate alerts",
+      "Products that could not be fetched are logged as errors, not crashes",
+      "request_id matches 'unit_test_voc_v3'"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "V4",
+    "test_name": "Graceful Degradation Under Platform Failure",
+    "description": "Full analysis with invalid Apify token. Validates report still generated with 3/4 sources, google_maps status is 'error', confidence downgraded to MEDIUM.",
+    "agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "task_type": "full_analysis",
+      "category": "portable blender",
+      "keywords": ["portable blender", "travel blender"],
+      "target_market": "US",
+      "platforms": ["amazon", "reddit", "youtube", "google_maps"],
+      "subreddits": ["r/BuyItForLife", "r/Cooking"],
+      "time_range": "6months",
+      "priority": "normal",
+      "request_id": "unit_test_voc_v4",
+      "_test_overrides": {
+        "apify_token": "INVALID_TOKEN_FOR_TESTING",
+        "description": "This test intentionally uses an invalid Apify token to test graceful degradation"
+      }
+    },
+    "expected_output": {
+      "schema": "VOCReport",
+      "required_fields": ["request_id", "data_sources", "pain_points", "confidence"],
+      "successful_sources_min": 3,
+      "google_maps_status": "error",
+      "confidence": ["MEDIUM"]
+    },
+    "timeout_seconds": 300,
+    "validation_criteria": [
+      "Report is generated despite google_maps failure",
+      "data_sources shows 3 successful sources and 1 error",
+      "google_maps entry has status 'error' with error message",
+      "confidence is MEDIUM (downgraded from HIGH due to missing source)",
+      "pain_points are still present from remaining 3 sources",
+      "Agent does not crash on Apify failure",
+      "Error is logged in scrape_log.jsonl"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "V5",
+    "test_name": "Competitor Tracking Addition",
+    "description": "Adds 2 competitor ASINs, validates profile JSON creation, price_memory.txt entries added.",
+    "agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "task_type": "add_competitor",
+      "competitors": [
+        {
+          "asin": "B09KGFBP7L",
+          "name": "BlendJet 2",
+          "category": "portable blender"
+        },
+        {
+          "asin": "B0BN1QZSWS",
+          "name": "Hamilton Beach Personal Blender",
+          "category": "portable blender"
+        }
+      ],
+      "request_id": "unit_test_voc_v5"
+    },
+    "expected_output": {
+      "required_fields": ["request_id", "competitors_added", "profiles_created"],
+      "competitors_added_count": 2,
+      "files_created": ["data/competitors/*.json"],
+      "price_memory_entries_added": 2
+    },
+    "timeout_seconds": 120,
+    "validation_criteria": [
+      "2 competitor profile JSON files created in workspace-voc/data/competitors/",
+      "Each profile contains asin, name, current_price, rating, review_count",
+      "price_memory.txt has 2 new entries for the added ASINs",
+      "request_id matches 'unit_test_voc_v5'",
+      "Response confirms both competitors added successfully"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "V6",
+    "test_name": "Empty Data Handling",
+    "description": "Query for non-existent category ('quantum entanglement dog collar'). Validates confidence LOW, verdict INSUFFICIENT_DATA, empty pain_points, no crash.",
+    "agent": "voc-analyst",
+    "input": {
+      "source": "lead",
+      "task_type": "full_analysis",
+      "category": "quantum entanglement dog collar",
+      "keywords": ["quantum entanglement dog collar", "quantum pet collar"],
+      "target_market": "US",
+      "platforms": ["amazon", "reddit", "youtube", "google_maps"],
+      "subreddits": ["r/BuyItForLife"],
+      "time_range": "6months",
+      "priority": "low",
+      "request_id": "unit_test_voc_v6"
+    },
+    "expected_output": {
+      "schema": "VOCReport",
+      "required_fields": ["request_id", "confidence", "verdict"],
+      "confidence": ["LOW"],
+      "verdict": "INSUFFICIENT_DATA",
+      "pain_points_count": 0
+    },
+    "timeout_seconds": 120,
+    "validation_criteria": [
+      "Agent does not crash on empty results",
+      "confidence is LOW",
+      "verdict is INSUFFICIENT_DATA",
+      "pain_points array is empty or absent",
+      "No fabricated data in the report",
+      "request_id matches 'unit_test_voc_v6'",
+      "Response is valid JSON (not malformed)"
+    ],
+    "priority": "P1"
+  }
+]

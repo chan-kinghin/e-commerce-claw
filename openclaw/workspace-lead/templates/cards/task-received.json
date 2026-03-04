@@ -1,0 +1,53 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "config": {
+      "wide_screen_mode": true
+    },
+    "header": {
+      "title": {
+        "tag": "plain_text",
+        "content": "Task Received"
+      },
+      "template": "blue"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Task**: Analyze camping folding cot market and create multi-channel content"
+        }
+      },
+      {
+        "tag": "div",
+        "fields": [
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Submitted by**\n@User"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Status**\nDecomposing subtasks..."
+            }
+          }
+        ]
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "Dispatching to: VOC Analyst, GEO Optimizer, Reddit Specialist, TikTok Director"
+        }
+      }
+    ]
+  }
+}

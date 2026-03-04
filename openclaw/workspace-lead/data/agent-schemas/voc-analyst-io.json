@@ -1,0 +1,79 @@
+{
+  "agent_id": "voc-analyst",
+  "version": "1.0",
+  "input_schema": {
+    "full_analysis": {
+      "type": "object",
+      "required": ["category", "keywords", "target_market", "platforms"],
+      "properties": {
+        "category": { "type": "string", "description": "Product category in English (e.g., 'camping folding bed')" },
+        "keywords": { "type": "array", "items": { "type": "string" }, "description": "Search keywords for multi-platform scraping" },
+        "target_market": { "type": "string", "enum": ["US", "EU", "UK", "JP", "global"], "description": "Target geographic market" },
+        "competitor_asins": { "type": "array", "items": { "type": "string" }, "description": "Amazon ASINs of competitors to analyze" },
+        "platforms": { "type": "array", "items": { "type": "string", "enum": ["amazon", "reddit", "youtube", "google_maps", "tiktok", "instagram", "twitter", "quora", "trustpilot", "bbb"] }, "description": "Platforms to scrape" },
+        "subreddits": { "type": "array", "items": { "type": "string" }, "description": "Target subreddits (e.g., 'r/Camping')" },
+        "time_range": { "type": "string", "enum": ["1month", "3months", "6months", "1year"], "description": "Data collection time range" }
+      }
+    },
+    "quick_query": {
+      "type": "object",
+      "required": ["category", "platform", "query_type"],
+      "properties": {
+        "category": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "target_market": { "type": "string" },
+        "platform": { "type": "string", "enum": ["amazon", "reddit", "youtube"] },
+        "query_type": { "type": "string", "enum": ["price_check", "review_summary", "competitor_snapshot"] },
+        "asins": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "output_schema": {
+    "VOCReport": {
+      "type": "object",
+      "required": ["pain_points", "market_overview", "recommendation"],
+      "properties": {
+        "pain_points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "issue": { "type": "string", "description": "Pain point description" },
+              "frequency": { "type": "string", "description": "How often mentioned (e.g., '68% of negative reviews')" },
+              "platforms_confirmed": { "type": "array", "items": { "type": "string" }, "description": "Platforms where this pain point was validated" },
+              "design_opportunity": { "type": "string", "description": "Product design solution" },
+              "representative_quotes": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "market_overview": {
+          "type": "object",
+          "properties": {
+            "price_range": { "type": "string" },
+            "market_saturation": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+            "top_competitors": { "type": "array", "items": { "type": "object" } },
+            "trend_direction": { "type": "string", "enum": ["GROWING", "STABLE", "DECLINING"] }
+          }
+        },
+        "recommendation": {
+          "type": "object",
+          "properties": {
+            "entry_recommendation": { "type": "string", "enum": ["RECOMMENDED_ENTRY", "CAUTIOUS_ENTRY", "NOT_RECOMMENDED"] },
+            "suggested_positioning": { "type": "string" },
+            "target_price_point": { "type": "string" }
+          }
+        },
+        "confidence_level": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+        "sources_count": { "type": "number" }
+      }
+    },
+    "QuickQueryResult": {
+      "type": "object",
+      "properties": {
+        "results": { "type": "array", "items": { "type": "object" } },
+        "summary": { "type": "string" },
+        "data_freshness": { "type": "string" }
+      }
+    }
+  }
+}

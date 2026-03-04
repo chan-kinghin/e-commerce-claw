@@ -1,0 +1,26 @@
+{
+  "request_id": "req_{{date}}_{{seq}}",
+  "source": "lead",
+  "target": "reddit-spec",
+  "task_type": "reddit_campaign",
+  "priority": "{{priority|normal}}",
+  "timeout_seconds": 600,
+  "payload": {
+    "campaign_type": "traffic_hijack",
+    "product": {
+      "name": "{{product_name}}",
+      "category": "{{product_category}}",
+      "key_features": "{{key_features}}",
+      "price_range": "{{price_range}}"
+    },
+    "target_subreddits": "{{target_subreddits}}",
+    "voc_pain_points": "{{voc_pain_points}}",
+    "target_posts": "{{target_posts|[]}}",
+    "notes": "{{notes|}}"
+  },
+  "callback_expectations": {
+    "format": "RedditCampaignResult JSON",
+    "key_fields": ["comments_posted", "engagement_metrics", "monitoring_status"],
+    "downstream_consumers": []
+  }
+}

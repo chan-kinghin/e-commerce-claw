@@ -1,0 +1,83 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "config": {
+      "wide_screen_mode": true
+    },
+    "header": {
+      "title": {
+        "tag": "plain_text",
+        "content": "Agent Error: Task Failed"
+      },
+      "template": "red"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "fields": [
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Agent**\nReddit Specialist"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Error Type**\nScraping Failure"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Details**: Reddit rate limit exceeded (429 Too Many Requests). The agent attempted 3 retries with exponential backoff but all failed."
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Impact**: Reddit traffic hijacking subtask is paused. Other agents (GEO, TikTok) are unaffected and continue executing."
+        }
+      },
+      {
+        "tag": "action",
+        "actions": [
+          {
+            "tag": "button",
+            "text": {
+              "tag": "plain_text",
+              "content": "Retry Task"
+            },
+            "type": "primary",
+            "value": {
+              "action": "retry",
+              "agent": "reddit-spec",
+              "task_id": "task_reddit_001"
+            }
+          },
+          {
+            "tag": "button",
+            "text": {
+              "tag": "plain_text",
+              "content": "Skip & Continue"
+            },
+            "type": "default",
+            "value": {
+              "action": "skip",
+              "task_id": "task_reddit_001"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,322 @@
+[
+  {
+    "test_id": "G1",
+    "test_name": "Camping Cot Blog Post",
+    "description": "Blog generation from VOC pain points. Validates 1500-2500 words, 6+ citations, 15+ data points, FAQ section, comparison table, GEO score >= 80.",
+    "agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "task": "generate_product_content",
+      "source_report": "voc_test_camping_cot",
+      "pain_points_summary": [
+        {
+          "issue": "Insufficient weight capacity",
+          "data_point": "68% of negative reviews mention weight capacity issues",
+          "severity": 9.2,
+          "design_solution": "450lb tested capacity with reinforced steel frame"
+        },
+        {
+          "issue": "Difficult storage and portability",
+          "data_point": "42% of negative reviews cite bulky folding and storage",
+          "severity": 7.5,
+          "design_solution": "One-fold mechanism, fits in trunk corner"
+        },
+        {
+          "issue": "Fabric tears after extended use",
+          "data_point": "23% of 1-star reviews mention fabric durability",
+          "severity": 6.8,
+          "design_solution": "600D ripstop polyester with reinforced seams"
+        }
+      ],
+      "competitive_positioning": {
+        "price_range": "$59.99 - $79.99",
+        "key_differentiators": ["450lb capacity", "one-fold design", "600D ripstop fabric"],
+        "authority_citations": ["OutdoorGearLab", "Wirecutter", "REI Expert Reviews"],
+        "competitors": [
+          { "name": "Coleman ComfortSmart", "price": "$44.99", "capacity": "300lb" },
+          { "name": "TETON Sports Outfitter", "price": "$89.99", "capacity": "400lb" },
+          { "name": "KingCamp Strong Stable", "price": "$69.99", "capacity": "330lb" }
+        ]
+      },
+      "target_content": ["independent_site_blog"],
+      "request_id": "unit_test_geo_g1"
+    },
+    "expected_output": {
+      "content_type": "independent_site_blog",
+      "required_sections": ["introduction", "comparison_table", "faq", "conclusion"],
+      "word_count_range": [1500, 2500],
+      "citations_min": 6,
+      "data_points_min": 15,
+      "geo_score_min": 80,
+      "hard_fail_rules_passed": true
+    },
+    "timeout_seconds": 480,
+    "validation_criteria": [
+      "Blog is 1500-2500 words",
+      "Contains 6+ citations from authority sources",
+      "Contains 15+ quantitative data points",
+      "FAQ section present with 5+ Q&A pairs",
+      "Comparison table present with 3+ competitors",
+      "GEO score >= 80",
+      "All HARD FAIL rules (Categories A-D) passed",
+      "Pain point data from VOC ('68%', '450lb') appears in content",
+      "No keyword stuffing (category keyword max 3x per 500 words)"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "G2",
+    "test_name": "Bluetooth Earbuds Amazon Listing",
+    "description": "Amazon listing optimization. Validates title < 200 chars with numeric spec, 5 bullets with CAPS benefit + data, no keyword stuffing, GEO score >= 80.",
+    "agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "task": "generate_product_content",
+      "source_report": "voc_test_bluetooth_earbuds",
+      "pain_points_summary": [
+        {
+          "issue": "Battery dies too fast",
+          "data_point": "34% of negative reviews cite battery life",
+          "severity": 8.5,
+          "design_solution": "48-hour total battery with case"
+        },
+        {
+          "issue": "Falls out during exercise",
+          "data_point": "22% of negative reviews about fit issues",
+          "severity": 7.2,
+          "design_solution": "3 ear tip sizes + wing tips for secure fit"
+        },
+        {
+          "issue": "Poor noise cancellation",
+          "data_point": "18% of negative reviews cite weak ANC",
+          "severity": 6.9,
+          "design_solution": "Hybrid ANC with 35dB noise reduction"
+        }
+      ],
+      "competitive_positioning": {
+        "price_range": "$29.99 - $39.99",
+        "key_differentiators": ["48-hour battery", "hybrid ANC 35dB", "IPX5 waterproof"],
+        "authority_citations": ["rtings.com", "SoundGuys", "What Hi-Fi?"],
+        "competitors": [
+          { "name": "JBL Tune 230NC", "price": "$49.95", "battery": "40h" },
+          { "name": "Anker Soundcore Life P3", "price": "$55.99", "battery": "35h" },
+          { "name": "TOZO T12", "price": "$25.99", "battery": "30h" }
+        ]
+      },
+      "target_content": ["amazon_listing"],
+      "request_id": "unit_test_geo_g2"
+    },
+    "expected_output": {
+      "content_type": "amazon_listing",
+      "title_max_chars": 200,
+      "title_contains_numeric_spec": true,
+      "bullet_points_count": 5,
+      "bullet_format": "CAPS_BENEFIT_PLUS_DATA",
+      "geo_score_min": 80,
+      "hard_fail_rules_passed": true
+    },
+    "timeout_seconds": 300,
+    "validation_criteria": [
+      "Title is < 200 characters",
+      "Title contains numeric spec (e.g., '48-Hour', '35dB')",
+      "5 bullet points present",
+      "Each bullet starts with CAPS benefit keyword followed by data point",
+      "No keyword stuffing (category keyword max 3x per 500 words)",
+      "GEO score >= 80",
+      "All HARD FAIL rules passed",
+      "Pain point data from VOC ('34%', '48-hour') appears in listing"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "G3",
+    "test_name": "Standing Desk Product Description",
+    "description": "Product description with expert citations. Validates BIFMA/UL authority citations, all specs have units, named competitor comparison, 10+ data points, GEO score >= 80.",
+    "agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "task": "generate_product_content",
+      "source_report": "voc_test_standing_desk",
+      "pain_points_summary": [
+        {
+          "issue": "Motor wobble at full height",
+          "data_point": "31% of negative reviews mention wobble",
+          "severity": 8.8,
+          "design_solution": "Dual-motor system with cross-beam stabilizer"
+        },
+        {
+          "issue": "Memory presets malfunction",
+          "data_point": "19% of returns cite electronics issues",
+          "severity": 7.0,
+          "design_solution": "4 programmable presets with LED display"
+        },
+        {
+          "issue": "Desktop surface scratches easily",
+          "data_point": "15% of 2-star reviews mention surface quality",
+          "severity": 5.5,
+          "design_solution": "Bamboo surface with anti-scratch coating"
+        }
+      ],
+      "competitive_positioning": {
+        "price_range": "$399.99 - $499.99",
+        "key_differentiators": ["dual-motor", "BIFMA certified", "bamboo top"],
+        "authority_citations": ["BIFMA", "UL", "Wirecutter", "NY Times Wirecutter"],
+        "competitors": [
+          { "name": "FlexiSpot E7", "price": "$479.99", "motor": "dual" },
+          { "name": "Uplift V2", "price": "$599.00", "motor": "dual" },
+          { "name": "IKEA BEKANT", "price": "$349.00", "motor": "single" }
+        ]
+      },
+      "target_content": ["product_description"],
+      "request_id": "unit_test_geo_g3"
+    },
+    "expected_output": {
+      "content_type": "product_description",
+      "authority_citations": ["BIFMA", "UL"],
+      "specs_have_units": true,
+      "named_competitor_comparison": true,
+      "data_points_min": 10,
+      "geo_score_min": 80,
+      "hard_fail_rules_passed": true
+    },
+    "timeout_seconds": 240,
+    "validation_criteria": [
+      "BIFMA and/or UL authority citations present",
+      "All technical specs include units (lbs, inches, watts, etc.)",
+      "Named competitor comparison included (FlexiSpot, Uplift, or IKEA)",
+      "10+ quantitative data points in description",
+      "GEO score >= 80",
+      "All HARD FAIL rules passed",
+      "Pain point data from VOC ('31%', 'dual-motor') appears in content"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "G4",
+    "test_name": "GEO Rule Violation Detection",
+    "description": "Rules engine catches deliberate violations in pre-written bad content. Validates detection of: C1 (keyword stuffing), C2 (vague qualifier), C4 (generic opener), A1 (no citations), D1 (no FAQ). Score < 40.",
+    "agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "task": "validate_content",
+      "content_to_validate": "In today's fast-paced world, finding the best portable blender is important. A portable blender is a great portable blender for anyone who needs a portable blender. This amazing portable blender is truly the best portable blender on the market. The portable blender features very good blending power and really nice design. It is quite durable and somewhat affordable. Many people love this top-quality portable blender because it is an incredible portable blender that blends well.",
+      "content_type": "independent_site_blog",
+      "expected_violations": ["C1_keyword_stuffing", "C2_vague_qualifier", "C4_generic_opener", "A1_no_citations", "D1_no_faq"],
+      "request_id": "unit_test_geo_g4"
+    },
+    "expected_output": {
+      "violations_detected": ["C1", "C2", "C4", "A1", "D1"],
+      "geo_score_max": 40,
+      "hard_fail_rules_passed": false
+    },
+    "timeout_seconds": 60,
+    "validation_criteria": [
+      "C1 violation detected: keyword stuffing ('portable blender' appears > 3x per 500 words)",
+      "C2 violation detected: vague qualifiers ('very good', 'really nice', 'quite', 'somewhat')",
+      "C4 violation detected: generic opener ('In today's fast-paced world')",
+      "A1 violation detected: no citations or authority sources",
+      "D1 violation detected: no FAQ section",
+      "GEO score < 40",
+      "Rules engine does not crash on bad content"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "G5",
+    "test_name": "Multi-Format Output from Single VOC Report",
+    "description": "Full content suite for portable blender: blog + Amazon listing + product description. Validates all three use same VOC data, each format passes GEO rules, pain point #1 addressed in all outputs, cross-format duplication < 20%.",
+    "agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "task": "generate_product_content",
+      "source_report": "voc_test_portable_blender",
+      "pain_points_summary": [
+        {
+          "issue": "Blade not strong enough for ice",
+          "data_point": "38% of negative reviews cite ice-crushing failure",
+          "severity": 9.0,
+          "design_solution": "6-blade stainless steel system crushes 10 ice cubes in 15 seconds"
+        },
+        {
+          "issue": "Battery too low for multiple uses",
+          "data_point": "29% of negative reviews cite battery life",
+          "severity": 7.8,
+          "design_solution": "4000mAh USB-C rechargeable, 15+ blends per charge"
+        },
+        {
+          "issue": "Hard to clean",
+          "data_point": "21% of negative reviews mention cleaning difficulty",
+          "severity": 6.5,
+          "design_solution": "Self-cleaning mode: add water + soap, press button"
+        }
+      ],
+      "competitive_positioning": {
+        "price_range": "$29.99 - $39.99",
+        "key_differentiators": ["6-blade system", "4000mAh battery", "self-cleaning"],
+        "authority_citations": ["Good Housekeeping", "BuzzFeed Reviews", "Wirecutter"],
+        "competitors": [
+          { "name": "BlendJet 2", "price": "$49.95", "blades": 4 },
+          { "name": "Ninja Blast", "price": "$39.99", "blades": 4 },
+          { "name": "PopBabies", "price": "$25.99", "blades": 4 }
+        ]
+      },
+      "target_content": ["independent_site_blog", "amazon_listing", "product_description"],
+      "request_id": "unit_test_geo_g5"
+    },
+    "expected_output": {
+      "content_types": ["independent_site_blog", "amazon_listing", "product_description"],
+      "all_geo_scores_min": 80,
+      "all_hard_fail_rules_passed": true,
+      "cross_format_duplication_max_percent": 20,
+      "pain_point_1_in_all_outputs": true
+    },
+    "timeout_seconds": 720,
+    "validation_criteria": [
+      "3 distinct content formats generated",
+      "All three use same VOC data (ice-crushing, battery, cleaning)",
+      "Each format passes GEO rules with score >= 80",
+      "Pain point #1 (ice-crushing, '38%') addressed in all three outputs",
+      "Cross-format text duplication < 20% (measured by n-gram overlap)",
+      "Blog has comparison table and FAQ",
+      "Amazon listing has 5 CAPS bullets",
+      "Product description has authority citations"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "G6",
+    "test_name": "Citation Freshness and Verification",
+    "description": "Detects stale citations (2022-2023) in wireless charger content. Validates warnings on citations older than 18 months, replacement sources suggested.",
+    "agent": "geo-optimizer",
+    "input": {
+      "source": "lead",
+      "task": "validate_citations",
+      "content_to_validate": "According to a 2022 study by Consumer Reports, wireless chargers have improved significantly. TechRadar's March 2023 review found that Qi2 chargers deliver up to 15W. A 2021 report by iFixit noted that wireless charging coils are standardized. PCMag's 2023 buyer guide recommends MagSafe-compatible chargers for iPhone users.",
+      "content_type": "independent_site_blog",
+      "category": "wireless charger",
+      "current_date": "2026-03-05",
+      "staleness_threshold_months": 18,
+      "request_id": "unit_test_geo_g6"
+    },
+    "expected_output": {
+      "stale_citations_detected": [
+        { "source": "Consumer Reports 2022", "age_months_approx": 38 },
+        { "source": "TechRadar March 2023", "age_months_approx": 36 },
+        { "source": "iFixit 2021", "age_months_approx": 50 },
+        { "source": "PCMag 2023", "age_months_approx": 27 }
+      ],
+      "stale_count_min": 3,
+      "replacement_sources_suggested": true
+    },
+    "timeout_seconds": 180,
+    "validation_criteria": [
+      "Detects at least 3 stale citations (older than 18 months from 2026-03-05)",
+      "Consumer Reports 2022 flagged as stale",
+      "iFixit 2021 flagged as stale",
+      "TechRadar March 2023 flagged as stale",
+      "Replacement/updated sources suggested for each stale citation",
+      "Suggestions include sources from 2025-2026 timeframe"
+    ],
+    "priority": "P1"
+  }
+]

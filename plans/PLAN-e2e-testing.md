@@ -1,140 +1,140 @@
-# End-to-End Testing and Validation Strategy
+# 端到端测试与验证策略
 
-**System**: Cross-Border E-Commerce AI Platform (OpenClaw Multi-Agent Architecture)
-**Agents Under Test**: lead, voc-analyst, geo-optimizer, reddit-spec, tiktok-director
-**Date**: 2026-03-05
-**Status**: Not Started
-
----
-
-## 1. System Smoke Tests
-
-Before running any functional tests, verify that every agent is alive, connected, and has access to its required resources.
-
-### 1.1 Agent Health Checks
-
-| Agent | Test | Command / Method | Expected Result | Timeout |
-|-------|------|-----------------|-----------------|---------|
-| `lead` | Agent responds to ping | `openclaw agent ping lead` | Returns `{ "status": "alive", "agent": "lead" }` | 10s |
-| `lead` | Model connectivity | `openclaw agent test-model lead` | doubao-seed-2.0-code returns a completion | 30s |
-| `lead` | Workspace read/write | Write then read a test file in `~/.openclaw/workspace-lead/data/test_smoke.txt` | File content matches | 5s |
-| `lead` | SOUL.md loaded | Check `~/.openclaw/workspace-lead/SOUL.md` exists and is non-empty | File size > 100 bytes | 5s |
-| `lead` | AGENTS.md loaded | Check `~/.openclaw/workspace-lead/AGENTS.md` exists | File size > 100 bytes | 5s |
-| `voc-analyst` | Agent responds to ping | `openclaw agent ping voc-analyst` | Returns `{ "status": "alive" }` | 10s |
-| `voc-analyst` | Model connectivity | `openclaw agent test-model voc-analyst` | Kimi K2.5 returns a completion | 30s |
-| `voc-analyst` | Workspace read/write | Write then read in `~/.openclaw/workspace-voc/data/test_smoke.txt` | File content matches | 5s |
-| `voc-analyst` | SOUL.md loaded | Check `~/.openclaw/workspace-voc/SOUL.md` exists and is non-empty | File size > 100 bytes | 5s |
-| `geo-optimizer` | Agent responds to ping | `openclaw agent ping geo-optimizer` | Returns `{ "status": "alive" }` | 10s |
-| `geo-optimizer` | Model connectivity | `openclaw agent test-model geo-optimizer` | doubao-seed-2.0-code returns a completion | 30s |
-| `geo-optimizer` | Workspace read/write | Write then read in `~/.openclaw/workspace-geo/data/test_smoke.txt` | File content matches | 5s |
-| `geo-optimizer` | GEO rules file loaded | Check `~/.openclaw/workspace-geo/rules/geo-rules.md` exists | File size > 500 bytes | 5s |
-| `reddit-spec` | Agent responds to ping | `openclaw agent ping reddit-spec` | Returns `{ "status": "alive" }` | 10s |
-| `reddit-spec` | Model connectivity | `openclaw agent test-model reddit-spec` | Kimi K2.5 returns a completion | 30s |
-| `reddit-spec` | Workspace read/write | Write then read in `~/.openclaw/workspace-reddit/data/test_smoke.txt` | File content matches | 5s |
-| `reddit-spec` | Account registry exists | Check `~/.openclaw/workspace-reddit/data/accounts/account-registry.json` | Valid JSON, `accounts` array present | 5s |
-| `tiktok-director` | Agent responds to ping | `openclaw agent ping tiktok-director` | Returns `{ "status": "alive" }` | 10s |
-| `tiktok-director` | Model connectivity | `openclaw agent test-model tiktok-director` | doubao-seed-2.0-code returns a completion | 30s |
-| `tiktok-director` | Workspace read/write | Write then read in `~/.openclaw/workspace-tiktok/data/test_smoke.txt` | File content matches | 5s |
-| `tiktok-director` | Storyboard template exists | Check `~/.openclaw/workspace-tiktok/templates/storyboard-25grid.json` | Valid JSON with `grids` array | 5s |
-
-### 1.2 Skills Verification
-
-| Agent | Skill | Verification Command | Expected Result | Timeout |
-|-------|-------|---------------------|-----------------|---------|
-| `voc-analyst` | Decodo Skill | `openclaw skill test decodo --workspace workspace-voc` | Skill responds with capability list | 15s |
-| `voc-analyst` | reddit-readonly | `openclaw skill test reddit-readonly --workspace workspace-voc` | Skill fetches r/test successfully | 15s |
-| `voc-analyst` | Brave Search | `openclaw skill test brave-search --workspace workspace-voc` | Search returns results for test query | 15s |
-| `voc-analyst` | Apify | `openclaw skill test apify --workspace workspace-voc` | Apify actor list returned | 15s |
-| `geo-optimizer` | Tavily | `openclaw skill test tavily --workspace workspace-geo` | Search returns results | 15s |
-| `geo-optimizer` | Brave Search | `openclaw skill test brave-search --workspace workspace-geo` | Search returns results | 15s |
-| `geo-optimizer` | Firecrawl | `openclaw skill test firecrawl --workspace workspace-geo` | Crawl of test URL succeeds | 15s |
-| `reddit-spec` | reddit-readonly | `openclaw skill test reddit-readonly --workspace workspace-reddit` | Subreddit data returned | 15s |
-| `reddit-spec` | Brave Search | `openclaw skill test brave-search --workspace workspace-reddit` | Search returns results | 15s |
-| `tiktok-director` | nano-banana-pro | `openclaw skill test nano-banana-pro` | Image generation capability confirmed | 15s |
-| `tiktok-director` | seedance-video | `openclaw skill test seedance-video` | Video generation capability confirmed | 15s |
-| `tiktok-director` | manga-style-video | `openclaw skill test manga-style-video --workspace workspace-tiktok` | Style list returned (8 styles) | 15s |
-| `tiktok-director` | manga-drama | `openclaw skill test manga-drama --workspace workspace-tiktok` | Skill responds | 15s |
-| `tiktok-director` | volcengine-video-understanding | `openclaw skill test volcengine-video-understanding --workspace workspace-tiktok` | QA analysis capability confirmed | 15s |
-
-### 1.3 Environment Variable Verification
-
-| Variable | Required By | Check Method | Expected |
-|----------|------------|-------------|----------|
-| `DECODO_AUTH_TOKEN` | voc-analyst | `test -n "$DECODO_AUTH_TOKEN"` | Non-empty string starting with `VTAw` |
-| `BRAVE_API_KEY` | voc-analyst, geo-optimizer, reddit-spec | `test -n "$BRAVE_API_KEY"` | Non-empty string starting with `BSA` |
-| `APIFY_TOKEN` | voc-analyst | `test -n "$APIFY_TOKEN"` | Non-empty string starting with `apify_api_` |
-| `TAVILY_API_KEY` | geo-optimizer | `test -n "$TAVILY_API_KEY"` | Non-empty string starting with `tvly-` |
-| `FEISHU_WEBHOOK_URL` | lead, voc-analyst | `test -n "$FEISHU_WEBHOOK_URL"` | Valid URL |
-| Feishu App Credentials | lead | Check `openclaw.json` channels.feishu.accounts.lead | `appId` and `appSecret` are non-placeholder values |
-
-### 1.4 sessions_send Connectivity
-
-| From | To | Test | Expected | Timeout |
-|------|-----|------|----------|---------|
-| lead | voc-analyst | `sessions_send` echo test: `{ "type": "ping" }` | voc-analyst receives message and responds `{ "type": "pong" }` | 15s |
-| lead | geo-optimizer | `sessions_send` echo test | geo-optimizer responds with pong | 15s |
-| lead | reddit-spec | `sessions_send` echo test | reddit-spec responds with pong | 15s |
-| lead | tiktok-director | `sessions_send` echo test | tiktok-director responds with pong | 15s |
-| voc-analyst | lead | `sessions_send` echo test (reverse) | lead receives and responds | 15s |
+**系统**：跨境电商 AI 平台（OpenClaw 多 Agent 架构）
+**受测 Agent**：lead、voc-analyst、geo-optimizer、reddit-spec、tiktok-director
+**日期**：2026-03-05
+**状态**：未开始
 
 ---
 
-## 2. Unit-Level Agent Tests
+## 1. 系统冒烟测试
 
-These tests validate each agent's core functionality in isolation. They are drawn directly from each agent's implementation plan.
+在运行任何功能测试之前，先验证每个 Agent 是否存活、已连接，并能访问其所需资源。
 
-### 2.1 VOC Analyst Tests (from PLAN-voc-analyst.md)
+### 1.1 Agent 健康检查
 
-| # | Test Name | What It Validates | Expected Duration | Dependencies |
-|---|-----------|-------------------|:-----------------:|-------------|
-| V1 | **Full Cross-Validation Analysis** | End-to-end multi-source category analysis for "portable blender" across 4 platforms (Amazon, Reddit, YouTube, Google Maps). Validates JSON report schema, pain point cross-validation (source_count >= 2), confidence level, and markdown report generation. | 5 min | Decodo, reddit-readonly, Apify, Brave Search |
-| V2 | **Single-Platform Quick Query** | Reddit-only quick sentiment check for "4K TV". Validates response within 120s, at least 10 posts analyzed, confidence marked LOW (single source). | 2 min | reddit-readonly or Decodo |
-| V3 | **Price Monitoring Detection** | Seeds price_memory.txt with known prices, runs price monitor, detects price changes and generates alerts. Validates price_memory.txt update and price_history file creation. | 3 min | Playwright-npx or web_fetch |
-| V4 | **Graceful Degradation Under Platform Failure** | Full analysis with invalid Apify token. Validates report still generated with 3/4 sources, google_maps status is "error", confidence downgraded to MEDIUM. | 5 min | Decodo, reddit-readonly (Apify intentionally broken) |
-| V5 | **Competitor Tracking Addition** | Adds 2 competitor ASINs, validates profile JSON creation, price_memory.txt entries added. | 2 min | Decodo |
-| V6 | **Empty Data Handling** | Query for non-existent category ("quantum entanglement dog collar"). Validates confidence LOW, verdict INSUFFICIENT_DATA, empty pain_points, no crash. | 2 min | All search skills |
+| Agent | 测试项 | 命令 / 方法 | 预期结果 | 超时 |
+|-------|--------|-------------|----------|------|
+| `lead` | Agent 响应 ping | `openclaw agent ping lead` | 返回 `{ "status": "alive", "agent": "lead" }` | 10s |
+| `lead` | 模型连通性 | `openclaw agent test-model lead` | doubao-seed-2.0-code 返回补全结果 | 30s |
+| `lead` | 工作区读写 | 向 `~/.openclaw/workspace-lead/data/test_smoke.txt` 写入后读取 | 文件内容一致 | 5s |
+| `lead` | SOUL.md 已加载 | 检查 `~/.openclaw/workspace-lead/SOUL.md` 存在且非空 | 文件大小 > 100 字节 | 5s |
+| `lead` | AGENTS.md 已加载 | 检查 `~/.openclaw/workspace-lead/AGENTS.md` 存在 | 文件大小 > 100 字节 | 5s |
+| `voc-analyst` | Agent 响应 ping | `openclaw agent ping voc-analyst` | 返回 `{ "status": "alive" }` | 10s |
+| `voc-analyst` | 模型连通性 | `openclaw agent test-model voc-analyst` | Kimi K2.5 返回补全结果 | 30s |
+| `voc-analyst` | 工作区读写 | 向 `~/.openclaw/workspace-voc/data/test_smoke.txt` 写入后读取 | 文件内容一致 | 5s |
+| `voc-analyst` | SOUL.md 已加载 | 检查 `~/.openclaw/workspace-voc/SOUL.md` 存在且非空 | 文件大小 > 100 字节 | 5s |
+| `geo-optimizer` | Agent 响应 ping | `openclaw agent ping geo-optimizer` | 返回 `{ "status": "alive" }` | 10s |
+| `geo-optimizer` | 模型连通性 | `openclaw agent test-model geo-optimizer` | doubao-seed-2.0-code 返回补全结果 | 30s |
+| `geo-optimizer` | 工作区读写 | 向 `~/.openclaw/workspace-geo/data/test_smoke.txt` 写入后读取 | 文件内容一致 | 5s |
+| `geo-optimizer` | GEO 规则文件已加载 | 检查 `~/.openclaw/workspace-geo/rules/geo-rules.md` 存在 | 文件大小 > 500 字节 | 5s |
+| `reddit-spec` | Agent 响应 ping | `openclaw agent ping reddit-spec` | 返回 `{ "status": "alive" }` | 10s |
+| `reddit-spec` | 模型连通性 | `openclaw agent test-model reddit-spec` | Kimi K2.5 返回补全结果 | 30s |
+| `reddit-spec` | 工作区读写 | 向 `~/.openclaw/workspace-reddit/data/test_smoke.txt` 写入后读取 | 文件内容一致 | 5s |
+| `reddit-spec` | 账号注册表存在 | 检查 `~/.openclaw/workspace-reddit/data/accounts/account-registry.json` | 有效 JSON，包含 `accounts` 数组 | 5s |
+| `tiktok-director` | Agent 响应 ping | `openclaw agent ping tiktok-director` | 返回 `{ "status": "alive" }` | 10s |
+| `tiktok-director` | 模型连通性 | `openclaw agent test-model tiktok-director` | doubao-seed-2.0-code 返回补全结果 | 30s |
+| `tiktok-director` | 工作区读写 | 向 `~/.openclaw/workspace-tiktok/data/test_smoke.txt` 写入后读取 | 文件内容一致 | 5s |
+| `tiktok-director` | 分镜模板存在 | 检查 `~/.openclaw/workspace-tiktok/templates/storyboard-25grid.json` | 有效 JSON，包含 `grids` 数组 | 5s |
 
-### 2.2 GEO Optimizer Tests (from PLAN-geo-optimizer.md)
+### 1.2 Skill 验证
 
-| # | Test Name | What It Validates | Expected Duration | Dependencies |
-|---|-----------|-------------------|:-----------------:|-------------|
-| G1 | **Camping Cot Blog Post** | Blog generation from VOC pain points. Validates 1500-2500 words, 6+ citations, 15+ data points, FAQ section, comparison table, GEO score >= 80. | 8 min | Tavily, Brave Search, Exa |
-| G2 | **Bluetooth Earbuds Amazon Listing** | Amazon listing optimization. Validates title < 200 chars with numeric spec, 5 bullets with CAPS benefit + data, no keyword stuffing (category keyword max 3x per 500 words), GEO score >= 80. | 5 min | Decodo, Brave Search |
-| G3 | **Standing Desk Product Description** | Product description with expert citations. Validates BIFMA/UL authority citations, all specs have units, named competitor comparison, 10+ data points, GEO score >= 80. | 4 min | Search skills |
-| G4 | **GEO Rule Violation Detection** | Rules engine catches deliberate violations in pre-written bad content. Validates detection of: C1 (keyword stuffing), C2 (vague qualifier), C4 (generic opener), A1 (no citations), D1 (no FAQ). Score < 40. | 1 min | None (rules engine only) |
-| G5 | **Multi-Format Output from Single VOC Report** | Full content suite for portable blender: blog + Amazon listing + product description. Validates all three use same VOC data, each format passes GEO rules, pain point #1 addressed in all outputs, cross-format duplication < 20%. | 12 min | All search skills |
-| G6 | **Citation Freshness and Verification** | Detects stale citations (2022-2023) in wireless charger content. Validates warnings on citations older than 18 months, replacement sources suggested. | 3 min | Search skills |
+| Agent | Skill | 验证命令 | 预期结果 | 超时 |
+|-------|-------|---------|----------|------|
+| `voc-analyst` | Decodo Skill | `openclaw skill test decodo --workspace workspace-voc` | Skill 返回能力列表 | 15s |
+| `voc-analyst` | reddit-readonly | `openclaw skill test reddit-readonly --workspace workspace-voc` | Skill 成功抓取 r/test | 15s |
+| `voc-analyst` | Brave Search | `openclaw skill test brave-search --workspace workspace-voc` | 搜索返回测试查询结果 | 15s |
+| `voc-analyst` | Apify | `openclaw skill test apify --workspace workspace-voc` | 返回 Apify actor 列表 | 15s |
+| `geo-optimizer` | Tavily | `openclaw skill test tavily --workspace workspace-geo` | 搜索返回结果 | 15s |
+| `geo-optimizer` | Brave Search | `openclaw skill test brave-search --workspace workspace-geo` | 搜索返回结果 | 15s |
+| `geo-optimizer` | Firecrawl | `openclaw skill test firecrawl --workspace workspace-geo` | 测试 URL 爬取成功 | 15s |
+| `reddit-spec` | reddit-readonly | `openclaw skill test reddit-readonly --workspace workspace-reddit` | 返回 Subreddit 数据 | 15s |
+| `reddit-spec` | Brave Search | `openclaw skill test brave-search --workspace workspace-reddit` | 搜索返回结果 | 15s |
+| `tiktok-director` | nano-banana-pro | `openclaw skill test nano-banana-pro` | 确认图像生成能力 | 15s |
+| `tiktok-director` | seedance-video | `openclaw skill test seedance-video` | 确认视频生成能力 | 15s |
+| `tiktok-director` | manga-style-video | `openclaw skill test manga-style-video --workspace workspace-tiktok` | 返回风格列表（8 种风格） | 15s |
+| `tiktok-director` | manga-drama | `openclaw skill test manga-drama --workspace workspace-tiktok` | Skill 响应 | 15s |
+| `tiktok-director` | volcengine-video-understanding | `openclaw skill test volcengine-video-understanding --workspace workspace-tiktok` | 确认 QA 分析能力 | 15s |
 
-### 2.3 Reddit Specialist Tests (from PLAN-reddit-specialist.md)
+### 1.3 环境变量验证
 
-| # | Test Name | What It Validates | Expected Duration | Dependencies |
-|---|-----------|-------------------|:-----------------:|-------------|
-| R1 | **W2 Comment Generation** | Non-promotional comment for camping cot thread (W2 stage). Validates: zero product mentions, addresses OP's problem, actionable advice, spam score < 0.1, 100-200 words. | 1 min | None (comment generation only) |
-| R2 | **W4 Soft Recommendation** | Soft product recommendation for skincare discussion (W4 stage). Validates: product mentioned once naturally, 1+ alternative mentioned, honest trade-off included, subreddit jargon used, spam score < 0.2, no direct links. | 1 min | None (comment generation only) |
-| R3 | **Traffic Hijacking Post Evaluation** | Score a candidate post for traffic hijacking. Validates: correct score calculation per rubric, 7/10 threshold decision, comment drafted if Go, evaluation logged in JSON format. | 2 min | Brave Search |
-| R4 | **Multi-Account Rotation Compliance** | 3 accounts at different SOP stages with assigned subreddits. Validates: correct account used per subreddit, W3 account excluded from promo, no subreddit overlap, frequency limits respected. | 1 min | None (logic validation) |
-| R5 | **Shadowban Detection and Response** | Detect shadowban via 2 independent methods, update registry, halt activity, initiate recovery. Validates: two detection methods used, status updated, 14-day cooldown set, alert logged, subreddit assignments redistributed. | 3 min | Playwright-npx, reddit-readonly |
-| R6 | **End-to-End Traffic Hijacking** | Complete workflow from Google search to posted comment for "portable blender". Validates: 5+ candidate posts found, 3 evaluated, 1-2 selected (score >= 7), comments address VOC pain points, no direct links, W5 account used, monitoring schedule set. | 5 min | Brave Search, reddit-readonly |
+| 变量 | 所需 Agent | 检查方法 | 预期 |
+|------|-----------|---------|------|
+| `DECODO_AUTH_TOKEN` | voc-analyst | `test -n "$DECODO_AUTH_TOKEN"` | 非空字符串，以 `VTAw` 开头 |
+| `BRAVE_API_KEY` | voc-analyst、geo-optimizer、reddit-spec | `test -n "$BRAVE_API_KEY"` | 非空字符串，以 `BSA` 开头 |
+| `APIFY_TOKEN` | voc-analyst | `test -n "$APIFY_TOKEN"` | 非空字符串，以 `apify_api_` 开头 |
+| `TAVILY_API_KEY` | geo-optimizer | `test -n "$TAVILY_API_KEY"` | 非空字符串，以 `tvly-` 开头 |
+| `FEISHU_WEBHOOK_URL` | lead、voc-analyst | `test -n "$FEISHU_WEBHOOK_URL"` | 有效 URL |
+| 飞书应用凭证 | lead | 检查 `openclaw.json` channels.feishu.accounts.lead | `appId` 和 `appSecret` 为非占位符值 |
 
-### 2.4 TikTok Director Tests (from PLAN-tiktok-director.md)
+### 1.4 sessions_send 连通性
 
-| # | Test Name | What It Validates | Expected Duration | Dependencies |
-|---|-----------|-------------------|:-----------------:|-------------|
-| T1 | **Standard UGC Video -- Camping Cot** | Full 25-grid storyboard + 10-12 key frames + 15s video + QA. Validates: all 25 grids present (3/5/7/6/4 distribution), breathing movement in first 2s, mattress press demo, QA composite >= 7.0, video < 50MB, duration 15s +/- 0.5s. | 15 min | nano-banana-pro, seedance-video, volcengine-video-understanding |
-| T2 | **Manga Drama -- Wuxia Tea Product** | 3-scene Chinese ink wash manga drama. Validates: character consistency across scenes, ink wash style (limited palette, brush strokes), per-scene QA >= 6.5, continuous story flow. | 20 min | canghe-image-gen, manga-style-video, manga-drama, seedance-video, volcengine-video-understanding |
-| T3 | **A/B Testing Matrix -- Portable Blender** | 4 hook variants from 1 base storyboard. Validates: identical content from second 2 onward, distinct hook visuals/audio, all 4 pass QA >= 6.5, file sizes within 20% of each other. | 25 min | nano-banana-pro, seedance-video, volcengine-video-understanding |
-| T4 | **Ghibli Style Video -- Bamboo Toothbrush** | 10-second Ghibli-style video. Validates: watercolor textures and earth tones present, 17-grid storyboard scaled correctly, nature context (not bathroom), volcengine detects positive sentiment, QA >= 7.0. | 12 min | nano-banana-pro, seedance-video, volcengine-video-understanding |
-| T5 | **Video QA Failure and Regeneration** | Deliberate minimal-prompt video generation to trigger QA failure. Validates: QA identifies deficiencies, regeneration targets only failed segments, second attempt improves scores, loop completes in <= 3 attempts, cost tracking reflects multi-attempt. | 20 min | All TikTok skills |
+| 发送方 | 接收方 | 测试 | 预期 | 超时 |
+|--------|--------|------|------|------|
+| lead | voc-analyst | `sessions_send` echo 测试：`{ "type": "ping" }` | voc-analyst 收到消息并回复 `{ "type": "pong" }` | 15s |
+| lead | geo-optimizer | `sessions_send` echo 测试 | geo-optimizer 回复 pong | 15s |
+| lead | reddit-spec | `sessions_send` echo 测试 | reddit-spec 回复 pong | 15s |
+| lead | tiktok-director | `sessions_send` echo 测试 | tiktok-director 回复 pong | 15s |
+| voc-analyst | lead | `sessions_send` echo 测试（反向） | lead 收到并回复 | 15s |
 
 ---
 
-## 3. Integration Tests (Agent-to-Agent)
+## 2. Agent 单元测试
 
-These tests validate `sessions_send` communication between specific agent pairs, ensuring data flows correctly through the system.
+这些测试验证各 Agent 的核心功能在隔离环境下的表现。测试用例直接来源于各 Agent 的实施计划。
 
-### 3.1 Lead -> VOC Analyst: Task Dispatch and Result Collection
+### 2.1 VOC Analyst 测试（来自 PLAN-voc-analyst.md）
 
-**Input Message** (Lead sends via sessions_send):
+| # | 测试名称 | 验证内容 | 预计耗时 | 依赖 |
+|---|----------|---------|:--------:|------|
+| V1 | **完整交叉验证分析** | 对"便携榨汁机"在 4 个平台（Amazon、Reddit、YouTube、Google Maps）进行端到端多源品类分析。验证 JSON 报告结构、痛点交叉验证（source_count >= 2）、置信度等级及 Markdown 报告生成。 | 5 分钟 | Decodo、reddit-readonly、Apify、Brave Search |
+| V2 | **单平台快速查询** | 仅 Reddit 的"4K 电视"快速情感分析。验证 120 秒内响应，至少分析 10 篇帖子，置信度标记为 LOW（单一来源）。 | 2 分钟 | reddit-readonly 或 Decodo |
+| V3 | **价格监控检测** | 使用已知价格预填 price_memory.txt，运行价格监控，检测价格变化并生成告警。验证 price_memory.txt 更新及 price_history 文件创建。 | 3 分钟 | Playwright-npx 或 web_fetch |
+| V4 | **平台故障下的优雅降级** | 使用无效 Apify token 进行完整分析。验证报告仍以 3/4 数据源生成，google_maps 状态为"error"，置信度降为 MEDIUM。 | 5 分钟 | Decodo、reddit-readonly（Apify 故意失效） |
+| V5 | **竞品追踪添加** | 添加 2 个竞品 ASIN，验证资料 JSON 文件创建、price_memory.txt 条目新增。 | 2 分钟 | Decodo |
+| V6 | **空数据处理** | 查询不存在的品类（"量子纠缠狗项圈"）。验证置信度 LOW、判定 INSUFFICIENT_DATA、空 pain_points、无崩溃。 | 2 分钟 | 所有搜索 Skill |
+
+### 2.2 GEO Optimizer 测试（来自 PLAN-geo-optimizer.md）
+
+| # | 测试名称 | 验证内容 | 预计耗时 | 依赖 |
+|---|----------|---------|:--------:|------|
+| G1 | **行军床博客文章** | 基于 VOC 痛点生成博客。验证 1500-2500 词、6+ 引用、15+ 数据点、FAQ 部分、对比表、GEO 评分 >= 80。 | 8 分钟 | Tavily、Brave Search、Exa |
+| G2 | **蓝牙耳机 Amazon Listing** | Amazon Listing 优化。验证标题 < 200 字符含数字参数、5 条卖点大写开头 + 数据、无关键词堆砌（品类词每 500 词最多 3 次）、GEO 评分 >= 80。 | 5 分钟 | Decodo、Brave Search |
+| G3 | **升降桌产品描述** | 含专家引用的产品描述。验证 BIFMA/UL 权威引用、所有参数含单位、具名竞品对比、10+ 数据点、GEO 评分 >= 80。 | 4 分钟 | 搜索 Skill |
+| G4 | **GEO 规则违规检测** | 规则引擎对预先写好的低质量内容进行检测。验证检出以下违规：C1（关键词堆砌）、C2（模糊修饰词）、C4（通用开头）、A1（无引用）、D1（无 FAQ）。评分 < 40。 | 1 分钟 | 无（仅规则引擎） |
+| G5 | **单份 VOC 报告生成多格式输出** | 便携榨汁机的完整内容套件：博客 + Amazon Listing + 产品描述。验证三种格式使用相同 VOC 数据、各格式通过 GEO 规则、排名第一痛点在所有输出中均有体现、跨格式重复率 < 20%。 | 12 分钟 | 所有搜索 Skill |
+| G6 | **引用时效性与验证** | 检测无线充电器内容中的过期引用（2022-2023）。验证对超过 18 个月的引用发出警告、建议替代来源。 | 3 分钟 | 搜索 Skill |
+
+### 2.3 Reddit Specialist 测试（来自 PLAN-reddit-specialist.md）
+
+| # | 测试名称 | 验证内容 | 预计耗时 | 依赖 |
+|---|----------|---------|:--------:|------|
+| R1 | **W2 评论生成** | 行军床帖子的非推广性评论（W2 阶段）。验证：零产品提及、回应 OP 的问题、可操作建议、spam 评分 < 0.1、100-200 词。 | 1 分钟 | 无（仅评论生成） |
+| R2 | **W4 软性推荐** | 护肤品讨论中的软性产品推荐（W4 阶段）。验证：产品仅自然提及一次、1+ 替代品提及、坦诚优缺点、使用 subreddit 行话、spam 评分 < 0.2、无直接链接。 | 1 分钟 | 无（仅评论生成） |
+| R3 | **流量截取帖子评估** | 对候选帖子进行流量截取评分。验证：按评分体系正确计算分数、7/10 阈值判定、达标则生成评论草稿、评估结果以 JSON 格式记录。 | 2 分钟 | Brave Search |
+| R4 | **多账号轮转合规性** | 3 个处于不同 SOP 阶段的账号，各有分配的 subreddit。验证：各 subreddit 使用正确账号、W3 账号排除在推广之外、无 subreddit 重叠、频率限制受遵守。 | 1 分钟 | 无（逻辑验证） |
+| R5 | **Shadowban 检测与响应** | 通过 2 种独立方法检测 shadowban、更新注册表、暂停活动、启动恢复。验证：两种检测方法均使用、状态已更新、设定 14 天冷却期、告警已记录、subreddit 分配已重新分配。 | 3 分钟 | Playwright-npx、reddit-readonly |
+| R6 | **端到端流量截取** | 从 Google 搜索到发布评论的完整"便携榨汁机"工作流。验证：5+ 候选帖子找到、3 篇已评估、1-2 篇入选（评分 >= 7）、评论回应 VOC 痛点、无直接链接、使用 W5 账号、已设监控计划。 | 5 分钟 | Brave Search、reddit-readonly |
+
+### 2.4 TikTok Director 测试（来自 PLAN-tiktok-director.md）
+
+| # | 测试名称 | 验证内容 | 预计耗时 | 依赖 |
+|---|----------|---------|:--------:|------|
+| T1 | **标准 UGC 视频 —— 行军床** | 完整 25 格分镜 + 10-12 关键帧 + 15 秒视频 + QA。验证：25 格全部存在（3/5/7/6/4 分布）、前 2 秒有呼吸感运镜、床垫按压演示、QA 综合评分 >= 7.0、视频 < 50MB、时长 15 秒 +/- 0.5 秒。 | 15 分钟 | nano-banana-pro、seedance-video、volcengine-video-understanding |
+| T2 | **漫画剧情 —— 武侠茶产品** | 3 个场景的中国水墨风漫画剧情。验证：角色跨场景一致性、水墨风格（有限色板、毛笔笔触）、单场景 QA >= 6.5、连贯的故事流。 | 20 分钟 | canghe-image-gen、manga-style-video、manga-drama、seedance-video、volcengine-video-understanding |
+| T3 | **A/B 测试矩阵 —— 便携榨汁机** | 基于 1 个基础分镜生成 4 种开场变体。验证：第 2 秒之后内容完全一致、开场视觉/音频各不同、4 个变体均通过 QA >= 6.5、文件大小相互在 20% 以内。 | 25 分钟 | nano-banana-pro、seedance-video、volcengine-video-understanding |
+| T4 | **吉卜力风格视频 —— 竹牙刷** | 10 秒吉卜力风格视频。验证：水彩质感和大地色调、17 格分镜正确缩放、自然环境（非浴室）、volcengine 检测到正面情感、QA >= 7.0。 | 12 分钟 | nano-banana-pro、seedance-video、volcengine-video-understanding |
+| T5 | **视频 QA 失败与重新生成** | 故意使用极简 prompt 生成视频以触发 QA 失败。验证：QA 识别出不足之处、重新生成仅针对失败片段、第二次尝试分数提升、循环在 <= 3 次内完成、成本追踪反映多次尝试。 | 20 分钟 | 所有 TikTok Skill |
+
+---
+
+## 3. 集成测试（Agent 间协作）
+
+这些测试验证特定 Agent 对之间的 `sessions_send` 通信，确保数据在系统中正确流转。
+
+### 3.1 Lead -> VOC Analyst：任务派发与结果收集
+
+**输入消息**（Lead 通过 sessions_send 发送）：
 ```json
 {
   "task_type": "full_analysis",
@@ -149,25 +149,25 @@ These tests validate `sessions_send` communication between specific agent pairs,
 }
 ```
 
-**Expected Response** (VOC returns via sessions_send):
-- Valid VOCReport JSON with `request_id: "int_test_lead_voc_001"`
-- `data_sources` has entries for each requested platform
-- `pain_points` array is non-empty
-- `metadata.needs_geo_optimization` and `metadata.needs_tiktok_content` flags present
-- Report files saved to `~/.openclaw/workspace-voc/data/reports/`
+**预期响应**（VOC 通过 sessions_send 返回）：
+- 有效的 VOCReport JSON，`request_id: "int_test_lead_voc_001"`
+- `data_sources` 包含每个请求平台的条目
+- `pain_points` 数组非空
+- `metadata.needs_geo_optimization` 和 `metadata.needs_tiktok_content` 标志存在
+- 报告文件保存到 `~/.openclaw/workspace-voc/data/reports/`
 
-**Validation Criteria**:
-- [ ] Lead receives response within 5 minutes
-- [ ] Response JSON validates against VOCReport schema
-- [ ] `request_id` matches the sent value
-- [ ] `confidence` is HIGH or MEDIUM (at least 3 sources succeeded)
-- [ ] Lead can parse and extract `pain_points_summary` for downstream routing
+**验证标准**：
+- [ ] Lead 在 5 分钟内收到响应
+- [ ] 响应 JSON 通过 VOCReport schema 验证
+- [ ] `request_id` 与发送值匹配
+- [ ] `confidence` 为 HIGH 或 MEDIUM（至少 3 个数据源成功）
+- [ ] Lead 能解析并提取 `pain_points_summary` 用于下游路由
 
-**Timeout**: 6 minutes
+**超时**：6 分钟
 
-### 3.2 Lead -> GEO Optimizer: Content Generation Request and Delivery
+### 3.2 Lead -> GEO Optimizer：内容生成请求与交付
 
-**Input Message** (Lead sends via sessions_send):
+**输入消息**（Lead 通过 sessions_send 发送）：
 ```json
 {
   "task": "generate_product_content",
@@ -185,24 +185,24 @@ These tests validate `sessions_send` communication between specific agent pairs,
 }
 ```
 
-**Expected Response**:
-- Status `completed` with `outputs` array containing blog and Amazon listing
-- Each output has `geo_score >= 80`
+**预期响应**：
+- 状态 `completed`，`outputs` 数组包含博客和 Amazon Listing
+- 每个输出的 `geo_score >= 80`
 - `quality_summary.all_hard_fail_rules_passed: true`
-- Files saved to `~/.openclaw/workspace-geo/data/output/`
+- 文件保存到 `~/.openclaw/workspace-geo/data/output/`
 
-**Validation Criteria**:
-- [ ] Lead receives response within 10 minutes
-- [ ] Blog output contains quantitative data from pain_points_summary (e.g., "68%", "450")
-- [ ] Amazon listing title contains numeric spec
-- [ ] Both outputs have GEO score >= 80
-- [ ] No HARD FAIL rule violations
+**验证标准**：
+- [ ] Lead 在 10 分钟内收到响应
+- [ ] 博客输出包含 pain_points_summary 中的量化数据（如"68%"、"450"）
+- [ ] Amazon Listing 标题包含数字参数
+- [ ] 两个输出的 GEO 评分均 >= 80
+- [ ] 无 HARD FAIL 规则违规
 
-**Timeout**: 12 minutes
+**超时**：12 分钟
 
-### 3.3 Lead -> Reddit Specialist: Campaign Assignment and Status Reporting
+### 3.3 Lead -> Reddit Specialist：推广任务分配与状态汇报
 
-**Input Message** (Lead sends via sessions_send):
+**输入消息**（Lead 通过 sessions_send 发送）：
 ```json
 {
   "task_type": "reddit_campaign",
@@ -221,24 +221,24 @@ These tests validate `sessions_send` communication between specific agent pairs,
 }
 ```
 
-**Expected Response**:
-- Status `in_progress` with eligible accounts listed
-- Plan includes target_posts_found count, posts evaluated, posts selected
-- Estimated posting window provided
-- No blockers (or specific blocker reasons if accounts not ready)
+**预期响应**：
+- 状态 `in_progress`，列出符合条件的账号
+- 计划包含 target_posts_found 数量、已评估帖子数、入选帖子数
+- 提供预估发布时间窗口
+- 无阻塞因素（或列出具体阻塞原因）
 
-**Validation Criteria**:
-- [ ] Lead receives acknowledgment within 2 minutes
-- [ ] Response lists only W4+ accounts as eligible
-- [ ] Target posts found > 0
-- [ ] Estimated posting window is realistic (3-7 days)
-- [ ] Weekly report follows within the posting window period
+**验证标准**：
+- [ ] Lead 在 2 分钟内收到确认
+- [ ] 响应中仅列出 W4+ 账号为符合条件
+- [ ] 找到的目标帖子数 > 0
+- [ ] 预估发布时间窗口合理（3-7 天）
+- [ ] 在发布窗口期内有周报跟进
 
-**Timeout**: 3 minutes (for initial acknowledgment)
+**超时**：3 分钟（初始确认）
 
-### 3.4 Lead -> TikTok Director: Video Generation Request and Asset Delivery
+### 3.4 Lead -> TikTok Director：视频生成请求与素材交付
 
-**Input Message** (Lead sends via sessions_send):
+**输入消息**（Lead 通过 sessions_send 发送）：
 ```json
 {
   "source": "lead",
@@ -260,545 +260,545 @@ These tests validate `sessions_send` communication between specific agent pairs,
 }
 ```
 
-**Expected Response**:
-- Status `completed` with deliverables object
-- Storyboard JSON with 25 grids
-- Images directory with 10-12 PNG files at 1080x1920
-- Video file (MP4, 15s, 9:16)
-- QA report with composite score >= 7.0
-- Cost and timing breakdown
+**预期响应**：
+- 状态 `completed`，包含 deliverables 对象
+- 25 格分镜 JSON
+- 图片目录包含 10-12 张 1080x1920 PNG 文件
+- 视频文件（MP4，15 秒，9:16）
+- QA 报告，综合评分 >= 7.0
+- 成本和耗时明细
 
-**Validation Criteria**:
-- [ ] Lead receives final deliverables within 15 minutes
-- [ ] Video file exists and is playable (MP4, < 50MB)
-- [ ] QA composite score >= 7.0
-- [ ] Storyboard categories match 3/5/7/6/4 distribution
-- [ ] Cost breakdown present with all token counts
+**验证标准**：
+- [ ] Lead 在 15 分钟内收到最终交付物
+- [ ] 视频文件存在且可播放（MP4，< 50MB）
+- [ ] QA 综合评分 >= 7.0
+- [ ] 分镜类别匹配 3/5/7/6/4 分布
+- [ ] 成本明细含所有 token 用量
 
-**Timeout**: 18 minutes
+**超时**：18 分钟
 
-### 3.5 VOC -> GEO (via Lead): Pain Point Data Flowing to Content Creation
+### 3.5 VOC -> GEO（经 Lead）：痛点数据流向内容生成
 
-**Test Flow**:
-1. Lead dispatches category analysis to VOC
-2. VOC returns pain point report
-3. Lead extracts pain_points_summary and competitive_positioning
-4. Lead forwards structured data to GEO
-5. GEO produces content using VOC data
+**测试流程**：
+1. Lead 向 VOC 派发品类分析
+2. VOC 返回痛点报告
+3. Lead 提取 pain_points_summary 和 competitive_positioning
+4. Lead 将结构化数据转发给 GEO
+5. GEO 使用 VOC 数据生成内容
 
-**Validation Criteria**:
-- [ ] GEO content references specific pain point data from VOC (e.g., "68% of negative reviews")
-- [ ] GEO blog comparison table includes competitor data from VOC report
-- [ ] GEO content does not fabricate pain points not present in VOC data
-- [ ] Data transformation from VOCReport to GEO input preserves accuracy
-- [ ] End-to-end time from VOC dispatch to GEO output < 15 minutes
+**验证标准**：
+- [ ] GEO 内容引用了 VOC 的具体痛点数据（如"68% 的差评"）
+- [ ] GEO 博客对比表包含 VOC 报告中的竞品数据
+- [ ] GEO 内容未捏造 VOC 数据中不存在的痛点
+- [ ] 从 VOCReport 到 GEO 输入的数据转换保持准确
+- [ ] 从 VOC 派发到 GEO 输出的端到端时间 < 15 分钟
 
-**Timeout**: 18 minutes
+**超时**：18 分钟
 
-### 3.6 VOC -> TikTok (via Lead): Pain Point Data Flowing to Video Creation
+### 3.6 VOC -> TikTok（经 Lead）：痛点数据流向视频生成
 
-**Test Flow**:
-1. Lead dispatches category analysis to VOC
-2. VOC returns pain point report
-3. Lead extracts pain_points_for_script with visual demos and second markers
-4. Lead forwards structured data to TikTok Director
-5. TikTok produces storyboard and video
+**测试流程**：
+1. Lead 向 VOC 派发品类分析
+2. VOC 返回痛点报告
+3. Lead 提取 pain_points_for_script，含视觉演示和秒数标记
+4. Lead 将结构化数据转发给 TikTok Director
+5. TikTok 生成分镜和视频
 
-**Validation Criteria**:
-- [ ] TikTok storyboard pain_point grids (4-8) reference actual VOC issues
-- [ ] First pain point maps to "Show at second 2-4" in storyboard
-- [ ] Product specs from VOC data appear in CTA text overlays
-- [ ] Video QA confirms pain point display category is present
-- [ ] End-to-end time from VOC dispatch to video delivery < 20 minutes
+**验证标准**：
+- [ ] TikTok 分镜中的 pain_point 格（第 4-8 格）引用了实际 VOC 问题
+- [ ] 第一个痛点映射到分镜中"第 2-4 秒展示"
+- [ ] VOC 数据中的产品参数出现在 CTA 文字叠加中
+- [ ] 视频 QA 确认存在痛点展示类别
+- [ ] 从 VOC 派发到视频交付的端到端时间 < 20 分钟
 
-**Timeout**: 22 minutes
+**超时**：22 分钟
 
 ---
 
-## 4. End-to-End Scenario: Camping Folding Cot (Flagship)
+## 4. 端到端场景：行军折叠床（旗舰场景）
 
-This is the complete system test based on the business plan's reference scenario (Section 2.7). It exercises all 5 agents working together.
+这是基于商业计划书参考场景（2.7 节）的完整系统测试，调动全部 5 个 Agent 协同工作。
 
-### 4.1 Trigger
+### 4.1 触发
 
-**User Input** (Feishu group message):
+**用户输入**（飞书群消息）：
 ```
-@Lead  "All channels, full content push"
+@Lead "全渠道、全内容推送"
 ```
 
-**Equivalent English**: "Analyze the camping folding bed market and push content to all channels"
+**等效英文**: "Analyze the camping folding bed market and push content to all channels"
 
-### 4.2 Step-by-Step Execution
+### 4.2 分步执行
 
-#### Step 1: User Message Received (T+0s)
+#### 步骤 1：接收用户消息（T+0s）
 
-| Item | Detail |
-|------|--------|
-| Channel | Feishu WebSocket |
-| Receiver | Lead agent (sole human interface) |
-| Action | Lead receives natural language instruction |
-| Validation | Lead acknowledges receipt in Feishu group within 5 seconds |
+| 项目 | 详情 |
+|------|------|
+| 渠道 | 飞书 WebSocket |
+| 接收方 | Lead Agent（唯一人机接口） |
+| 动作 | Lead 接收自然语言指令 |
+| 验证 | Lead 在 5 秒内于飞书群发送确认 |
 
-#### Step 2: Lead Decomposes Task (T+5s)
+#### 步骤 2：Lead 拆解任务（T+5s）
 
-| Item | Detail |
-|------|--------|
-| Action | Lead parses intent, generates DAG execution plan with 4 sub-tasks |
-| Sub-tasks | (1) VOC market analysis, (2) Reddit high-ranking post search, (3) GEO content generation (depends on VOC), (4) TikTok video generation (depends on VOC), (5) Reddit comment drafting (depends on Reddit search + VOC) |
-| DAG Structure | Tasks 1+2 run in parallel; Tasks 3+4+5 run after 1+2 complete |
-| Validation | Lead posts progress update in Feishu: "Starting analysis, 4 sub-tasks created" |
-| Expected Duration | ~5 seconds |
+| 项目 | 详情 |
+|------|------|
+| 动作 | Lead 解析意图，生成含 4 个子任务的 DAG 执行计划 |
+| 子任务 | (1) VOC 市场分析，(2) Reddit 高排名帖搜索，(3) GEO 内容生成（依赖 VOC），(4) TikTok 视频生成（依赖 VOC），(5) Reddit 评论撰写（依赖 Reddit 搜索 + VOC） |
+| DAG 结构 | 任务 1+2 并行执行；任务 3+4+5 在 1+2 完成后执行 |
+| 验证 | Lead 在飞书发送进度更新："开始分析，已创建 4 个子任务" |
+| 预计耗时 | 约 5 秒 |
 
-#### Step 3: VOC + Reddit Search in PARALLEL (T+5s to T+3min)
+#### 步骤 3：VOC + Reddit 搜索并行执行（T+5s 至 T+3min）
 
-**Sub-task 3A: VOC Market Analysis**
+**子任务 3A：VOC 市场分析**
 
-| Item | Detail |
-|------|--------|
+| 项目 | 详情 |
+|------|------|
 | Agent | voc-analyst |
-| Input | `sessions_send` from Lead: full_analysis for "camping folding bed" across Amazon, Reddit, YouTube, Google Maps |
-| Actions | Amazon BSR top 50, Reddit subreddit scraping (r/Camping, r/BuyItForLife), YouTube subtitle extraction (top 3 reviews), Google Maps wholesale data |
-| Expected Output | Pain points: weight capacity insufficient (severity 9.2), difficult storage (severity 7.5); price range $30-80; BSR top 50 analysis; competitor weaknesses |
-| Duration | ~3 minutes |
+| 输入 | Lead 通过 `sessions_send` 发送：对"行军折叠床"跨 Amazon、Reddit、YouTube、Google Maps 进行 full_analysis |
+| 动作 | Amazon BSR 前 50 商品、Reddit subreddit 爬取（r/Camping、r/BuyItForLife）、YouTube 字幕提取（前 3 个评测视频）、Google Maps 批发数据 |
+| 预期输出 | 痛点：承重不足（严重度 9.2）、收纳困难（严重度 7.5）；价格区间 $30-80；BSR 前 50 分析；竞品弱点 |
+| 耗时 | 约 3 分钟 |
 
-**Sub-task 3B: Reddit High-Ranking Post Search**
+**子任务 3B：Reddit 高排名帖搜索**
 
-| Item | Detail |
-|------|--------|
+| 项目 | 详情 |
+|------|------|
 | Agent | reddit-spec |
-| Input | `sessions_send` from Lead: find high-ranking old posts about camping cots in r/Camping, r/BuyItForLife |
-| Actions | Brave Search for "best camping cot reddit", evaluate post quality per scoring rubric (10-point scale), select posts scoring >= 7/10 |
-| Expected Output | 3 high-ranking old posts identified with scores, URLs, and thread context |
-| Duration | ~2 minutes |
+| 输入 | Lead 通过 `sessions_send` 发送：在 r/Camping、r/BuyItForLife 中搜索关于行军床的高排名老帖 |
+| 动作 | Brave Search 搜索"best camping cot reddit"，按评分体系（10 分制）评估帖子质量，选取评分 >= 7/10 的帖子 |
+| 预期输出 | 3 篇已标注评分、URL 和帖子上下文的高排名老帖 |
+| 耗时 | 约 2 分钟 |
 
-**Checkpoint at T+3min**:
-- [ ] VOC report received by Lead with pain points and market data
-- [ ] Reddit post list received by Lead with 3+ evaluated posts
-- [ ] Both agents completed without errors
-- [ ] Lead posts Feishu update: "Market analysis complete. Top pain point: weight capacity."
+**T+3min 检查点**：
+- [ ] Lead 收到含痛点和市场数据的 VOC 报告
+- [ ] Lead 收到含 3+ 已评估帖子的 Reddit 帖子列表
+- [ ] 两个 Agent 均无错误完成
+- [ ] Lead 发送飞书更新："市场分析完成。首要痛点：承重不足。"
 
-#### Step 4: GEO + Reddit Comment + TikTok in PARALLEL (T+3min to T+13min)
+#### 步骤 4：GEO + Reddit 评论 + TikTok 并行执行（T+3min 至 T+13min）
 
-**Sub-task 4A: GEO Content Generation**
+**子任务 4A：GEO 内容生成**
 
-| Item | Detail |
-|------|--------|
+| 项目 | 详情 |
+|------|------|
 | Agent | geo-optimizer |
-| Input | VOC pain points + competitive positioning data routed by Lead |
-| Actions | Research authority sources (OutdoorGearLab, Wirecutter), draft blog with comparison table, apply GEO rules engine, self-evaluate |
-| Expected Output | Blog post with quantitative data ("supports up to 450 lbs"), OutdoorGearLab citation, FAQ section with 5+ Q&A pairs, GEO score >= 80 |
-| Duration | ~5-8 minutes |
+| 输入 | Lead 路由的 VOC 痛点 + 竞品定位数据 |
+| 动作 | 研究权威来源（OutdoorGearLab、Wirecutter），撰写含对比表的博客，应用 GEO 规则引擎，自我评估 |
+| 预期输出 | 博客含量化数据（"承重可达 450 磅"）、OutdoorGearLab 引用、5+ 条 Q&A 的 FAQ 部分、GEO 评分 >= 80 |
+| 耗时 | 约 5-8 分钟 |
 
-**Sub-task 4B: Reddit Comment Drafting**
+**子任务 4B：Reddit 评论撰写**
 
-| Item | Detail |
-|------|--------|
+| 项目 | 详情 |
+|------|------|
 | Agent | reddit-spec |
-| Input | 3 target posts from Step 3B + VOC pain points from Step 3A |
-| Actions | Craft genuine comments for each target post (100-250 words each), address OP's pain points, naturally embed product mention, run spam score check |
-| Expected Output | 2-3 comment drafts ready for posting, each with spam score < 0.2, no direct product links |
-| Duration | ~3-5 minutes |
+| 输入 | 步骤 3B 的 3 个目标帖 + 步骤 3A 的 VOC 痛点 |
+| 动作 | 为每个目标帖撰写真诚评论（各 100-250 词），回应 OP 的痛点，自然嵌入产品提及，执行 spam 评分检查 |
+| 预期输出 | 2-3 条待发布评论草稿，每条 spam 评分 < 0.2，无直接产品链接 |
+| 耗时 | 约 3-5 分钟 |
 
-**Sub-task 4C: TikTok Video Generation**
+**子任务 4C：TikTok 视频生成**
 
-| Item | Detail |
-|------|--------|
+| 项目 | 详情 |
+|------|------|
 | Agent | tiktok-director |
-| Input | Product brief + VOC pain points routed by Lead |
-| Actions | Design 25-grid storyboard, generate key frame images (nano-banana-pro), generate video segments (Seedance 1.5 Pro), assemble final video, run QA (volcengine) |
-| Expected Output | 15-second UGC video with breathing camera movement in first 2 seconds, mattress press close-up at second 4, QA composite >= 7.0 |
-| Duration | ~10 minutes |
+| 输入 | Lead 路由的产品简介 + VOC 痛点 |
+| 动作 | 设计 25 格分镜，生成关键帧图片（nano-banana-pro），生成视频片段（Seedance 1.5 Pro），组装最终视频，执行 QA（volcengine） |
+| 预期输出 | 15 秒 UGC 视频，前 2 秒含呼吸感运镜，第 4 秒床垫按压特写，QA 综合评分 >= 7.0 |
+| 耗时 | 约 10 分钟 |
 
-**Checkpoint at T+13min**:
-- [ ] GEO blog post received by Lead with GEO score >= 80
-- [ ] Reddit comment drafts received by Lead
-- [ ] TikTok video + QA report received by Lead
-- [ ] All three agents completed without critical errors
+**T+13min 检查点**：
+- [ ] Lead 收到 GEO 博客，GEO 评分 >= 80
+- [ ] Lead 收到 Reddit 评论草稿
+- [ ] Lead 收到 TikTok 视频 + QA 报告
+- [ ] 三个 Agent 均无严重错误完成
 
-#### Step 5: Lead Aggregates All Outputs (T+13min to T+15min)
+#### 步骤 5：Lead 汇总所有输出（T+13min 至 T+15min）
 
-| Item | Detail |
-|------|--------|
+| 项目 | 详情 |
+|------|------|
 | Agent | lead |
-| Actions | Collect all outputs, validate completeness, format Feishu summary card |
-| Output | Feishu interactive card message containing: market summary, top pain points, blog link, Amazon listing preview, Reddit campaign status, video thumbnail + download link |
-| Duration | ~10 seconds |
+| 动作 | 收集所有输出，验证完整性，格式化飞书汇总卡片 |
+| 输出 | 飞书互动卡片消息：市场摘要、核心痛点、博客链接、Amazon Listing 预览、Reddit 推广状态、视频缩略图 + 下载链接 |
+| 耗时 | 约 10 秒 |
 
-### 4.3 Total Timeline
+### 4.3 总时间线
 
-| Phase | Duration | Agents Active |
-|-------|:--------:|:-------------:|
-| Message receipt + decomposition | ~5s | lead |
-| Parallel research (VOC + Reddit search) | ~3 min | voc-analyst + reddit-spec |
-| Parallel content creation (GEO + Reddit comments + TikTok) | ~10 min | geo-optimizer + reddit-spec + tiktok-director |
-| Result aggregation + Feishu report | ~10s | lead |
-| **Total** | **~15-20 minutes** | All 5 agents |
+| 阶段 | 耗时 | 活跃 Agent |
+|------|:----:|:----------:|
+| 消息接收 + 任务拆解 | 约 5 秒 | lead |
+| 并行调研（VOC + Reddit 搜索） | 约 3 分钟 | voc-analyst + reddit-spec |
+| 并行内容创建（GEO + Reddit 评论 + TikTok） | 约 10 分钟 | geo-optimizer + reddit-spec + tiktok-director |
+| 结果汇总 + 飞书报告 | 约 10 秒 | lead |
+| **总计** | **约 15-20 分钟** | 全部 5 个 Agent |
 
-### 4.4 Success Criteria
+### 4.4 成功标准
 
-| # | Criterion | Validation Method |
-|---|-----------|-------------------|
-| 1 | All 5 deliverables present: VOC report, blog post, Amazon listing, Reddit comments, TikTok video | Count distinct deliverable types in Lead's collection |
-| 2 | VOC report has HIGH or MEDIUM confidence with >= 3 data sources | Check `confidence` and `data_sources` in VOCReport JSON |
-| 3 | GEO blog passes all HARD FAIL rules (Categories A-D) | Run GEO rules engine on blog output |
-| 4 | GEO blog GEO score >= 80 | Check `geo_score` in output metadata |
-| 5 | Reddit comments have spam score < 0.2 and no product links | Content analysis of each comment draft |
-| 6 | TikTok video QA composite >= 7.0 | Check QA report JSON |
-| 7 | TikTok video is 15s +/- 0.5s, 1080x1920, MP4 | ffprobe on output video file |
-| 8 | TikTok video first 2 seconds contain breathing movement (no static frames) | volcengine first-N-frames analysis |
-| 9 | Feishu summary card sent to group | Verify card message received in Feishu group |
-| 10 | Total execution time <= 20 minutes | Wall-clock time from Feishu message to summary card |
-| 11 | No unhandled errors across any agent | Check error logs for all 5 workspaces |
-| 12 | VOC pain point data ("weight capacity", "storage") appears in GEO content and TikTok storyboard | Cross-reference pain_points between VOC output and downstream outputs |
-
----
-
-## 5. Additional E2E Scenarios
-
-### 5.1 Scenario: Bluetooth Earbuds (VOC + GEO + Reddit, No TikTok)
-
-This scenario tests a partial pipeline where TikTok video generation is not requested.
-
-**Trigger** (Feishu):
-```
-@Lead  "Research Bluetooth earbuds market, write content, seed Reddit. No video."
-```
-
-#### Step-by-Step
-
-| Step | Agent | Action | Expected Output | Duration |
-|------|-------|--------|-----------------|:--------:|
-| 1 | Lead | Parse intent, identify 3 sub-tasks (no TikTok) | DAG with VOC -> GEO + Reddit | ~5s |
-| 2 | voc-analyst | Full analysis: "bluetooth earbuds" across Amazon, Reddit, YouTube | Pain points: battery dies fast (34%), falls out during exercise (22%), poor noise cancellation (18%); price range $20-35 | ~3 min |
-| 3a | geo-optimizer | Blog post + Amazon listing using VOC pain points | Blog: "48-hour battery" data point, comparison table of 4+ earbuds, FAQ with 5+ Q&A, GEO score >= 80. Amazon: title with battery hours spec, 5 CAPS bullets | ~8 min |
-| 3b | reddit-spec | Search for high-ranking posts in r/headphones, r/BuyItForLife, r/budgetaudiophile; draft comments | 2-3 target posts found, comment drafts addressing battery/fit pain points, no links | ~5 min |
-| 4 | Lead | Aggregate: VOC report + blog + listing + Reddit campaign status | Feishu summary card (no video section) | ~10s |
-
-**Success Criteria**:
-
-| # | Criterion |
-|---|-----------|
-| 1 | TikTok agent is NOT invoked (Lead correctly excludes it) |
-| 2 | VOC report covers 3 platforms minimum |
-| 3 | GEO blog references battery life data from VOC (e.g., "34% of negative reviews cite battery life") |
-| 4 | Amazon listing title contains numeric battery spec (e.g., "48-Hour") |
-| 5 | Reddit comments target r/headphones or r/budgetaudiophile (different subs than camping scenario) |
-| 6 | Reddit comments mention earbuds naturally within personal experience narrative |
-| 7 | Feishu summary card has 3 sections (VOC + GEO + Reddit), no video section |
-| 8 | Total time <= 12 minutes |
-
-### 5.2 Scenario: Portable Blender (Full Pipeline, Different Product Category)
-
-This scenario exercises the full 5-agent pipeline with a different product category, different subreddits, and a different manga style for TikTok.
-
-**Trigger** (Feishu):
-```
-@Lead  "Full pipeline: portable blender market analysis + all channels. TikTok style: Japanese healing."
-```
-
-#### Step-by-Step
-
-| Step | Agent | Action | Expected Output | Duration |
-|------|-------|--------|-----------------|:--------:|
-| 1 | Lead | Parse intent, create 4 sub-tasks, note TikTok style preference (japanese) | DAG: VOC + Reddit search parallel, then GEO + Reddit comment + TikTok parallel | ~5s |
-| 2a | voc-analyst | Full analysis: "portable blender" across Amazon, Reddit, YouTube, Google Maps | Pain points: blade not strong enough for ice (38%), battery too low (29%), hard to clean (21%); price $25-45; BSR top 50 | ~3 min |
-| 2b | reddit-spec | Search for high-ranking posts in r/BuyItForLife, r/Cooking, r/MealPrepSunday | 3+ candidate posts about portable blenders, evaluated and scored | ~2 min |
-| 3a | geo-optimizer | Blog + Amazon listing + product description for portable blender | Blog with ice-blending test data, comparison table, FAQ. Amazon listing with blade count spec. Product description with USB-C charging detail. All GEO score >= 80 | ~10 min |
-| 3b | reddit-spec | Draft comments for selected posts using VOC pain points (blade, battery, cleaning) | 2 comments addressing blender-specific pain points, using r/Cooking jargon ("mise en place", "batch prep") | ~4 min |
-| 3c | tiktok-director | 25-grid storyboard in `japanese` healing style + 15s video | Soft pastel colors, warm lighting, kitchen/lifestyle setting, product demo of ice blending, QA composite >= 7.0 | ~12 min |
-| 4 | Lead | Aggregate all 5 deliverables | Feishu summary card with all sections including video thumbnail | ~10s |
-
-**Success Criteria**:
-
-| # | Criterion |
-|---|-----------|
-| 1 | VOC report identifies ice-blending as top pain point with frequency data |
-| 2 | GEO content contains ice-blending quantitative data (e.g., "crushes 10 ice cubes in 15 seconds") |
-| 3 | Reddit comments target different subreddits than camping scenario (r/Cooking, r/MealPrepSunday) |
-| 4 | Reddit comments use cooking-community jargon naturally |
-| 5 | TikTok video uses `japanese` manga style (soft pastels, warm lighting confirmed by volcengine) |
-| 6 | TikTok storyboard pain_point grids show ice-blending demonstration |
-| 7 | All 5 deliverables present in Feishu summary |
-| 8 | No cross-contamination with camping cot data from other test runs |
-| 9 | Total time <= 20 minutes |
+| # | 标准 | 验证方法 |
+|---|------|---------|
+| 1 | 5 项交付物全部齐全：VOC 报告、博客文章、Amazon Listing、Reddit 评论、TikTok 视频 | 统计 Lead 收集到的不同交付物类型 |
+| 2 | VOC 报告为 HIGH 或 MEDIUM 置信度，>= 3 个数据源 | 检查 VOCReport JSON 中的 `confidence` 和 `data_sources` |
+| 3 | GEO 博客通过所有 HARD FAIL 规则（A-D 类） | 对博客输出运行 GEO 规则引擎 |
+| 4 | GEO 博客 GEO 评分 >= 80 | 检查输出元数据中的 `geo_score` |
+| 5 | Reddit 评论 spam 评分 < 0.2 且无产品链接 | 对每条评论草稿进行内容分析 |
+| 6 | TikTok 视频 QA 综合评分 >= 7.0 | 检查 QA 报告 JSON |
+| 7 | TikTok 视频 15 秒 +/- 0.5 秒，1080x1920，MP4 | 对输出视频文件执行 ffprobe |
+| 8 | TikTok 视频前 2 秒含呼吸感运镜（无静态帧） | volcengine 首 N 帧分析 |
+| 9 | 飞书汇总卡片已发送到群组 | 验证飞书群收到卡片消息 |
+| 10 | 总执行时间 <= 20 分钟 | 从飞书消息到汇总卡片的挂钟时间 |
+| 11 | 所有 Agent 无未处理错误 | 检查 5 个工作区的错误日志 |
+| 12 | VOC 痛点数据（"承重"、"收纳"）出现在 GEO 内容和 TikTok 分镜中 | 交叉比对 VOC 输出与下游输出中的 pain_points |
 
 ---
 
-## 6. Performance Benchmarks
+## 5. 其他端到端场景
 
-| Stage | Agent | Target Time | Max Acceptable | Notes |
-|-------|-------|:-----------:|:--------------:|-------|
-| Task decomposition | lead | 5s | 15s | Parse natural language, generate DAG |
-| VOC full analysis (4 platforms) | voc-analyst | 3 min | 5 min | Parallel scraping of Amazon, Reddit, YouTube, Google Maps |
-| VOC quick query (1 platform) | voc-analyst | 1 min | 2 min | Single-platform sentiment check |
-| GEO blog post generation | geo-optimizer | 5 min | 8 min | Research + draft + rules check + revision |
-| GEO Amazon listing generation | geo-optimizer | 3 min | 5 min | Competitor analysis + draft + rules check |
-| GEO product description | geo-optimizer | 3 min | 4 min | Feature-benefit mapping + draft |
-| Reddit post finding (Google search) | reddit-spec | 1 min | 2 min | Brave Search for high-ranking posts |
-| Reddit comment drafting (per comment) | reddit-spec | 1 min | 2 min | Read thread + craft genuine comment |
-| TikTok storyboard generation | tiktok-director | 45s | 90s | doubao-seed-2.0-code script generation |
-| TikTok image generation (per frame) | tiktok-director | 30s | 60s | nano-banana-pro single image |
-| TikTok video generation (per segment) | tiktok-director | 90s | 120s | Seedance 1.5 Pro per 5-10s clip |
-| TikTok QA analysis | tiktok-director | 45s | 60s | volcengine-video-understanding per video |
-| TikTok full pipeline (storyboard to video) | tiktok-director | 10 min | 15 min | End-to-end for one product |
-| Result aggregation | lead | 10s | 30s | Collect outputs, format Feishu card |
-| **Full pipeline (all 5 agents)** | **All** | **15 min** | **20 min** | **Camping cot reference scenario** |
-| Price monitoring cycle (20 ASINs) | voc-analyst | 2 min | 3 min | Daily cron job |
+### 5.1 场景：蓝牙耳机（VOC + GEO + Reddit，无 TikTok）
 
----
+此场景测试不需要 TikTok 视频生成的部分管线。
 
-## 7. Failure Injection Tests
-
-These tests validate system resilience when individual components fail.
-
-### 7.1 VOC Agent Timeout Mid-Research
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Trigger a full_analysis task but kill the voc-analyst process after it begins Amazon scraping but before Reddit scraping completes |
-| **Expected Behavior** | Lead detects voc-analyst timeout after configured threshold (5 min). Lead reports partial results if any were received before timeout. Lead sends Feishu message: "VOC analysis timed out. Partial data available. Proceeding with available results." |
-| **Validation** | Lead does not crash. If partial Amazon data was received, it is included in the report. GEO and TikTok receive whatever data is available (may proceed with reduced quality). Feishu notification includes error context. |
-| **Pass Criteria** | Lead gracefully handles timeout, does not hang indefinitely, delivers partial report to user |
-
-### 7.2 Reddit Rate-Limited (429)
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Configure reddit-readonly to return 429 responses (simulate by setting invalid rate limit headers or exhausting quota) |
-| **Expected Behavior** | reddit-spec detects 429, retries with exponential backoff (5s, 15s, 45s). If still failing after 3 retries, falls back to Decodo reddit_subreddit. If Decodo also fails, falls back to Brave Search with `site:reddit.com`. Lead waits for reddit-spec's response or timeout. |
-| **Validation** | Retry attempts are logged in `scrape_log.jsonl`. Fallback chain is followed in correct order. If all Reddit sources fail, reddit-spec reports failure to Lead with specifics. Lead proceeds without Reddit data for downstream tasks. |
-| **Pass Criteria** | Agent follows retry/fallback strategy, never crashes, reports clear error context |
-
-### 7.3 Seedance API Down
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Block outbound connections to Seedance API endpoint (or set invalid API credentials) |
-| **Expected Behavior** | tiktok-director fails at video generation step. Storyboard and image assets are still generated successfully. Agent reports to Lead: `{ "status": "partial_failure", "completed": ["storyboard", "images"], "failed": ["video_generation"], "error": "Seedance API unreachable" }`. Lead delivers all other results (VOC, GEO, Reddit) to user without video. Feishu card includes note: "Video generation unavailable. Storyboard and key frames delivered instead." |
-| **Validation** | Lead delivers 4/5 deliverables to user. Feishu card is properly formatted without video section. Storyboard JSON and images are accessible. No cascading failure to other agents. |
-| **Pass Criteria** | System delivers partial results, video failure does not block other agents |
-
-### 7.4 Feishu WebSocket Disconnect
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Disconnect the Feishu WebSocket connection mid-pipeline (after Lead has dispatched tasks but before final aggregation) |
-| **Expected Behavior** | Lead detects WebSocket disconnect. Lead attempts reconnection with exponential backoff. Agent pipeline continues executing (sessions_send is independent of Feishu). Once WebSocket reconnects, Lead delivers the queued Feishu summary card. If reconnection fails after 5 attempts, Lead logs the completed results to workspace for manual retrieval. |
-| **Validation** | Agent-to-agent communication (sessions_send) is unaffected by Feishu disconnect. Results are not lost. Queued messages are delivered upon reconnection. If reconnection fails, results are saved to disk. |
-| **Pass Criteria** | Feishu disconnect does not affect agent pipeline execution, messages delivered after reconnect |
-
-### 7.5 Bad Data from VOC (Malformed JSON)
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Inject malformed JSON in VOC's sessions_send response (e.g., truncated JSON, missing required fields, invalid data types) |
-| **Expected Behavior** | Lead detects JSON parse error or schema validation failure. Lead does not forward malformed data to GEO or TikTok. Lead requests VOC to retry (one retry attempt). If retry also fails, Lead reports to user: "Market analysis returned invalid data. Please try again." GEO and TikTok are never sent malformed input. |
-| **Validation** | Lead performs input validation before routing. GEO/TikTok never receive garbage data. Error is logged with the malformed payload for debugging. Feishu notification is clear and actionable. |
-| **Pass Criteria** | Malformed data is caught at Lead, never propagated downstream |
-
-### 7.6 All Agents Timeout
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Kill all 4 worker agents (voc-analyst, geo-optimizer, reddit-spec, tiktok-director) after Lead dispatches tasks |
-| **Expected Behavior** | Lead waits for configured timeout per agent. As each agent times out, Lead records the failure. After all agents have timed out, Lead escalates to human: Feishu message with "All agents unresponsive. No data collected. Manual intervention required." Lead includes diagnostic info: which agents were unreachable, timestamps, last known status. |
-| **Validation** | Lead does not hang forever. Timeout is bounded (max 10 minutes for all agents). Feishu escalation includes actionable diagnostic info. System can recover after agents are restarted without manual cleanup. |
-| **Pass Criteria** | Lead escalates clearly, does not deadlock, provides diagnostic information |
-
-### 7.7 Model API Quota Exhausted
-
-| Item | Detail |
-|------|--------|
-| **Setup** | Exhaust doubao-seed-2.0-code or Kimi K2.5 API quota mid-task |
-| **Expected Behavior** | Affected agent receives API error (429 or quota exceeded). Agent reports specific error to Lead via sessions_send. Lead adjusts: if execution-layer model (Kimi K2.5) is down, tasks cannot be rerouted (different model type). Lead reports to user which capability is affected. |
-| **Validation** | Clear error reporting with model name and quota details. No silent failures. User informed of which features are temporarily unavailable. |
-| **Pass Criteria** | Quota exhaustion is reported clearly, does not cause crashes or data corruption |
-
----
-
-## 8. Success Criteria Matrix
-
-| Test Category | Test Name | Pass Criteria | Fail Criteria | Priority |
-|--------------|-----------|---------------|---------------|:--------:|
-| **Smoke** | Agent health check (all 5) | All 5 agents return alive within 10s | Any agent unresponsive after 10s | P0 |
-| **Smoke** | Skills verification | All required skills respond to test command | Any P0 skill fails to respond | P0 |
-| **Smoke** | Environment variables | All required env vars are set and non-empty | Any required env var missing | P0 |
-| **Smoke** | sessions_send connectivity | All 5 agent pairs complete echo test | Any pair fails to communicate | P0 |
-| **Unit** | VOC full analysis (V1) | JSON report valid, >= 3 pain points, source_count >= 2, confidence HIGH/MEDIUM | Invalid JSON, < 3 pain points, or NONE confidence | P0 |
-| **Unit** | VOC graceful degradation (V4) | Report generated with 3/4 sources, error logged | Agent crash or no report generated | P1 |
-| **Unit** | VOC empty data handling (V6) | verdict INSUFFICIENT_DATA, no crash | Crash, fabricated data, or hang | P1 |
-| **Unit** | GEO blog post (G1) | GEO score >= 80, 6+ citations, FAQ present, table present | GEO score < 60 or HARD FAIL violations | P0 |
-| **Unit** | GEO rule violation detection (G4) | All 5 intentional violations detected, score < 40 | Any violation missed | P1 |
-| **Unit** | GEO multi-format output (G5) | 3 formats generated, all score >= 80, same VOC data used | Any format missing or score < 60 | P1 |
-| **Unit** | Reddit W2 comment (R1) | Zero product mentions, spam score < 0.1, 100-200 words | Product mentioned, or spam score >= 0.3 | P0 |
-| **Unit** | Reddit W4 soft recommendation (R2) | Product mentioned once, alternative present, spam < 0.2 | Multiple product mentions, no alternative, or links present | P0 |
-| **Unit** | Reddit traffic hijacking (R6) | Posts found, evaluated, comments drafted, no links | No posts found or comments contain direct links | P1 |
-| **Unit** | TikTok UGC video (T1) | 25 grids, 15s video, QA >= 7.0, breathing movement present | QA < 6.0, wrong duration, or static opening | P0 |
-| **Unit** | TikTok manga drama (T2) | Character consistency, style consistency, per-scene QA >= 6.5 | Character inconsistency or wrong manga style | P1 |
-| **Unit** | TikTok QA failure recovery (T5) | Deficiency detected, targeted regeneration, <= 3 attempts | False positive QA, full regeneration instead of targeted, or > 3 attempts | P1 |
-| **Integration** | Lead -> VOC dispatch (3.1) | Response within 5 min, valid schema, request_id matches | Timeout, invalid schema, or wrong request_id | P0 |
-| **Integration** | Lead -> GEO dispatch (3.2) | Response within 10 min, GEO score >= 80, no HARD FAIL | Timeout or HARD FAIL violations in output | P0 |
-| **Integration** | Lead -> Reddit dispatch (3.3) | Acknowledgment within 2 min, eligible accounts listed | Timeout or no eligible accounts | P1 |
-| **Integration** | Lead -> TikTok dispatch (3.4) | Video delivered within 15 min, QA >= 7.0 | Timeout or QA < 6.0 | P0 |
-| **Integration** | VOC -> GEO data flow (3.5) | GEO content references VOC pain point data accurately | GEO fabricates data not in VOC report | P0 |
-| **Integration** | VOC -> TikTok data flow (3.6) | Storyboard pain_point grids reference VOC issues | Storyboard ignores VOC data | P1 |
-| **E2E** | Camping cot full pipeline (4) | All 5 deliverables present, total time <= 20 min, Feishu card sent | Any deliverable missing or total time > 25 min | P0 |
-| **E2E** | Bluetooth earbuds partial pipeline (5.1) | 3 deliverables (no TikTok), TikTok correctly excluded, total <= 12 min | TikTok invoked or > 15 min | P1 |
-| **E2E** | Portable blender full pipeline (5.2) | All 5 deliverables, japanese style confirmed, different subreddits | Wrong style or same subreddits as camping | P1 |
-| **Failure** | VOC timeout (7.1) | Lead reports partial results, no hang | Lead hangs or crashes | P0 |
-| **Failure** | Reddit rate-limited (7.2) | Retry + fallback chain followed, error reported | Agent crashes on 429 | P1 |
-| **Failure** | Seedance API down (7.3) | 4/5 deliverables delivered, video section omitted | All deliverables blocked by video failure | P0 |
-| **Failure** | Feishu disconnect (7.4) | Pipeline continues, messages delivered on reconnect | Pipeline halts or data lost | P0 |
-| **Failure** | Bad VOC JSON (7.5) | Malformed data caught at Lead, not forwarded | GEO/TikTok receive garbage data | P0 |
-| **Failure** | All agents timeout (7.6) | Lead escalates to human with diagnostics, no deadlock | Lead deadlocks or sends empty report | P0 |
-
----
-
-## 9. Test Execution Runbook
-
-### 9.1 Prerequisites Checklist
-
-Before running any tests, verify all of the following:
-
-- [ ] **All 5 agents running**: `openclaw agent list` shows lead, voc-analyst, geo-optimizer, reddit-spec, tiktok-director all in `running` state
-- [ ] **OpenClaw runtime active**: `openclaw status` returns healthy
-- [ ] **openclaw.json configured**: All agent entries present with correct workspace paths and model assignments
-- [ ] **Skills installed**: Run skills verification table (Section 1.2) -- all P0 skills must pass
-- [ ] **API keys set**: All environment variables from Section 1.3 are configured with valid (non-placeholder) values
-- [ ] **Feishu apps connected**: At least the Lead Feishu app has valid (non-placeholder) appId and appSecret; WebSocket connection is established
-- [ ] **Workspace directories exist**: All 5 workspace directories under `~/.openclaw/` exist with SOUL.md files
-- [ ] **Disk space**: At least 5 GB free (TikTok video generation requires temporary storage)
-- [ ] **Network connectivity**: Outbound access to Volcengine (Seedance, doubao), Moonshot (Kimi K2.5), Brave Search, Reddit, Amazon APIs
-- [ ] **Test isolation**: No production data in workspace `data/` directories (or backed up)
-
-### 9.2 Test Execution Order
-
-Tests must be run in this order because later stages depend on earlier ones passing:
-
+**触发**（飞书）：
 ```
-Phase 1: Smoke Tests (5 minutes)
-  1.1 Agent health checks (all 5 agents)
-  1.2 Skills verification (all required skills)
-  1.3 Environment variable verification
-  1.4 sessions_send connectivity tests
-  --> STOP if any P0 smoke test fails. Fix before proceeding.
-
-Phase 2: Unit Tests (60-90 minutes)
-  2.1 VOC Analyst tests (V1-V6) -- ~20 min
-  2.2 GEO Optimizer tests (G1-G6) -- ~35 min
-  2.3 Reddit Specialist tests (R1-R6) -- ~15 min
-  2.4 TikTok Director tests (T1-T5) -- ~90 min (most time-intensive)
-  --> Run VOC + Reddit in parallel (different agents, no dependency)
-  --> Run GEO after VOC V1 passes (GEO needs VOC-format data)
-  --> Run TikTok tests independently (longest duration)
-  --> STOP if any P0 unit test fails. Fix before proceeding.
-
-Phase 3: Integration Tests (30-40 minutes)
-  3.1 Lead -> VOC dispatch test
-  3.2 Lead -> GEO dispatch test
-  3.3 Lead -> Reddit dispatch test
-  3.4 Lead -> TikTok dispatch test
-  3.5 VOC -> GEO data flow test (requires 3.1 + 3.2 passing)
-  3.6 VOC -> TikTok data flow test (requires 3.1 + 3.4 passing)
-  --> Run 3.1-3.4 sequentially (all go through Lead)
-  --> Run 3.5 and 3.6 after their dependencies pass
-  --> STOP if any P0 integration test fails. Fix before proceeding.
-
-Phase 4: E2E Scenarios (40-60 minutes)
-  4.1 Camping cot full pipeline (flagship scenario) -- ~20 min
-  4.2 Bluetooth earbuds partial pipeline -- ~12 min
-  4.3 Portable blender full pipeline -- ~20 min
-  --> Run sequentially to avoid resource contention
-
-Phase 5: Failure Injection Tests (30-40 minutes)
-  5.1 VOC timeout test
-  5.2 Reddit rate-limited test
-  5.3 Seedance API down test
-  5.4 Feishu disconnect test
-  5.5 Bad VOC JSON test
-  5.6 All agents timeout test
-  --> Run sequentially; each test modifies system state
-  --> Restore system to normal state after each test
+@Lead "调研蓝牙耳机市场，写内容，布局 Reddit。不需要视频。"
 ```
 
-**Total estimated duration**: 3-4 hours for full suite
+#### 分步执行
 
-### 9.3 How to Run Each Test Category
+| 步骤 | Agent | 动作 | 预期输出 | 耗时 |
+|------|-------|------|---------|:----:|
+| 1 | Lead | 解析意图，识别 3 个子任务（无 TikTok） | DAG：VOC -> GEO + Reddit | 约 5 秒 |
+| 2 | voc-analyst | 完整分析："蓝牙耳机"跨 Amazon、Reddit、YouTube | 痛点：电池耗尽快（34%）、运动时掉落（22%）、降噪差（18%）；价格区间 $20-35 | 约 3 分钟 |
+| 3a | geo-optimizer | 使用 VOC 痛点生成博客 + Amazon Listing | 博客："48 小时续航"数据点，4+ 耳机对比表，5+ 条 Q&A 的 FAQ，GEO 评分 >= 80。Amazon：标题含续航时长参数，5 条大写卖点 | 约 8 分钟 |
+| 3b | reddit-spec | 搜索 r/headphones、r/BuyItForLife、r/budgetaudiophile 中的高排名帖并撰写评论 | 找到 2-3 个目标帖，评论草稿回应电池/佩戴痛点，无链接 | 约 5 分钟 |
+| 4 | Lead | 汇总：VOC 报告 + 博客 + Listing + Reddit 推广状态 | 飞书汇总卡片（无视频部分） | 约 10 秒 |
 
-#### Smoke Tests
+**成功标准**：
+
+| # | 标准 |
+|---|------|
+| 1 | TikTok Agent 未被调用（Lead 正确排除） |
+| 2 | VOC 报告覆盖至少 3 个平台 |
+| 3 | GEO 博客引用 VOC 的电池续航数据（如"34% 的差评提及电池续航"） |
+| 4 | Amazon Listing 标题含数字续航参数（如"48-Hour"） |
+| 5 | Reddit 评论目标为 r/headphones 或 r/budgetaudiophile（不同于行军床场景的 subreddit） |
+| 6 | Reddit 评论在个人经历叙述中自然提及耳机 |
+| 7 | 飞书汇总卡片有 3 个板块（VOC + GEO + Reddit），无视频板块 |
+| 8 | 总时间 <= 12 分钟 |
+
+### 5.2 场景：便携榨汁机（全管线，不同产品品类）
+
+此场景使用不同产品品类、不同 subreddit 和不同 TikTok 漫画风格来测试完整 5-Agent 管线。
+
+**触发**（飞书）：
+```
+@Lead "全管线：便携榨汁机市场分析 + 全渠道。TikTok 风格：日式治愈系。"
+```
+
+#### 分步执行
+
+| 步骤 | Agent | 动作 | 预期输出 | 耗时 |
+|------|-------|------|---------|:----:|
+| 1 | Lead | 解析意图，创建 4 个子任务，记录 TikTok 风格偏好（japanese） | DAG：VOC + Reddit 搜索并行，然后 GEO + Reddit 评论 + TikTok 并行 | 约 5 秒 |
+| 2a | voc-analyst | 完整分析："便携榨汁机"跨 Amazon、Reddit、YouTube、Google Maps | 痛点：刀片打不碎冰块（38%）、电量太低（29%）、难清洗（21%）；价格 $25-45；BSR 前 50 | 约 3 分钟 |
+| 2b | reddit-spec | 搜索 r/BuyItForLife、r/Cooking、r/MealPrepSunday 中的高排名帖 | 3+ 条关于便携榨汁机的候选帖，已评估评分 | 约 2 分钟 |
+| 3a | geo-optimizer | 博客 + Amazon Listing + 产品描述（便携榨汁机） | 博客含碎冰测试数据、对比表、FAQ。Amazon Listing 含刀片数量参数。产品描述含 USB-C 充电细节。所有 GEO 评分 >= 80 | 约 10 分钟 |
+| 3b | reddit-spec | 使用 VOC 痛点（刀片、电池、清洗）为选中帖子撰写评论 | 2 条回应榨汁机特定痛点的评论，使用 r/Cooking 行话（"mise en place"、"batch prep"） | 约 4 分钟 |
+| 3c | tiktok-director | `japanese` 治愈风格 25 格分镜 + 15 秒视频 | 柔和粉彩色调、温暖光线、厨房/生活场景、碎冰演示产品展示、QA 综合评分 >= 7.0 | 约 12 分钟 |
+| 4 | Lead | 汇总全部 5 项交付物 | 飞书汇总卡片含所有板块（包括视频缩略图） | 约 10 秒 |
+
+**成功标准**：
+
+| # | 标准 |
+|---|------|
+| 1 | VOC 报告将碎冰能力识别为首要痛点并附频率数据 |
+| 2 | GEO 内容包含碎冰量化数据（如"15 秒内粉碎 10 块冰"） |
+| 3 | Reddit 评论目标为不同于行军床场景的 subreddit（r/Cooking、r/MealPrepSunday） |
+| 4 | Reddit 评论自然使用烹饪社区行话 |
+| 5 | TikTok 视频使用 `japanese` 漫画风格（volcengine 确认柔和粉彩、温暖光线） |
+| 6 | TikTok 分镜 pain_point 格展示碎冰演示 |
+| 7 | 飞书汇总中包含全部 5 项交付物 |
+| 8 | 无与其他测试运行的行军床数据交叉污染 |
+| 9 | 总时间 <= 20 分钟 |
+
+---
+
+## 6. 性能基准
+
+| 阶段 | Agent | 目标时间 | 最大可接受 | 说明 |
+|------|-------|:-------:|:--------:|------|
+| 任务拆解 | lead | 5 秒 | 15 秒 | 解析自然语言，生成 DAG |
+| VOC 完整分析（4 平台） | voc-analyst | 3 分钟 | 5 分钟 | Amazon、Reddit、YouTube、Google Maps 并行爬取 |
+| VOC 快速查询（1 平台） | voc-analyst | 1 分钟 | 2 分钟 | 单平台情感分析 |
+| GEO 博客生成 | geo-optimizer | 5 分钟 | 8 分钟 | 调研 + 草稿 + 规则检查 + 修订 |
+| GEO Amazon Listing 生成 | geo-optimizer | 3 分钟 | 5 分钟 | 竞品分析 + 草稿 + 规则检查 |
+| GEO 产品描述 | geo-optimizer | 3 分钟 | 4 分钟 | 功能-利益映射 + 草稿 |
+| Reddit 帖子搜索（Google 搜索） | reddit-spec | 1 分钟 | 2 分钟 | Brave Search 搜索高排名帖 |
+| Reddit 评论撰写（每条） | reddit-spec | 1 分钟 | 2 分钟 | 阅读帖子 + 撰写真诚评论 |
+| TikTok 分镜生成 | tiktok-director | 45 秒 | 90 秒 | doubao-seed-2.0-code 脚本生成 |
+| TikTok 图片生成（每帧） | tiktok-director | 30 秒 | 60 秒 | nano-banana-pro 单张图片 |
+| TikTok 视频生成（每段） | tiktok-director | 90 秒 | 120 秒 | Seedance 1.5 Pro 每 5-10 秒片段 |
+| TikTok QA 分析 | tiktok-director | 45 秒 | 60 秒 | volcengine-video-understanding 每个视频 |
+| TikTok 全流程（分镜到视频） | tiktok-director | 10 分钟 | 15 分钟 | 单个产品端到端 |
+| 结果汇总 | lead | 10 秒 | 30 秒 | 收集输出，格式化飞书卡片 |
+| **全管线（全部 5 个 Agent）** | **全部** | **15 分钟** | **20 分钟** | **行军床参考场景** |
+| 价格监控周期（20 个 ASIN） | voc-analyst | 2 分钟 | 3 分钟 | 每日定时任务 |
+
+---
+
+## 7. 故障注入测试
+
+这些测试验证单个组件故障时的系统韧性。
+
+### 7.1 VOC Agent 调研中途超时
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 触发 full_analysis 任务，在 voc-analyst 开始 Amazon 爬取后但 Reddit 爬取完成前终止其进程 |
+| **预期行为** | Lead 在配置的阈值（5 分钟）后检测到 voc-analyst 超时。Lead 汇报超时前已收到的部分结果。Lead 发送飞书消息："VOC 分析超时。部分数据可用。将使用可用结果继续。" |
+| **验证** | Lead 不崩溃。若已收到部分 Amazon 数据，则包含在报告中。GEO 和 TikTok 接收可用数据（可能质量降低）。飞书通知包含错误上下文。 |
+| **通过标准** | Lead 优雅处理超时、不无限挂起、向用户交付部分报告 |
+
+### 7.2 Reddit 被限流（429）
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 配置 reddit-readonly 返回 429 响应（通过设置无效频率限制头或耗尽配额模拟） |
+| **预期行为** | reddit-spec 检测到 429，使用指数退避重试（5 秒、15 秒、45 秒）。3 次重试后仍然失败，回退到 Decodo reddit_subreddit。若 Decodo 也失败，回退到 Brave Search 加 `site:reddit.com`。Lead 等待 reddit-spec 的响应或超时。 |
+| **验证** | 重试尝试记录在 `scrape_log.jsonl`。回退链按正确顺序执行。若所有 Reddit 来源均失败，reddit-spec 向 Lead 报告包含详情的失败信息。Lead 在无 Reddit 数据情况下继续下游任务。 |
+| **通过标准** | Agent 遵循重试/回退策略、不崩溃、报告清晰错误上下文 |
+
+### 7.3 Seedance API 宕机
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 阻断到 Seedance API 端点的出站连接（或设置无效 API 凭证） |
+| **预期行为** | tiktok-director 在视频生成步骤失败。分镜和图片素材仍成功生成。Agent 向 Lead 报告：`{ "status": "partial_failure", "completed": ["storyboard", "images"], "failed": ["video_generation"], "error": "Seedance API unreachable" }`。Lead 将其他结果（VOC、GEO、Reddit）交付用户（无视频）。飞书卡片包含备注："视频生成不可用。已交付分镜和关键帧。" |
+| **验证** | Lead 向用户交付 4/5 交付物。飞书卡片格式正确无视频部分。分镜 JSON 和图片可访问。无级联故障影响其他 Agent。 |
+| **通过标准** | 系统交付部分结果、视频故障不阻塞其他 Agent |
+
+### 7.4 飞书 WebSocket 断开
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 在管线执行中途断开飞书 WebSocket 连接（Lead 已派发任务但尚未最终汇总） |
+| **预期行为** | Lead 检测到 WebSocket 断开。Lead 使用指数退避尝试重连。Agent 管线继续执行（sessions_send 独立于飞书）。WebSocket 重连后，Lead 交付排队的飞书汇总卡片。若 5 次重连均失败，Lead 将完成的结果记录到工作区供手动提取。 |
+| **验证** | Agent 间通信（sessions_send）不受飞书断开影响。结果不丢失。排队消息在重连后交付。若重连失败，结果保存到磁盘。 |
+| **通过标准** | 飞书断开不影响 Agent 管线执行，重连后消息正常交付 |
+
+### 7.5 VOC 返回坏数据（畸形 JSON）
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 在 VOC 的 sessions_send 响应中注入畸形 JSON（如截断 JSON、缺失必需字段、无效数据类型） |
+| **预期行为** | Lead 检测到 JSON 解析错误或 schema 验证失败。Lead 不将畸形数据转发给 GEO 或 TikTok。Lead 请求 VOC 重试（一次重试机会）。若重试也失败，Lead 向用户报告："市场分析返回无效数据。请重试。" GEO 和 TikTok 绝不会收到垃圾数据。 |
+| **验证** | Lead 在路由前执行输入验证。GEO/TikTok 绝不收到垃圾数据。错误连同畸形载荷一并记录，便于调试。飞书通知清晰且可操作。 |
+| **通过标准** | 畸形数据在 Lead 处被拦截、绝不传播到下游 |
+
+### 7.6 全部 Agent 超时
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 在 Lead 派发任务后终止全部 4 个工作 Agent（voc-analyst、geo-optimizer、reddit-spec、tiktok-director） |
+| **预期行为** | Lead 等待每个 Agent 的配置超时。每个 Agent 超时后，Lead 记录失败。全部 Agent 超时后，Lead 向人类升级：飞书消息"所有 Agent 无响应。未收集到数据。需要人工干预。"Lead 附带诊断信息：哪些 Agent 不可达、时间戳、最后已知状态。 |
+| **验证** | Lead 不会永久挂起。超时有上限（所有 Agent 最多 10 分钟）。飞书升级包含可操作的诊断信息。Agent 重启后系统可恢复，无需手动清理。 |
+| **通过标准** | Lead 清晰升级、不死锁、提供诊断信息 |
+
+### 7.7 模型 API 配额耗尽
+
+| 项目 | 详情 |
+|------|------|
+| **配置** | 在任务执行中途耗尽 doubao-seed-2.0-code 或 Kimi K2.5 的 API 配额 |
+| **预期行为** | 受影响 Agent 收到 API 错误（429 或配额超限）。Agent 通过 sessions_send 向 Lead 报告具体错误。Lead 进行调整：若执行层模型（Kimi K2.5）宕机，任务无法重新路由（不同模型类型）。Lead 向用户报告哪些能力受到影响。 |
+| **验证** | 清晰的错误报告含模型名称和配额详情。无静默失败。用户被告知哪些功能暂时不可用。 |
+| **通过标准** | 配额耗尽被清晰报告、不导致崩溃或数据损坏 |
+
+---
+
+## 8. 成功标准矩阵
+
+| 测试类别 | 测试名称 | 通过标准 | 失败标准 | 优先级 |
+|---------|---------|---------|---------|:------:|
+| **冒烟** | Agent 健康检查（全部 5 个） | 5 个 Agent 全部在 10 秒内返回 alive | 任一 Agent 在 10 秒后无响应 | P0 |
+| **冒烟** | Skill 验证 | 所有必需 Skill 响应测试命令 | 任一 P0 Skill 无响应 | P0 |
+| **冒烟** | 环境变量 | 所有必需环境变量已设置且非空 | 任一必需环境变量缺失 | P0 |
+| **冒烟** | sessions_send 连通性 | 全部 5 对 Agent 完成 echo 测试 | 任一对无法通信 | P0 |
+| **单元** | VOC 完整分析（V1） | JSON 报告有效，>= 3 痛点，source_count >= 2，置信度 HIGH/MEDIUM | 无效 JSON、< 3 痛点或 NONE 置信度 | P0 |
+| **单元** | VOC 优雅降级（V4） | 报告以 3/4 数据源生成，错误已记录 | Agent 崩溃或无报告生成 | P1 |
+| **单元** | VOC 空数据处理（V6） | 判定 INSUFFICIENT_DATA、无崩溃 | 崩溃、捏造数据或挂起 | P1 |
+| **单元** | GEO 博客（G1） | GEO 评分 >= 80、6+ 引用、含 FAQ、含对比表 | GEO 评分 < 60 或 HARD FAIL 违规 | P0 |
+| **单元** | GEO 规则违规检测（G4） | 全部 5 个故意违规均被检出，评分 < 40 | 任一违规被遗漏 | P1 |
+| **单元** | GEO 多格式输出（G5） | 3 种格式生成，全部评分 >= 80，使用相同 VOC 数据 | 任一格式缺失或评分 < 60 | P1 |
+| **单元** | Reddit W2 评论（R1） | 零产品提及、spam 评分 < 0.1、100-200 词 | 提及产品或 spam 评分 >= 0.3 | P0 |
+| **单元** | Reddit W4 软性推荐（R2） | 产品提及一次、含替代品、spam < 0.2 | 多次提及产品、无替代品或含链接 | P0 |
+| **单元** | Reddit 流量截取（R6） | 帖子已找到、已评估、评论已撰写、无链接 | 未找到帖子或评论含直接链接 | P1 |
+| **单元** | TikTok UGC 视频（T1） | 25 格、15 秒视频、QA >= 7.0、含呼吸感运镜 | QA < 6.0、时长错误或静态开场 | P0 |
+| **单元** | TikTok 漫画剧情（T2） | 角色一致性、风格一致性、单场景 QA >= 6.5 | 角色不一致或风格错误 | P1 |
+| **单元** | TikTok QA 失败恢复（T5） | 识别不足、定向重生成、<= 3 次尝试 | 误报 QA、全量重生成而非定向、或 > 3 次尝试 | P1 |
+| **集成** | Lead -> VOC 派发（3.1） | 5 分钟内响应、有效 schema、request_id 匹配 | 超时、无效 schema 或错误 request_id | P0 |
+| **集成** | Lead -> GEO 派发（3.2） | 10 分钟内响应、GEO 评分 >= 80、无 HARD FAIL | 超时或输出中有 HARD FAIL 违规 | P0 |
+| **集成** | Lead -> Reddit 派发（3.3） | 2 分钟内确认、列出符合条件账号 | 超时或无符合条件账号 | P1 |
+| **集成** | Lead -> TikTok 派发（3.4） | 15 分钟内交付视频、QA >= 7.0 | 超时或 QA < 6.0 | P0 |
+| **集成** | VOC -> GEO 数据流（3.5） | GEO 内容准确引用 VOC 痛点数据 | GEO 捏造 VOC 报告中不存在的数据 | P0 |
+| **集成** | VOC -> TikTok 数据流（3.6） | 分镜 pain_point 格引用 VOC 问题 | 分镜忽略 VOC 数据 | P1 |
+| **E2E** | 行军床全管线（4） | 5 项交付物齐全、总时间 <= 20 分钟、飞书卡片已发 | 任一交付物缺失或总时间 > 25 分钟 | P0 |
+| **E2E** | 蓝牙耳机部分管线（5.1） | 3 项交付物（无 TikTok）、TikTok 被正确排除、总时间 <= 12 分钟 | TikTok 被调用或 > 15 分钟 | P1 |
+| **E2E** | 便携榨汁机全管线（5.2） | 5 项交付物齐全、japanese 风格确认、不同 subreddit | 风格错误或与行军床相同 subreddit | P1 |
+| **故障** | VOC 超时（7.1） | Lead 报告部分结果、不挂起 | Lead 挂起或崩溃 | P0 |
+| **故障** | Reddit 被限流（7.2） | 重试 + 回退链执行、错误已报告 | Agent 因 429 崩溃 | P1 |
+| **故障** | Seedance API 宕机（7.3） | 交付 4/5 交付物、视频部分省略 | 所有交付物被视频故障阻塞 | P0 |
+| **故障** | 飞书断开（7.4） | 管线继续执行、重连后消息交付 | 管线中断或数据丢失 | P0 |
+| **故障** | VOC 坏 JSON（7.5） | 畸形数据在 Lead 处拦截、不转发 | GEO/TikTok 收到垃圾数据 | P0 |
+| **故障** | 全部 Agent 超时（7.6） | Lead 向人类升级并附诊断信息、不死锁 | Lead 死锁或发送空报告 | P0 |
+
+---
+
+## 9. 测试执行手册
+
+### 9.1 前置条件检查清单
+
+运行任何测试前，验证以下所有项目：
+
+- [ ] **全部 5 个 Agent 运行中**：`openclaw agent list` 显示 lead、voc-analyst、geo-optimizer、reddit-spec、tiktok-director 均为 `running` 状态
+- [ ] **OpenClaw 运行时正常**：`openclaw status` 返回 healthy
+- [ ] **openclaw.json 已配置**：所有 Agent 条目存在，工作区路径和模型分配正确
+- [ ] **Skill 已安装**：运行 Skill 验证表（1.2 节）—— 所有 P0 Skill 必须通过
+- [ ] **API 密钥已配置**：1.3 节所有环境变量已配置有效（非占位符）值
+- [ ] **飞书应用已连接**：至少 Lead 飞书应用有有效（非占位符）的 appId 和 appSecret；WebSocket 连接已建立
+- [ ] **工作区目录存在**：`~/.openclaw/` 下全部 5 个工作区目录存在且包含 SOUL.md 文件
+- [ ] **磁盘空间**：至少 5 GB 可用（TikTok 视频生成需要临时存储）
+- [ ] **网络连通性**：可出站访问 Volcengine（Seedance、doubao）、Moonshot（Kimi K2.5）、Brave Search、Reddit、Amazon API
+- [ ] **测试隔离**：工作区 `data/` 目录中无生产数据（或已备份）
+
+### 9.2 测试执行顺序
+
+测试必须按此顺序执行，因为后续阶段依赖前置阶段通过：
+
+```
+阶段 1：冒烟测试（5 分钟）
+  1.1 Agent 健康检查（全部 5 个 Agent）
+  1.2 Skill 验证（所有必需 Skill）
+  1.3 环境变量验证
+  1.4 sessions_send 连通性测试
+  --> 任一 P0 冒烟测试失败则停止。修复后再继续。
+
+阶段 2：单元测试（60-90 分钟）
+  2.1 VOC Analyst 测试（V1-V6）—— 约 20 分钟
+  2.2 GEO Optimizer 测试（G1-G6）—— 约 35 分钟
+  2.3 Reddit Specialist 测试（R1-R6）—— 约 15 分钟
+  2.4 TikTok Director 测试（T1-T5）—— 约 90 分钟（最耗时）
+  --> VOC + Reddit 可并行运行（不同 Agent，无依赖）
+  --> GEO 在 VOC V1 通过后运行（GEO 需要 VOC 格式数据）
+  --> TikTok 测试独立运行（耗时最长）
+  --> 任一 P0 单元测试失败则停止。修复后再继续。
+
+阶段 3：集成测试（30-40 分钟）
+  3.1 Lead -> VOC 派发测试
+  3.2 Lead -> GEO 派发测试
+  3.3 Lead -> Reddit 派发测试
+  3.4 Lead -> TikTok 派发测试
+  3.5 VOC -> GEO 数据流测试（需 3.1 + 3.2 通过）
+  3.6 VOC -> TikTok 数据流测试（需 3.1 + 3.4 通过）
+  --> 3.1-3.4 按顺序执行（均经过 Lead）
+  --> 3.5 和 3.6 在依赖通过后执行
+  --> 任一 P0 集成测试失败则停止。修复后再继续。
+
+阶段 4：E2E 场景（40-60 分钟）
+  4.1 行军床全管线（旗舰场景）—— 约 20 分钟
+  4.2 蓝牙耳机部分管线 —— 约 12 分钟
+  4.3 便携榨汁机全管线 —— 约 20 分钟
+  --> 按顺序运行以避免资源争用
+
+阶段 5：故障注入测试（30-40 分钟）
+  5.1 VOC 超时测试
+  5.2 Reddit 限流测试
+  5.3 Seedance API 宕机测试
+  5.4 飞书断开测试
+  5.5 VOC 坏 JSON 测试
+  5.6 全部 Agent 超时测试
+  --> 按顺序运行；每个测试会修改系统状态
+  --> 每个测试后恢复系统到正常状态
+```
+
+**总预计耗时**：完整套件 3-4 小时
+
+### 9.3 各测试类别执行方法
+
+#### 冒烟测试
 ```bash
-# Run all smoke tests
+# 运行全部冒烟测试
 openclaw test smoke --config ~/.openclaw/openclaw.json --verbose
 
-# Or run individually
+# 或逐个运行
 openclaw agent ping lead
 openclaw agent ping voc-analyst
 openclaw agent ping geo-optimizer
 openclaw agent ping reddit-spec
 openclaw agent ping tiktok-director
 
-# Skills verification
+# Skill 验证
 for skill in decodo reddit-readonly brave-search apify tavily firecrawl \
             nano-banana-pro seedance-video manga-style-video manga-drama \
             volcengine-video-understanding; do
   openclaw skill test $skill && echo "$skill: PASS" || echo "$skill: FAIL"
 done
 
-# Environment variable check
+# 环境变量检查
 for var in DECODO_AUTH_TOKEN BRAVE_API_KEY APIFY_TOKEN TAVILY_API_KEY \
            FEISHU_WEBHOOK_URL; do
   test -n "${!var}" && echo "$var: SET" || echo "$var: MISSING"
 done
 ```
 
-#### Unit Tests
+#### 单元测试
 ```bash
-# VOC tests -- send test payloads via sessions_send
+# VOC 测试 —— 通过 sessions_send 发送测试载荷
 openclaw test unit --agent voc-analyst --test-suite plans/test-payloads/voc-tests.json
 
-# GEO tests
+# GEO 测试
 openclaw test unit --agent geo-optimizer --test-suite plans/test-payloads/geo-tests.json
 
-# Reddit tests
+# Reddit 测试
 openclaw test unit --agent reddit-spec --test-suite plans/test-payloads/reddit-tests.json
 
-# TikTok tests
+# TikTok 测试
 openclaw test unit --agent tiktok-director --test-suite plans/test-payloads/tiktok-tests.json
 ```
 
-#### Integration Tests
+#### 集成测试
 ```bash
-# Run integration test suite (sends messages via Lead, validates round-trips)
+# 运行集成测试套件（通过 Lead 发送消息，验证往返通信）
 openclaw test integration --config ~/.openclaw/openclaw.json \
   --test-suite plans/test-payloads/integration-tests.json \
-  --timeout 1200  # 20 minute timeout
+  --timeout 1200  # 20 分钟超时
 ```
 
-#### E2E Tests
+#### E2E 测试
 ```bash
-# Camping cot scenario
+# 行军床场景
 openclaw test e2e --scenario "camping-cot" \
   --trigger "Feishu message" \
-  --message "Analyze camping folding bed market, full channel push" \
+  --message "分析行军折叠床市场，全渠道内容推送" \
   --timeout 1200
 
-# Bluetooth earbuds scenario
+# 蓝牙耳机场景
 openclaw test e2e --scenario "bluetooth-earbuds" \
   --trigger "Feishu message" \
-  --message "Research bluetooth earbuds, write content, seed Reddit, no video" \
+  --message "调研蓝牙耳机，写内容，布局 Reddit，不需要视频" \
   --timeout 900
 
-# Portable blender scenario
+# 便携榨汁机场景
 openclaw test e2e --scenario "portable-blender" \
   --trigger "Feishu message" \
-  --message "Full pipeline: portable blender, all channels, TikTok style japanese" \
+  --message "全管线：便携榨汁机，全渠道，TikTok 风格 japanese" \
   --timeout 1200
 ```
 
-#### Failure Injection Tests
+#### 故障注入测试
 ```bash
-# Each failure test requires setup, execution, and teardown
-# Run with the failure injection framework
+# 每个故障测试需要配置、执行和清理
+# 使用故障注入框架运行
 openclaw test failure --test voc-timeout --setup "kill voc-analyst after 30s"
 openclaw test failure --test reddit-429 --setup "mock reddit-readonly to return 429"
 openclaw test failure --test seedance-down --setup "block seedance API endpoint"
@@ -807,94 +807,94 @@ openclaw test failure --test bad-voc-json --setup "inject malformed JSON in voc-
 openclaw test failure --test all-timeout --setup "kill all worker agents after dispatch"
 ```
 
-### 9.4 How to Collect and Review Results
+### 9.4 结果收集与审查方法
 
-**Log Locations**:
+**日志位置**：
 ```
-~/.openclaw/workspace-lead/logs/          # Lead agent logs
-~/.openclaw/workspace-voc/logs/           # VOC agent logs + scrape_log.jsonl
-~/.openclaw/workspace-geo/data/quality-logs/  # GEO quality score history
-~/.openclaw/workspace-reddit/logs/        # Reddit agent logs
-~/.openclaw/workspace-reddit/data/monitoring/  # Shadowban checks, comment performance
-~/.openclaw/workspace-tiktok/data/performance-log.json  # TikTok QA scores, render times
+~/.openclaw/workspace-lead/logs/          # Lead Agent 日志
+~/.openclaw/workspace-voc/logs/           # VOC Agent 日志 + scrape_log.jsonl
+~/.openclaw/workspace-geo/data/quality-logs/  # GEO 质量评分历史
+~/.openclaw/workspace-reddit/logs/        # Reddit Agent 日志
+~/.openclaw/workspace-reddit/data/monitoring/  # Shadowban 检查、评论表现
+~/.openclaw/workspace-tiktok/data/performance-log.json  # TikTok QA 评分、渲染耗时
 ```
 
-**Result Collection Script**:
+**结果收集脚本**：
 ```bash
 #!/bin/bash
-# Collect all test results into a single directory
+# 将所有测试结果收集到单个目录
 RESULTS_DIR="test-results/$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$RESULTS_DIR"
 
-# Copy agent logs
+# 复制 Agent 日志
 for ws in workspace-lead workspace-voc workspace-geo workspace-reddit workspace-tiktok; do
   mkdir -p "$RESULTS_DIR/$ws"
   cp -r ~/.openclaw/$ws/logs/* "$RESULTS_DIR/$ws/" 2>/dev/null
 done
 
-# Copy GEO quality logs
+# 复制 GEO 质量日志
 cp ~/.openclaw/workspace-geo/data/quality-logs/score-history.jsonl "$RESULTS_DIR/geo-scores.jsonl" 2>/dev/null
 
-# Copy TikTok performance log
+# 复制 TikTok 性能日志
 cp ~/.openclaw/workspace-tiktok/data/performance-log.json "$RESULTS_DIR/tiktok-performance.json" 2>/dev/null
 
-# Copy VOC scrape log
+# 复制 VOC 爬取日志
 cp ~/.openclaw/workspace-voc/data/logs/scrape_log.jsonl "$RESULTS_DIR/voc-scrape-log.jsonl" 2>/dev/null
 
-# Generate summary
+# 生成摘要
 echo "Test run completed at $(date)" > "$RESULTS_DIR/SUMMARY.md"
 echo "Results directory: $RESULTS_DIR"
 ```
 
-**Review Checklist**:
-1. Check `SUMMARY.md` for overall pass/fail counts
-2. Review any FAIL results -- examine the specific agent logs for error details
-3. For GEO tests: check `geo-scores.jsonl` for score distribution
-4. For TikTok tests: check `tiktok-performance.json` for QA scores and render times
-5. For VOC tests: check `voc-scrape-log.jsonl` for scrape success rates
-6. Cross-reference timestamps to verify timing benchmarks
-7. Check error logs for any unhandled exceptions
+**审查清单**：
+1. 检查 `SUMMARY.md` 了解总体通过/失败数
+2. 审查所有 FAIL 结果 —— 查看具体 Agent 日志了解错误详情
+3. GEO 测试：检查 `geo-scores.jsonl` 了解评分分布
+4. TikTok 测试：检查 `tiktok-performance.json` 了解 QA 评分和渲染耗时
+5. VOC 测试：检查 `voc-scrape-log.jsonl` 了解爬取成功率
+6. 交叉比对时间戳验证耗时基准
+7. 检查错误日志中是否有未处理异常
 
-### 9.5 How to Handle Failures During Test Run
+### 9.5 测试运行中故障处理方法
 
-| Failure Type | Action |
-|-------------|--------|
-| P0 smoke test fails | STOP all testing. Fix the root cause (agent down, skill missing, env var unset). Re-run smoke suite. |
-| P0 unit test fails | STOP testing for that agent. Debug using agent logs. Fix and re-run that specific test. Continue with other agents. |
-| P1 unit test fails | Log the failure. Continue with remaining tests. Address after all P0 tests pass. |
-| Integration test fails | Check both sender and receiver agent logs. Verify sessions_send is working (re-run connectivity smoke test). Check for schema mismatches in message payloads. |
-| E2E test fails | Identify which step failed from Lead's aggregation log. Run the failing step's integration test in isolation. Check for timing issues (increase timeout if close to threshold). |
-| Failure injection test fails | Verify the failure was properly injected (check that the simulated failure actually occurred). Review the agent's error handling code path. |
-| Test infrastructure issue | If OpenClaw runtime itself is unstable, restart runtime and re-run from smoke tests. |
+| 故障类型 | 处理方式 |
+|---------|---------|
+| P0 冒烟测试失败 | 停止所有测试。修复根因（Agent 宕机、Skill 缺失、环境变量未设置）。重新运行冒烟套件。 |
+| P0 单元测试失败 | 停止该 Agent 的测试。使用 Agent 日志调试。修复并重新运行该特定测试。继续其他 Agent。 |
+| P1 单元测试失败 | 记录故障。继续剩余测试。在所有 P0 测试通过后再处理。 |
+| 集成测试失败 | 检查发送方和接收方 Agent 日志。验证 sessions_send 正常（重新运行连通性冒烟测试）。检查消息载荷中的 schema 不匹配。 |
+| E2E 测试失败 | 从 Lead 的汇总日志中识别失败步骤。单独运行失败步骤的集成测试。检查时间问题（若接近阈值则增加超时）。 |
+| 故障注入测试失败 | 验证故障已正确注入（确认模拟的故障确实发生了）。审查 Agent 的错误处理代码路径。 |
+| 测试基础设施问题 | 若 OpenClaw 运行时本身不稳定，重启运行时并从冒烟测试重新开始。 |
 
 ---
 
-## 10. Monitoring and Observability
+## 10. 监控与可观测性
 
-### 10.1 Agent Health Dashboard (Concept)
+### 10.1 Agent 健康仪表盘（概念）
 
-Track the following metrics per agent in a centralized dashboard:
+为每个 Agent 在集中仪表盘中跟踪以下指标：
 
-| Metric | lead | voc-analyst | geo-optimizer | reddit-spec | tiktok-director |
-|--------|:----:|:-----------:|:-------------:|:-----------:|:---------------:|
-| **Status** | alive/dead | alive/dead | alive/dead | alive/dead | alive/dead |
-| **Last Heartbeat** | timestamp | timestamp | timestamp | timestamp | timestamp |
-| **Active Tasks** | count | count | count | count | count |
-| **Tasks Completed (24h)** | count | count | count | count | count |
-| **Error Rate (24h)** | % | % | % | % | % |
-| **Avg Response Time** | seconds | seconds | seconds | seconds | seconds |
-| **Model API Latency** | ms | ms | ms | ms | ms |
-| **Token Usage (24h)** | count | count | count | count | count |
-| **Estimated Cost (24h)** | RMB | RMB | RMB | RMB | RMB |
+| 指标 | lead | voc-analyst | geo-optimizer | reddit-spec | tiktok-director |
+|------|:----:|:-----------:|:-------------:|:-----------:|:---------------:|
+| **状态** | alive/dead | alive/dead | alive/dead | alive/dead | alive/dead |
+| **最后心跳** | 时间戳 | 时间戳 | 时间戳 | 时间戳 | 时间戳 |
+| **活跃任务数** | 数量 | 数量 | 数量 | 数量 | 数量 |
+| **已完成任务（24h）** | 数量 | 数量 | 数量 | 数量 | 数量 |
+| **错误率（24h）** | % | % | % | % | % |
+| **平均响应时间** | 秒 | 秒 | 秒 | 秒 | 秒 |
+| **模型 API 延迟** | 毫秒 | 毫秒 | 毫秒 | 毫秒 | 毫秒 |
+| **Token 用量（24h）** | 数量 | 数量 | 数量 | 数量 | 数量 |
+| **预估成本（24h）** | 元 | 元 | 元 | 元 | 元 |
 
-**Implementation**: Use a lightweight monitoring script that polls each agent's health endpoint every 60 seconds and writes metrics to a JSON file. Visualize with a simple HTML dashboard or terminal-based tool.
+**实现方式**：使用轻量监控脚本每 60 秒轮询各 Agent 健康端点并将指标写入 JSON 文件。使用简单 HTML 仪表盘或终端工具可视化。
 
-### 10.2 Log Aggregation Strategy
+### 10.2 日志聚合策略
 
-Each agent writes logs to its own workspace. For centralized viewing:
+每个 Agent 将日志写入自己的工作区。集中查看方式：
 
 ```
-Log Sources:
+日志来源：
   ~/.openclaw/workspace-lead/logs/agent-activity.log
   ~/.openclaw/workspace-voc/logs/scrape_log.jsonl
   ~/.openclaw/workspace-voc/data/logs/scrape_log.jsonl
@@ -903,23 +903,23 @@ Log Sources:
   ~/.openclaw/workspace-reddit/data/monitoring/alerts.jsonl
   ~/.openclaw/workspace-tiktok/data/performance-log.json
 
-Aggregation Approach:
-  1. Each agent logs in JSONL format (one JSON object per line)
-  2. A cron job (every 5 minutes) tails new entries from all log files
-  3. Entries are tagged with agent_id and written to a central log:
+聚合方案：
+  1. 每个 Agent 以 JSONL 格式记录日志（每行一个 JSON 对象）
+  2. 定时任务（每 5 分钟）从所有日志文件中追尾新条目
+  3. 条目打上 agent_id 标签后写入中央日志：
      ~/.openclaw/logs/aggregated.jsonl
-  4. Central log can be queried with jq for debugging:
+  4. 中央日志可使用 jq 查询调试：
      cat ~/.openclaw/logs/aggregated.jsonl | jq 'select(.agent=="voc-analyst" and .level=="error")'
 ```
 
-**Log Format Standard** (all agents should follow):
+**日志格式标准**（所有 Agent 应遵循）：
 ```json
 {
   "timestamp": "2026-03-05T14:30:00+08:00",
   "agent": "voc-analyst",
   "level": "info|warn|error",
   "event": "scrape_complete|task_received|task_completed|error_occurred",
-  "message": "Human-readable description",
+  "message": "人类可读描述",
   "metadata": {
     "request_id": "req_20260305_001",
     "duration_ms": 4200,
@@ -928,24 +928,24 @@ Aggregation Approach:
 }
 ```
 
-### 10.3 Alert Triggers
+### 10.3 告警触发条件
 
-| Alert | Condition | Severity | Notification Channel | Action |
-|-------|-----------|:--------:|:--------------------:|--------|
-| Agent down | Health check fails 3 consecutive times | CRITICAL | Feishu + Telegram | Restart agent, investigate root cause |
-| Task timeout | Any task exceeds 2x its max acceptable time | HIGH | Feishu | Check agent logs, possible API issue |
-| Error rate spike | Agent error rate > 20% in rolling 1-hour window | HIGH | Feishu | Review error logs, check API status |
-| Model API error | Model returns 5xx or quota exceeded | HIGH | Feishu + Telegram | Check API dashboard, switch to backup model if available |
-| Scrape failure rate | VOC scrape success rate < 70% in 24h | MEDIUM | Feishu | Check platform accessibility, update scrape configs |
-| GEO quality drop | Average GEO score < 75 over last 10 outputs | MEDIUM | Feishu | Review rules engine, check citation source availability |
-| Reddit account alert | Shadowban detected or moderator action | HIGH | Feishu | Halt account activity, follow recovery protocol |
-| TikTok QA failure rate | > 40% of videos fail QA on first attempt | MEDIUM | Feishu | Review storyboard templates, check Seedance output quality |
-| Disk space low | < 2 GB free on Mac mini | HIGH | Feishu + Telegram | Clean old video files, archive reports |
-| Cost threshold | Daily API cost exceeds budget by 50% | MEDIUM | Feishu | Review token usage, identify expensive operations |
+| 告警 | 条件 | 严重级别 | 通知渠道 | 处理方式 |
+|------|------|:-------:|:------:|---------|
+| Agent 宕机 | 健康检查连续 3 次失败 | 严重 | 飞书 + Telegram | 重启 Agent，排查根因 |
+| 任务超时 | 任一任务超过最大可接受时间 2 倍 | 高 | 飞书 | 检查 Agent 日志，可能 API 问题 |
+| 错误率飙升 | Agent 滚动 1 小时错误率 > 20% | 高 | 飞书 | 审查错误日志，检查 API 状态 |
+| 模型 API 错误 | 模型返回 5xx 或配额超限 | 高 | 飞书 + Telegram | 检查 API 仪表盘，切换备用模型（如有） |
+| 爬取失败率 | VOC 24 小时爬取成功率 < 70% | 中 | 飞书 | 检查平台可访问性，更新爬取配置 |
+| GEO 质量下降 | 最近 10 篇输出平均 GEO 评分 < 75 | 中 | 飞书 | 审查规则引擎，检查引用来源可用性 |
+| Reddit 账号告警 | 检测到 shadowban 或版主操作 | 高 | 飞书 | 暂停账号活动，执行恢复协议 |
+| TikTok QA 失败率 | > 40% 的视频首次 QA 失败 | 中 | 飞书 | 审查分镜模板，检查 Seedance 输出质量 |
+| 磁盘空间不足 | Mac Mini 可用空间 < 2 GB | 高 | 飞书 + Telegram | 清理旧视频文件，归档报告 |
+| 成本超限 | 日 API 成本超预算 50% | 中 | 飞书 | 审查 token 用量，识别高开销操作 |
 
-### 10.4 Token/Cost Tracking per Agent per Task
+### 10.4 每 Agent 每任务的 Token/成本追踪
 
-**Tracking Schema** (appended to each task's metadata):
+**追踪 Schema**（附加到每个任务的元数据中）：
 ```json
 {
   "cost_tracking": {
@@ -968,37 +968,37 @@ Aggregation Approach:
 }
 ```
 
-**Daily Cost Aggregation** (cron job at 23:59):
+**每日成本汇总**（定时任务于 23:59 执行）：
 ```
-Report Format:
-  Date: 2026-03-05
-  Total Tasks: 12
-  Total Cost: 45.60 RMB ($6.30 USD)
+报告格式：
+  日期：2026-03-05
+  总任务数：12
+  总成本：45.60 元（$6.30 USD）
 
-  By Agent:
-    lead:           2.10 RMB (model tokens only)
-    voc-analyst:    8.40 RMB (model + scrape APIs)
-    geo-optimizer:  5.20 RMB (model + search APIs)
-    reddit-spec:    3.80 RMB (model + search APIs)
-    tiktok-director: 26.10 RMB (model + image + video gen)
+  按 Agent：
+    lead：           2.10 元（仅模型 token）
+    voc-analyst：    8.40 元（模型 + 爬取 API）
+    geo-optimizer：  5.20 元（模型 + 搜索 API）
+    reddit-spec：    3.80 元（模型 + 搜索 API）
+    tiktok-director：26.10 元（模型 + 图片 + 视频生成）
 
-  By Cost Type:
-    Model API:      18.50 RMB
-    Image Gen:       7.20 RMB
-    Video Gen:      15.00 RMB
-    Search APIs:     3.50 RMB
-    Scraping APIs:   1.40 RMB
+  按成本类型：
+    模型 API：      18.50 元
+    图片生成：       7.20 元
+    视频生成：      15.00 元
+    搜索 API：       3.50 元
+    爬取 API：       1.40 元
 ```
 
-### 10.5 Basic Monitoring Setup on Mac Mini
+### 10.5 Mac Mini 基础监控配置
 
-**Step 1: Health Check Cron**
+**步骤一：健康检查定时任务**
 ```bash
-# Add to crontab: runs every 2 minutes
+# 添加到 crontab：每 2 分钟运行
 */2 * * * * ~/.openclaw/scripts/health-check.sh >> ~/.openclaw/logs/health-check.log 2>&1
 ```
 
-**health-check.sh**:
+**health-check.sh**：
 ```bash
 #!/bin/bash
 TIMESTAMP=$(date +%Y-%m-%dT%H:%M:%S%z)
@@ -1008,7 +1008,7 @@ for agent in lead voc-analyst geo-optimizer reddit-spec tiktok-director; do
     echo "{\"timestamp\":\"$TIMESTAMP\",\"agent\":\"$agent\",\"status\":\"alive\"}"
   else
     echo "{\"timestamp\":\"$TIMESTAMP\",\"agent\":\"$agent\",\"status\":\"dead\"}"
-    # Send alert if agent is down
+    # Agent 宕机时发送告警
     curl -s -X POST "$FEISHU_WEBHOOK_URL" \
       -H "Content-Type: application/json" \
       -d "{\"msg_type\":\"text\",\"content\":{\"text\":\"ALERT: Agent $agent is DOWN at $TIMESTAMP\"}}"
@@ -1016,43 +1016,43 @@ for agent in lead voc-analyst geo-optimizer reddit-spec tiktok-director; do
 done
 ```
 
-**Step 2: Log Aggregation Cron**
+**步骤二：日志聚合定时任务**
 ```bash
-# Runs every 5 minutes
+# 每 5 分钟运行
 */5 * * * * ~/.openclaw/scripts/aggregate-logs.sh >> /dev/null 2>&1
 ```
 
-**Step 3: Daily Cost Report Cron**
+**步骤三：每日成本报告定时任务**
 ```bash
-# Runs at 23:59 daily
+# 每日 23:59 运行
 59 23 * * * ~/.openclaw/scripts/daily-cost-report.sh >> ~/.openclaw/logs/cost-reports.log 2>&1
 ```
 
-**Step 4: Disk Space Monitor**
+**步骤四：磁盘空间监控**
 ```bash
-# Runs every hour
+# 每小时运行
 0 * * * * df -h / | awk 'NR==2{if(int($5)>90) system("curl -s -X POST $FEISHU_WEBHOOK_URL -H \"Content-Type: application/json\" -d \"{\\\"msg_type\\\":\\\"text\\\",\\\"content\\\":{\\\"text\\\":\\\"ALERT: Disk usage at " $5 "\\\"}}\"")}'
 ```
 
-**Dashboard Access**: Open `~/.openclaw/dashboard/index.html` in a browser to view the health dashboard (a simple HTML page that reads from the JSONL health check log and renders status cards).
+**仪表盘访问**：在浏览器中打开 `~/.openclaw/dashboard/index.html` 查看健康仪表盘（一个简单的 HTML 页面，读取 JSONL 健康检查日志并渲染状态卡片）。
 
 ---
 
-## Appendix A: Test Data Files
+## 附录 A：测试数据文件
 
-Test payloads should be saved to `/Users/kinghinchan/e-commerce-claw/plans/test-payloads/` and referenced by the test execution scripts. Each test scenario in Sections 2-5 should have a corresponding JSON payload file.
+测试载荷应保存到 `/Users/kinghinchan/e-commerce-claw/plans/test-payloads/`，并被测试执行脚本引用。第 2-5 节中的每个测试场景应有对应的 JSON 载荷文件。
 
-## Appendix B: Glossary
+## 附录 B：术语表
 
-| Term | Definition |
-|------|-----------|
-| sessions_send | OpenClaw's native Agent-to-Agent async communication protocol |
-| Dark Track | Agent-to-agent data exchange via sessions_send (not visible to users) |
-| Light Track | Human-visible progress updates via Feishu messages |
-| GEO Score | Quality metric (0-100) for AI-search-optimized content |
-| QA Composite | Weighted quality score (0-10) for TikTok videos |
-| VOCReport | Structured JSON output from VOC analyst containing market analysis data |
-| DAG | Directed Acyclic Graph -- task dependency structure used by Lead for orchestration |
-| SOP | Standard Operating Procedure -- the 5-week Reddit account nurturing protocol |
-| Traffic Hijacking | Commenting on high-ranking old Reddit posts to capture organic search traffic |
-| Breathing Movement | Camera notation (BM) -- handheld sway with 2-3 degree oscillation for UGC feel |
+| 术语 | 定义 |
+|------|------|
+| sessions_send | OpenClaw 原生的 Agent 间异步通信协议 |
+| 暗通道（Dark Track） | 通过 sessions_send 进行的 Agent 间数据交换（用户不可见） |
+| 明通道（Light Track） | 通过飞书消息发送的人类可见进度更新 |
+| GEO Score | AI 搜索优化内容的质量指标（0-100） |
+| QA Composite | TikTok 视频的加权质量评分（0-10） |
+| VOCReport | VOC Analyst 输出的结构化 JSON 市场分析数据 |
+| DAG | 有向无环图 —— Lead 用于编排的任务依赖结构 |
+| SOP | 标准操作流程 —— Reddit 账号 5 周培育协议 |
+| 流量截取（Traffic Hijacking） | 在 Google 高排名的 Reddit 旧帖下评论，截取自然搜索流量 |
+| 呼吸感运镜（Breathing Movement） | 运镜标记（BM）—— 手持式 2-3 度摆动，营造 UGC 质感 |

@@ -1,0 +1,72 @@
+{
+  "dag_id": "content_creation",
+  "name": "Content Creation - VOC + GEO + TikTok",
+  "description": "Research-driven content pipeline: VOC analysis feeds pain point data to GEO content writer and TikTok video director in parallel.",
+  "intent": "content_creation",
+  "waves": [
+    {
+      "wave": 1,
+      "name": "Market Research",
+      "description": "VOC analyst extracts pain points and competitive positioning needed for content.",
+      "tasks": [
+        {
+          "task_ref": "w1_voc",
+          "target": "voc-analyst",
+          "template": "voc-full-analysis.json",
+          "depends_on": [],
+          "timeout_seconds": 300,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": true
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "Content Generation",
+      "description": "GEO optimizer creates blog + listing while TikTok director produces video, both using VOC pain point data.",
+      "tasks": [
+        {
+          "task_ref": "w2_geo",
+          "target": "geo-optimizer",
+          "template": "geo-blog-generation.json",
+          "depends_on": ["w1_voc"],
+          "data_transform": "voc_to_geo",
+          "timeout_seconds": 480,
+          "retry_timeout_seconds": 300,
+          "max_retries": 1,
+          "critical_path": false
+        },
+        {
+          "task_ref": "w2_tiktok",
+          "target": "tiktok-director",
+          "template": "tiktok-ugc-video.json",
+          "depends_on": ["w1_voc"],
+          "data_transform": "voc_to_tiktok",
+          "timeout_seconds": 900,
+          "retry_timeout_seconds": 600,
+          "max_retries": 1,
+          "critical_path": false
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "name": "Aggregation & Reporting",
+      "description": "Lead aggregates GEO content and TikTok video deliverables into unified Feishu report.",
+      "tasks": [
+        {
+          "task_ref": "w3_aggregate",
+          "target": "lead",
+          "action": "aggregate_and_report",
+          "depends_on": ["w2_geo", "w2_tiktok"],
+          "timeout_seconds": 30,
+          "max_retries": 0,
+          "critical_path": true
+        }
+      ]
+    }
+  ],
+  "estimated_total_time_minutes": 18,
+  "on_partial_failure": "deliver_available_results"
+}

@@ -1,0 +1,82 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "config": {
+      "wide_screen_mode": true
+    },
+    "header": {
+      "title": {
+        "tag": "plain_text",
+        "content": "Content Review: Blog Draft"
+      },
+      "template": "purple"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Title**: The Ultimate Guide to Choosing a Camping Folding Cot in 2026"
+        }
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**GEO Score**: 87/100\n**Word Count**: 2,450\n**Citations**: 6 (OutdoorGearLab, Wirecutter, REI Co-op)"
+        }
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Preview**: This guide examines key factors for selecting a camping cot, including weight capacity (tested up to 450 lbs), fold-down dimensions, and fabric durability..."
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "action",
+        "actions": [
+          {
+            "tag": "button",
+            "text": {
+              "tag": "plain_text",
+              "content": "Approve & Publish"
+            },
+            "type": "primary",
+            "value": {
+              "action": "approve",
+              "content_id": "blog_camping_cot_001"
+            }
+          },
+          {
+            "tag": "button",
+            "text": {
+              "tag": "plain_text",
+              "content": "Request Revision"
+            },
+            "type": "default",
+            "value": {
+              "action": "revise",
+              "content_id": "blog_camping_cot_001"
+            }
+          },
+          {
+            "tag": "button",
+            "text": {
+              "tag": "plain_text",
+              "content": "Reject"
+            },
+            "type": "danger",
+            "value": {
+              "action": "reject",
+              "content_id": "blog_camping_cot_001"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

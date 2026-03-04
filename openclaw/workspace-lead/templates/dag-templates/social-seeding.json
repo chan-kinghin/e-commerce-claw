@@ -1,0 +1,74 @@
+{
+  "dag_id": "social_seeding",
+  "name": "Social Seeding - VOC + Reddit",
+  "description": "Reddit-focused campaign: VOC analysis provides pain point angles while Reddit specialist finds high-ranking posts, then crafts and posts authentic comments.",
+  "intent": "social_seeding",
+  "waves": [
+    {
+      "wave": 1,
+      "name": "Research & Discovery",
+      "description": "VOC analyst extracts pain points while Reddit specialist searches for high-ranking old posts. Both run in parallel.",
+      "tasks": [
+        {
+          "task_ref": "w1_voc",
+          "target": "voc-analyst",
+          "template": "voc-full-analysis.json",
+          "depends_on": [],
+          "timeout_seconds": 300,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": true
+        },
+        {
+          "task_ref": "w1_reddit_search",
+          "target": "reddit-spec",
+          "template": "reddit-campaign.json",
+          "template_overrides": {
+            "payload.campaign_type": "search_posts"
+          },
+          "depends_on": [],
+          "timeout_seconds": 180,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": false
+        }
+      ]
+    },
+    {
+      "wave": 2,
+      "name": "Comment Deployment",
+      "description": "Reddit specialist crafts and posts comments on discovered old posts using VOC pain point angles.",
+      "tasks": [
+        {
+          "task_ref": "w2_reddit_comment",
+          "target": "reddit-spec",
+          "template": "reddit-traffic-hijack.json",
+          "depends_on": ["w1_voc", "w1_reddit_search"],
+          "data_transform": "voc_to_reddit",
+          "timeout_seconds": 600,
+          "retry_timeout_seconds": 180,
+          "max_retries": 1,
+          "critical_path": true
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "name": "Reporting",
+      "description": "Lead aggregates VOC findings and Reddit engagement metrics into Feishu report.",
+      "tasks": [
+        {
+          "task_ref": "w3_aggregate",
+          "target": "lead",
+          "action": "aggregate_and_report",
+          "depends_on": ["w2_reddit_comment"],
+          "timeout_seconds": 30,
+          "max_retries": 0,
+          "critical_path": true
+        }
+      ]
+    }
+  ],
+  "estimated_total_time_minutes": 8,
+  "on_partial_failure": "deliver_available_results"
+}

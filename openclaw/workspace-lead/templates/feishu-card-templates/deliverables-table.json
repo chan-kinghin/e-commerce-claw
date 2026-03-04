@@ -1,0 +1,7 @@
+{
+  "tag": "div",
+  "text": {
+    "tag": "lark_md",
+    "content": "| Agent | Output | Status |\n|------|------|:---:|\n| {{agent_1_name}} | {{agent_1_output}} | {{agent_1_status}} |\n| {{agent_2_name}} | {{agent_2_output}} | {{agent_2_status}} |\n| {{agent_3_name}} | {{agent_3_output}} | {{agent_3_status}} |\n| {{agent_4_name}} | {{agent_4_output}} | {{agent_4_status}} |"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "request_id": "req_{{date}}_{{seq}}",
+  "source": "lead",
+  "target": "geo-optimizer",
+  "task_type": "content_generation",
+  "priority": "{{priority|normal}}",
+  "timeout_seconds": 300,
+  "payload": {
+    "content_formats": ["amazon_listing"],
+    "product": {
+      "name": "{{product_name}}",
+      "category": "{{product_category}}",
+      "asin": "{{asin}}",
+      "price_range": {
+        "min": "{{price_min}}",
+        "max": "{{price_max}}",
+        "currency": "{{currency|USD}}"
+      },
+      "key_specs": "{{key_specs|{}}}",
+      "certifications": "{{certifications|[]}}"
+    },
+    "voc_data": {
+      "pain_points_summary": "{{pain_points_summary}}",
+      "competitive_positioning": {
+        "price_range": "{{competitive_price_range}}",
+        "key_differentiators": "{{key_differentiators}}",
+        "authority_citations": "{{authority_citations|[]}}"
+      }
+    }
+  },
+  "callback_expectations": {
+    "format": "GEOContent JSON",
+    "key_fields": ["amazon_listing", "geo_scores"],
+    "downstream_consumers": []
+  }
+}

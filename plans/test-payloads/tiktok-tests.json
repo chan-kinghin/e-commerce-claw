@@ -1,0 +1,322 @@
+[
+  {
+    "test_id": "T1",
+    "test_name": "Standard UGC Video -- Camping Cot",
+    "description": "Full 25-grid storyboard + 10-12 key frames + 15s video + QA. Validates: all 25 grids present (3/5/7/6/4 distribution), breathing movement in first 2s, mattress press demo, QA composite >= 7.0, video < 50MB, duration 15s +/- 0.5s.",
+    "agent": "tiktok-director",
+    "input": {
+      "source": "lead",
+      "task_type": "video_production",
+      "product": {
+        "name": "UltraRest Pro Camping Cot",
+        "category": "outdoor-camping",
+        "key_features": ["450lb capacity", "2-minute setup", "600D ripstop fabric", "one-fold mechanism"],
+        "target_audience": "outdoor enthusiasts, 25-45, US market",
+        "price": 79.99
+      },
+      "video_requirements": {
+        "type": "ugc",
+        "style": "standard",
+        "duration": 15,
+        "quantity": 1,
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920"
+      },
+      "voc_pain_points": [
+        {
+          "issue": "Weight capacity insufficient",
+          "visual_demo": "Person sitting/pressing on cot to show no flex",
+          "second_marker": "2-4"
+        },
+        {
+          "issue": "Difficult storage",
+          "visual_demo": "One-fold demonstration, fits in car trunk",
+          "second_marker": "6-8"
+        },
+        {
+          "issue": "Fabric tears",
+          "visual_demo": "Close-up of 600D ripstop texture",
+          "second_marker": "9-10"
+        }
+      ],
+      "priority": "high",
+      "request_id": "unit_test_tiktok_t1"
+    },
+    "expected_output": {
+      "storyboard": {
+        "total_grids": 25,
+        "category_distribution": {
+          "hook": 3,
+          "pain_point": 5,
+          "product_demo": 7,
+          "social_proof": 6,
+          "cta": 4
+        }
+      },
+      "images": {
+        "count_range": [10, 12],
+        "resolution": "1080x1920",
+        "format": "PNG"
+      },
+      "video": {
+        "duration_seconds": 15,
+        "duration_tolerance": 0.5,
+        "format": "MP4",
+        "max_size_mb": 50,
+        "aspect_ratio": "9:16"
+      },
+      "qa_report": {
+        "composite_score_min": 7.0,
+        "breathing_movement_first_2s": true,
+        "mattress_press_demo_present": true
+      }
+    },
+    "timeout_seconds": 900,
+    "validation_criteria": [
+      "Storyboard has all 25 grids with 3/5/7/6/4 category distribution",
+      "10-12 key frame images generated at 1080x1920 PNG",
+      "Video is 15s +/- 0.5s, MP4 format, 9:16 aspect ratio",
+      "Video file size < 50MB",
+      "Breathing movement (2-3 degree oscillation) in first 2 seconds",
+      "Mattress press demo visible in the video",
+      "QA composite score >= 7.0",
+      "All deliverables saved to workspace-tiktok/data/"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "T2",
+    "test_name": "Manga Drama -- Wuxia Tea Product",
+    "description": "3-scene Chinese ink wash manga drama. Validates: character consistency across scenes, ink wash style (limited palette, brush strokes), per-scene QA >= 6.5, continuous story flow.",
+    "agent": "tiktok-director",
+    "input": {
+      "source": "lead",
+      "task_type": "video_production",
+      "product": {
+        "name": "Cloud Mist Mountain Tea",
+        "category": "premium-tea",
+        "key_features": ["hand-picked at 1200m altitude", "traditional wuxia-inspired packaging", "single-origin Fujian oolong"],
+        "target_audience": "tea enthusiasts, 25-55, Chinese diaspora + US wellness market",
+        "price": 39.99
+      },
+      "video_requirements": {
+        "type": "manga_drama",
+        "style": "wuxia",
+        "duration": 30,
+        "scenes": 3,
+        "quantity": 1,
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920"
+      },
+      "story_brief": {
+        "scene_1": "A wandering swordsman arrives at a mountain teahouse at dusk, exhausted from battle",
+        "scene_2": "The tea master serves a cup of Cloud Mist tea; steam rises in graceful calligraphy-like curves",
+        "scene_3": "After drinking, the swordsman regains inner peace; he leaves a poem on the wall and departs at dawn"
+      },
+      "manga_style": {
+        "palette": "chinese_ink_wash",
+        "characteristics": ["limited palette (black, grey, subtle warm tones)", "brush stroke textures", "atmospheric fog/mist", "classical Chinese composition"],
+        "style_guide_ref": "workspace-tiktok/styles/chinese-ink-wash.md"
+      },
+      "priority": "normal",
+      "request_id": "unit_test_tiktok_t2"
+    },
+    "expected_output": {
+      "scenes": 3,
+      "character_consistency": true,
+      "style_consistency": "chinese_ink_wash",
+      "per_scene_qa_min": 6.5,
+      "story_flow_continuous": true,
+      "total_duration_seconds": 30
+    },
+    "timeout_seconds": 1200,
+    "validation_criteria": [
+      "3 scenes generated with continuous story flow",
+      "Character consistency: swordsman and tea master look the same across scenes",
+      "Ink wash style maintained: limited palette (black, grey, warm accents)",
+      "Brush stroke textures visible in all scenes",
+      "Per-scene QA score >= 6.5",
+      "Total video approximately 30 seconds",
+      "Atmospheric fog/mist present in mountain scenes",
+      "No modern elements breaking the wuxia aesthetic"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "T3",
+    "test_name": "A/B Testing Matrix -- Portable Blender",
+    "description": "4 hook variants from 1 base storyboard. Validates: identical content from second 2 onward, distinct hook visuals/audio, all 4 pass QA >= 6.5, file sizes within 20% of each other.",
+    "agent": "tiktok-director",
+    "input": {
+      "source": "lead",
+      "task_type": "video_production",
+      "product": {
+        "name": "BlendMax Pro Portable Blender",
+        "category": "kitchen-appliance",
+        "key_features": ["6-blade system", "4000mAh USB-C battery", "self-cleaning mode"],
+        "target_audience": "health-conscious millennials, 22-35, US market",
+        "price": 34.99
+      },
+      "video_requirements": {
+        "type": "ugc",
+        "style": "standard",
+        "duration": 15,
+        "quantity": 4,
+        "ab_testing": true,
+        "hook_variants": [
+          {
+            "variant": "A",
+            "hook_type": "problem_statement",
+            "description": "Open with messy kitchen blender disaster - ice cubes flying"
+          },
+          {
+            "variant": "B",
+            "hook_type": "question",
+            "description": "Open with text overlay: 'Can a $35 blender crush ice?'"
+          },
+          {
+            "variant": "C",
+            "hook_type": "social_proof",
+            "description": "Open with TikTok comment screenshots praising the blender"
+          },
+          {
+            "variant": "D",
+            "hook_type": "transformation",
+            "description": "Split screen: sad smoothie fail vs perfect smoothie"
+          }
+        ],
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920"
+      },
+      "priority": "normal",
+      "request_id": "unit_test_tiktok_t3"
+    },
+    "expected_output": {
+      "videos_count": 4,
+      "identical_content_from_second_2": true,
+      "distinct_hooks": true,
+      "all_qa_scores_min": 6.5,
+      "file_size_variance_max_percent": 20
+    },
+    "timeout_seconds": 1500,
+    "validation_criteria": [
+      "4 video variants generated",
+      "Content from second 2 onward is identical across all 4 variants",
+      "Each variant has a distinct hook in the first 2 seconds",
+      "Variant A: problem/disaster visual in hook",
+      "Variant B: text overlay question in hook",
+      "Variant C: social proof screenshots in hook",
+      "Variant D: split-screen transformation in hook",
+      "All 4 videos pass QA with composite >= 6.5",
+      "File sizes within 20% of each other"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "T4",
+    "test_name": "Ghibli Style Video -- Bamboo Toothbrush",
+    "description": "10-second Ghibli-style video. Validates: watercolor textures and earth tones present, 17-grid storyboard scaled correctly, nature context (not bathroom), volcengine detects positive sentiment, QA >= 7.0.",
+    "agent": "tiktok-director",
+    "input": {
+      "source": "lead",
+      "task_type": "video_production",
+      "product": {
+        "name": "EcoSmile Bamboo Toothbrush",
+        "category": "eco-personal-care",
+        "key_features": ["100% biodegradable bamboo handle", "BPA-free charcoal bristles", "plastic-free packaging"],
+        "target_audience": "eco-conscious consumers, 20-40, US market",
+        "price": 8.99
+      },
+      "video_requirements": {
+        "type": "ugc",
+        "style": "ghibli",
+        "duration": 10,
+        "quantity": 1,
+        "storyboard_grids": 17,
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920"
+      },
+      "style_direction": {
+        "palette": "ghibli_watercolor",
+        "characteristics": ["watercolor textures", "earth tones (greens, browns, warm yellows)", "nature setting (forest, garden, stream)", "soft natural lighting", "hand-painted feel"],
+        "setting": "nature_context",
+        "avoid": ["bathroom setting", "clinical/sterile environment", "harsh lighting"]
+      },
+      "priority": "normal",
+      "request_id": "unit_test_tiktok_t4"
+    },
+    "expected_output": {
+      "storyboard_grids": 17,
+      "video_duration_seconds": 10,
+      "style": "ghibli_watercolor",
+      "earth_tones_present": true,
+      "nature_context": true,
+      "sentiment": "positive",
+      "qa_composite_min": 7.0
+    },
+    "timeout_seconds": 720,
+    "validation_criteria": [
+      "17-grid storyboard (scaled from 25-grid template)",
+      "Video is approximately 10 seconds",
+      "Watercolor textures visible throughout",
+      "Earth tones dominant (greens, browns, warm yellows)",
+      "Nature context setting (forest, garden, stream) - NOT bathroom",
+      "Volcengine detects positive sentiment",
+      "QA composite score >= 7.0",
+      "Hand-painted/Ghibli aesthetic maintained throughout",
+      "Product shown naturally in nature setting"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "T5",
+    "test_name": "Video QA Failure and Regeneration",
+    "description": "Deliberate minimal-prompt video generation to trigger QA failure. Validates: QA identifies deficiencies, regeneration targets only failed segments, second attempt improves scores, loop completes in <= 3 attempts, cost tracking reflects multi-attempt.",
+    "agent": "tiktok-director",
+    "input": {
+      "source": "lead",
+      "task_type": "video_production",
+      "product": {
+        "name": "Generic Widget",
+        "category": "test-product",
+        "key_features": ["feature A"],
+        "target_audience": "general",
+        "price": 9.99
+      },
+      "video_requirements": {
+        "type": "ugc",
+        "style": "standard",
+        "duration": 15,
+        "quantity": 1,
+        "aspect_ratio": "9:16",
+        "resolution": "1080x1920"
+      },
+      "_test_config": {
+        "minimal_prompt": true,
+        "description": "This test intentionally uses minimal product info to trigger QA failure. The agent should detect quality issues and attempt regeneration.",
+        "expected_behavior": "First attempt should score low on QA. Agent should identify deficiencies and regenerate only failing segments."
+      },
+      "priority": "low",
+      "request_id": "unit_test_tiktok_t5"
+    },
+    "expected_output": {
+      "qa_first_attempt_fails": true,
+      "deficiencies_identified": true,
+      "targeted_regeneration": true,
+      "improvement_on_retry": true,
+      "max_attempts": 3,
+      "cost_tracking_multi_attempt": true
+    },
+    "timeout_seconds": 1200,
+    "validation_criteria": [
+      "QA identifies specific deficiencies on first attempt",
+      "Regeneration targets only failed segments (not full re-render)",
+      "Second or third attempt shows improved QA scores",
+      "Loop completes in <= 3 attempts total",
+      "Cost tracking reflects all attempts (token counts for each attempt)",
+      "Final output either passes QA or reports best-effort with detailed failure log",
+      "No infinite regeneration loop"
+    ],
+    "priority": "P1"
+  }
+]

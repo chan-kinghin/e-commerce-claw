@@ -1,0 +1,31 @@
+{
+  "request_id": "req_{{date}}_{{seq}}",
+  "source": "lead",
+  "target": "tiktok-director",
+  "task_type": "video_production",
+  "priority": "{{priority|high}}",
+  "timeout_seconds": 900,
+  "payload": {
+    "product": {
+      "name": "{{product_name}}",
+      "category": "{{product_category}}",
+      "key_features": "{{key_features}}",
+      "target_audience": "{{target_audience}}",
+      "price": "{{price}}",
+      "currency": "{{currency|USD}}"
+    },
+    "video_requirements": {
+      "type": "ugc",
+      "style": "{{style|standard}}",
+      "duration": "{{duration|15}}",
+      "quantity": "{{quantity|1}}",
+      "a_b_variants": "{{a_b_variants|4}}"
+    },
+    "pain_points_for_script": "{{pain_points_for_script}}"
+  },
+  "callback_expectations": {
+    "format": "VideoProduction JSON",
+    "key_fields": ["primary_video", "variants", "qa_score", "thumbnails"],
+    "downstream_consumers": []
+  }
+}

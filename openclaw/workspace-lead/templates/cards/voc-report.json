@@ -1,0 +1,79 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "config": {
+      "wide_screen_mode": true
+    },
+    "header": {
+      "title": {
+        "tag": "plain_text",
+        "content": "VOC Report: Camping Folding Cot"
+      },
+      "template": "green"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Top Pain Points (Cross-validated from 3+ sources)**"
+        }
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "| Rank | Pain Point | Frequency | Sources |\n|:---:|------|:---:|------|\n| 1 | Insufficient weight capacity | 42% | Amazon, Reddit, YouTube |\n| 2 | Difficult storage/folding | 31% | Amazon, Reddit |\n| 3 | Fabric tearing after 3 months | 18% | Amazon, YouTube |\n| 4 | Noisy joints | 9% | Reddit |"
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "fields": [
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Price Range**\n$30 - $80"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**BSR Range**\n#1,200 - #8,500"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Products Analyzed**\n50"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Reviews Processed**\n2,847"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "note",
+        "elements": [
+          {
+            "tag": "plain_text",
+            "content": "Full report saved to workspace-voc/data/reports/"
+          }
+        ]
+      }
+    ]
+  }
+}

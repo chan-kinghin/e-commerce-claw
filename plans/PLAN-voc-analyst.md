@@ -1,15 +1,15 @@
-# VOC (Voice of Customer) Market Analyst Agent - Implementation Plan
+# VOC（Voice of Customer）市场分析师 Agent —— 实施方案
 
 **Agent ID**: `voc-analyst`
-**Model**: Kimi K2.5 (cost-effective execution model)
-**Workspace**: `~/.openclaw/workspace-voc/`
-**Status**: Not Started
+**模型**: Kimi K2.5（高性价比执行模型）
+**工作区**: `~/.openclaw/workspace-voc/`
+**状态**: 未开始
 
 ---
 
-## 1. Agent Configuration
+## 1. Agent 配置
 
-### 1.1 SOUL.md (Complete Content)
+### 1.1 SOUL.md（完整内容）
 
 ```markdown
 # SOUL.md - VOC Market Analyst
@@ -68,41 +68,41 @@ All reports must be valid JSON conforming to the VOCReport schema (see Section 4
 Additionally, save a human-readable Markdown version to the workspace data/ directory.
 ```
 
-### 1.2 Workspace Directory Structure
+### 1.2 工作区目录结构
 
 ```
 ~/.openclaw/workspace-voc/
-├── SOUL.md                          # Agent personality and rules
-├── skills/                          # Private skills (agent-specific)
-│   └── agent-reach/                 # Symlink to global or local install
+├── SOUL.md                          # Agent 人设与行为规则
+├── skills/                          # 私有技能（Agent 专属）
+│   └── agent-reach/                 # 全局或本地安装的符号链接
 ├── data/
-│   ├── reports/                     # Finalized analysis reports (JSON + MD)
-│   │   ├── {category}_{date}.json   # Structured report
-│   │   └── {category}_{date}.md     # Human-readable version
-│   ├── raw/                         # Raw scraped data per session
-│   │   ├── amazon/                  # Amazon BSR and product data
-│   │   ├── reddit/                  # Reddit posts and comments
-│   │   ├── youtube/                 # YouTube subtitle transcripts
-│   │   ├── google-maps/             # Wholesale supplier data
-│   │   └── tiktok/                  # TikTok trending product data
-│   ├── price_memory.txt             # Price snapshot for cron monitoring
-│   ├── price_history/               # Historical price data (daily snapshots)
+│   ├── reports/                     # 最终分析报告（JSON + MD）
+│   │   ├── {category}_{date}.json   # 结构化报告
+│   │   └── {category}_{date}.md     # 人类可读版本
+│   ├── raw/                         # 每次会话的原始抓取数据
+│   │   ├── amazon/                  # Amazon BSR 与产品数据
+│   │   ├── reddit/                  # Reddit 帖子与评论
+│   │   ├── youtube/                 # YouTube 字幕文本
+│   │   ├── google-maps/             # 批发商供应商数据
+│   │   └── tiktok/                  # TikTok 热门商品数据
+│   ├── price_memory.txt             # 价格监控快照
+│   ├── price_history/               # 历史价格数据（每日快照）
 │   │   └── {date}_prices.json
-│   └── competitor_profiles/         # Tracked competitor ASIN profiles
+│   └── competitor_profiles/         # 追踪的竞品 ASIN 档案
 │       └── {asin}.json
 ├── templates/
-│   ├── report_template.md           # Markdown report template
-│   └── prompt_templates/            # Reusable prompt templates
+│   ├── report_template.md           # Markdown 报告模板
+│   └── prompt_templates/            # 可复用的 Prompt 模板
 │       ├── cross_validation.md
 │       ├── pain_point_extraction.md
 │       └── price_monitor.md
 └── logs/
-    └── scrape_log.jsonl             # Append-only log of all scrape operations
+    └── scrape_log.jsonl             # 所有爬取操作的追加日志
 ```
 
-### 1.3 Model Configuration
+### 1.3 模型配置
 
-In `~/.openclaw/openclaw.json`, the voc-analyst agent entry:
+在 `~/.openclaw/openclaw.json` 中，`voc-analyst` Agent 的配置项：
 
 ```json
 {
@@ -116,166 +116,164 @@ In `~/.openclaw/openclaw.json`, the voc-analyst agent entry:
 }
 ```
 
-**Rationale**: Kimi K2.5 is used because VOC tasks are execution-heavy (data scraping,
-cleaning, formatting) rather than decision-heavy. The low temperature ensures consistent
-structured output. Cost savings of ~90% compared to using a top-tier decision model.
+**选型理由**：VOC 任务以执行为主（数据爬取、清洗、格式化），而非决策判断。低 temperature 确保结构化输出一致性。相比使用顶级决策模型，成本降低约 90%。
 
 ---
 
-## 2. Skills Installation
+## 2. Skills 安装
 
-### 2.1 Critical Skills (Must-Have)
+### 2.1 核心必备 Skills
 
-| Priority | Skill | Installation Command | API Key Required | Purpose |
+| 优先级 | Skill | 安装命令 | 需要 API Key | 用途 |
 |:---:|------|------|:---:|------|
-| P0 | **Decodo Skill** | `Read and install: https://github.com/Decodo/decodo-openclaw-skill` | Yes: `DECODO_AUTH_TOKEN` | Amazon, Reddit, YouTube subtitle structured extraction |
-| P0 | **reddit-readonly** | `curl https://lobehub.com/skills/openclaw-skills-reddit-scraper/skill.md` then follow install instructions | No | Free Reddit fallback (old.reddit.com JSON endpoints) |
-| P0 | **Brave Search** | `Install from https://clawhub.ai/steipete/brave-search` | Yes: `BRAVE_API_KEY` | High-quality web search for discovery |
-| P1 | **Apify Skill** | `Install from https://github.com/apify/agent-skills` | Yes: `APIFY_TOKEN` | Google Maps, TikTok, Instagram batch scraping |
-| P1 | **Agent-Reach** | `Install from https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md` | Varies per channel | yt-dlp (YouTube/TikTok), xreach (Twitter), Jina Reader |
+| P0 | **Decodo Skill** | `Read and install: https://github.com/Decodo/decodo-openclaw-skill` | 是：`DECODO_AUTH_TOKEN` | Amazon、Reddit、YouTube 字幕结构化提取 |
+| P0 | **reddit-readonly** | `curl https://lobehub.com/skills/openclaw-skills-reddit-scraper/skill.md` 按说明安装 | 否 | 免费 Reddit 备选方案（old.reddit.com JSON 接口） |
+| P0 | **Brave Search** | `Install from https://clawhub.ai/steipete/brave-search` | 是：`BRAVE_API_KEY` | 高质量网页搜索，用于发现与补缺 |
+| P1 | **Apify Skill** | `Install from https://github.com/apify/agent-skills` | 是：`APIFY_TOKEN` | Google Maps、TikTok、Instagram 批量爬取 |
+| P1 | **Agent-Reach** | `Install from https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md` | 视渠道而定 | yt-dlp（YouTube/TikTok）、xreach（Twitter）、Jina Reader |
 
-### 2.2 Nice-to-Have Skills
+### 2.2 锦上添花 Skills
 
-| Priority | Skill | Installation Command | API Key Required | Purpose |
+| 优先级 | Skill | 安装命令 | 需要 API Key | 用途 |
 |:---:|------|------|:---:|------|
-| P2 | **Tavily Search** | Install via OpenClaw skill marketplace | Yes: `TAVILY_API_KEY` | China-domestic search (no VPN needed) |
-| P2 | **Exa Search** | Install via OpenClaw skill marketplace | Yes: `EXA_API_KEY` | Intent-based semantic search |
-| P2 | **Playwright-npx** | `Install from https://playbooks.com/skills/openclaw/skills/playwright-npx` | No | Dynamic SPA scraping |
-| P3 | **Firecrawl** | Install via OpenClaw skill marketplace | Yes: `FIRECRAWL_API_KEY` | Remote sandbox scraping (500 free/month) |
-| P3 | **stealth-browser** | Install via ClawHub | No | Cloudflare bypass for protected sites |
+| P2 | **Tavily Search** | 通过 OpenClaw Skill 市场安装 | 是：`TAVILY_API_KEY` | 国内直连搜索（无需 VPN） |
+| P2 | **Exa Search** | 通过 OpenClaw Skill 市场安装 | 是：`EXA_API_KEY` | 意图型语义搜索 |
+| P2 | **Playwright-npx** | `Install from https://playbooks.com/skills/openclaw/skills/playwright-npx` | 否 | 动态 SPA 页面爬取 |
+| P3 | **Firecrawl** | 通过 OpenClaw Skill 市场安装 | 是：`FIRECRAWL_API_KEY` | 远程沙盒爬取（每月免费 500 次） |
+| P3 | **stealth-browser** | 通过 ClawHub 安装 | 否 | Cloudflare 反爬绕过 |
 
-### 2.3 Dependencies and Environment
+### 2.3 环境依赖
 
 ```bash
-# System dependencies (pre-installed on Mac mini)
-brew install gh          # GitHub CLI for tech product intelligence
-brew install node        # Node.js 18+ for reddit-readonly skill
-brew install python3     # Python 3.11+ for Agent-Reach
+# 系统级依赖（Mac mini 预装）
+brew install gh          # GitHub CLI，用于科技产品情报
+brew install node        # Node.js 18+，reddit-readonly Skill 需要
+brew install python3     # Python 3.11+，Agent-Reach 需要
 
-# Agent-Reach sub-dependencies
-pip install yt-dlp       # YouTube/TikTok/Bilibili video metadata
-pip install feedparser   # RSS feed parsing
+# Agent-Reach 子依赖
+pip install yt-dlp       # YouTube/TikTok/B站 视频元数据
+pip install feedparser   # RSS 订阅源解析
 
-# Environment variables to configure
+# 需要配置的环境变量
 export DECODO_AUTH_TOKEN="VTAwMDAz..."
 export BRAVE_API_KEY="BSAl2YP5..."
 export APIFY_TOKEN="apify_api_5kIYzp..."
-export TAVILY_API_KEY="tvly-..."       # Optional
-export EXA_API_KEY="exa-..."           # Optional
-export FIRECRAWL_API_KEY="fc-..."      # Optional
+export TAVILY_API_KEY="tvly-..."       # 可选
+export EXA_API_KEY="exa-..."           # 可选
+export FIRECRAWL_API_KEY="fc-..."      # 可选
 ```
 
 ---
 
-## 3. Detailed Workflows
+## 3. 详细工作流
 
-### 3.1 Multi-Source Cross-Validation Flow (Primary Workflow)
+### 3.1 多源交叉验证流程（核心工作流）
 
-This is the core workflow triggered when Lead sends a category research task.
+当 Lead 发送品类调研任务时触发此核心流程。
 
 ```mermaid
 graph TD
-    START["Receive Task from Lead<br/>via sessions_send<br/>e.g. 'Analyze camping folding bed market'"] --> PARSE["Parse Task<br/>Extract: category, keywords,<br/>target markets, competitor ASINs"]
+    START["从 Lead 接收任务<br/>通过 sessions_send<br/>例：'分析露营折叠床市场'"] --> PARSE["解析任务<br/>提取：品类、关键词、<br/>目标市场、竞品 ASIN"]
 
     PARSE --> PARALLEL_1
 
-    subgraph PARALLEL_1["Phase 1: Parallel Data Collection"]
+    subgraph PARALLEL_1["阶段一：并行数据采集"]
         direction LR
-        AMAZON["Amazon BSR Scan<br/>amazon_search: top 50 products<br/>Extract: price, rating, reviews,<br/>BSR rank, seller info"]
-        REDDIT["Reddit Pain Points<br/>reddit_subreddit: r/relevant<br/>Search: complaints, recommendations<br/>Time filter: 6 months"]
-        YOUTUBE["YouTube Reviews<br/>youtube_subtitles: top 3 videos<br/>Extract: KOL talking points,<br/>product issues mentioned"]
-        GMAPS["Google Maps Wholesale<br/>Apify: Google Places Actor<br/>Extract: supplier count,<br/>location density, contact info"]
+        AMAZON["Amazon BSR 扫描<br/>amazon_search：前50名产品<br/>提取：价格、评分、评论数、<br/>BSR 排名、卖家信息"]
+        REDDIT["Reddit 痛点挖掘<br/>reddit_subreddit：相关版块<br/>搜索：吐槽、推荐<br/>时间范围：近6个月"]
+        YOUTUBE["YouTube 评测分析<br/>youtube_subtitles：前3个视频<br/>提取：KOL 评价要点、<br/>产品问题"]
+        GMAPS["Google Maps 批发商<br/>Apify：Google Places Actor<br/>提取：供应商数量、<br/>区域密度、联系方式"]
     end
 
-    AMAZON --> CLEAN["Phase 2: Data Cleaning<br/>Normalize prices to USD<br/>Deduplicate mentions<br/>Tag data source + timestamp"]
+    AMAZON --> CLEAN["阶段二：数据清洗<br/>统一价格为 USD<br/>跨平台去重<br/>标记数据源 + 时间戳"]
     REDDIT --> CLEAN
     YOUTUBE --> CLEAN
     GMAPS --> CLEAN
 
-    CLEAN --> VALIDATE["Phase 3: Cross-Validation<br/>Match pain points across sources<br/>Count source agreement per issue<br/>Flag contradictions"]
+    CLEAN --> VALIDATE["阶段三：交叉验证<br/>跨数据源匹配痛点<br/>统计每个问题的来源数<br/>标记矛盾信息"]
 
-    VALIDATE --> SCORE["Phase 4: Scoring<br/>Pain Point Severity Score (1-10)<br/>Market Opportunity Score<br/>Competition Intensity Index"]
+    VALIDATE --> SCORE["阶段四：评分<br/>痛点严重度评分（1-10）<br/>市场机会评分<br/>竞争强度指数"]
 
-    SCORE --> REPORT["Phase 5: Report Generation<br/>JSON: structured VOCReport<br/>MD: human-readable summary<br/>Save to data/reports/"]
+    SCORE --> REPORT["阶段五：报告生成<br/>JSON：结构化 VOCReport<br/>MD：人类可读摘要<br/>保存至 data/reports/"]
 
-    REPORT --> SEND["Phase 6: Deliver<br/>sessions_send report to Lead<br/>Flag pain_points for GEO/TikTok<br/>Log operation to scrape_log.jsonl"]
+    REPORT --> SEND["阶段六：交付<br/>sessions_send 报告给 Lead<br/>标记 GEO/TikTok 所需痛点<br/>记录操作日志至 scrape_log.jsonl"]
 
     style PARALLEL_1 fill:#E3F2FD,stroke:#2196F3
     style VALIDATE fill:#FFF9C4,stroke:#FFC107
     style REPORT fill:#E8F5E9,stroke:#4CAF50
 ```
 
-**Detailed Step-by-Step:**
+**分步详解：**
 
-1. **Receive & Parse** (5s): Lead sends task via `sessions_send`. Agent extracts category keywords, target market (US/EU/JP), and any specific competitor ASINs to track.
+1. **接收与解析**（5秒）：Lead 通过 `sessions_send` 发送任务。Agent 提取品类关键词、目标市场（美国/欧洲/日本）以及需要追踪的竞品 ASIN。
 
-2. **Parallel Collection** (2-5 min):
-   - **Amazon** (`amazon_search`): Query top 50 products for target keyword. Extract price range, average rating, review count distribution, BSR positions, Best Seller badges, and seller types (FBA/FBM/brand).
-   - **Reddit** (`reddit_subreddit` + `reddit-readonly`): Search 3-5 relevant subreddits (e.g., r/Camping, r/BuyItForLife). Filter by time (last 6 months). Extract posts with high engagement. Parse complaint keywords.
-   - **YouTube** (`youtube_subtitles`): Search for top 3 review videos via Brave Search. Extract subtitles. Identify KOL-mentioned product strengths and weaknesses.
-   - **Google Maps** (Apify Google Places Actor): Search wholesale/supplier density in target region. Estimate offline competition intensity.
+2. **并行采集**（2-5分钟）：
+   - **Amazon**（`amazon_search`）：查询目标关键词前50名产品。提取价格区间、平均评分、评论数分布、BSR 排名、Best Seller 标识、卖家类型（FBA/FBM/品牌直营）。
+   - **Reddit**（`reddit_subreddit` + `reddit-readonly`）：搜索 3-5 个相关版块（如 r/Camping、r/BuyItForLife）。按时间过滤（近6个月），提取高互动帖子，解析吐槽关键词。
+   - **YouTube**（`youtube_subtitles`）：通过 Brave Search 找到前3个评测视频，提取字幕，识别 KOL 提到的产品优缺点。
+   - **Google Maps**（Apify Google Places Actor）：搜索目标区域的批发商/供应商密度，评估线下竞争强度。
 
-3. **Data Cleaning** (30s): Normalize currencies, deduplicate cross-platform mentions of the same issue, tag each data point with source URL and scrape timestamp.
+3. **数据清洗**（30秒）：统一货币单位，跨平台去重同一问题的重复提及，为每个数据点标记来源 URL 和抓取时间戳。
 
-4. **Cross-Validation** (30s): For each identified pain point, count how many independent sources mention it. Only pain points confirmed by 2+ sources make it to the final ranking. Contradictions (e.g., Amazon reviews say "great durability" but Reddit says "broke after 2 uses") are flagged for human review.
+4. **交叉验证**（30秒）：对每个识别出的痛点，统计有多少独立数据源提到它。只有被 2 个以上来源确认的痛点才进入最终排名。矛盾信息（如 Amazon 评论说"耐用性好"但 Reddit 说"用两次就坏了"）会被标记待人工审核。
 
-5. **Scoring** (15s):
-   - Pain Point Severity = frequency * impact_weight * recency_factor
-   - Market Opportunity = (demand_signals - competition_intensity) * margin_estimate
-   - Competition Index = seller_count * avg_review_count * brand_concentration
+5. **评分**（15秒）：
+   - 痛点严重度 = 提及频率 * 影响权重 * 时效因子
+   - 市场机会 = (需求信号 - 竞争强度) * 利润率估算
+   - 竞争指数 = 卖家数量 * 平均评论数 * 品牌集中度
 
-6. **Report & Deliver** (10s): Generate JSON + Markdown reports. Send structured result to Lead via `sessions_send`. Include metadata flags so Lead knows which downstream agents need the data.
+6. **报告与交付**（10秒）：生成 JSON + Markdown 报告。通过 `sessions_send` 将结构化结果发送给 Lead。在元数据中标注哪些下游 Agent 需要这些数据。
 
-### 3.2 Single-Platform Quick Research Flow
+### 3.2 单平台快速调研流程
 
 ```mermaid
 graph LR
-    INPUT["Quick Query<br/>'Check Reddit sentiment<br/>on portable blenders'"] --> ROUTE["Route to<br/>Platform Handler"]
-    ROUTE -->|Reddit| REDDIT_QUICK["reddit_subreddit<br/>+ reddit-readonly<br/>Top 20 posts"]
-    ROUTE -->|Amazon| AMAZON_QUICK["amazon_search<br/>Top 30 results"]
-    ROUTE -->|YouTube| YT_QUICK["youtube_subtitles<br/>Top 3 videos"]
-    REDDIT_QUICK --> FORMAT["Quick Report<br/>Sentiment summary<br/>Top 5 pain points<br/>Key quotes with URLs"]
+    INPUT["快速查询<br/>'查看 Reddit 上便携搅拌机<br/>的用户评价'"] --> ROUTE["路由到<br/>平台处理器"]
+    ROUTE -->|Reddit| REDDIT_QUICK["reddit_subreddit<br/>+ reddit-readonly<br/>前20条帖子"]
+    ROUTE -->|Amazon| AMAZON_QUICK["amazon_search<br/>前30条结果"]
+    ROUTE -->|YouTube| YT_QUICK["youtube_subtitles<br/>前3个视频"]
+    REDDIT_QUICK --> FORMAT["快速报告<br/>情感倾向摘要<br/>前5大痛点<br/>关键引文附链接"]
     AMAZON_QUICK --> FORMAT
     YT_QUICK --> FORMAT
-    FORMAT --> DELIVER["sessions_send<br/>to Lead"]
+    FORMAT --> DELIVER["sessions_send<br/>发送给 Lead"]
 ```
 
-Used for fast, focused queries when Lead only needs data from one platform. Response time target: under 2 minutes.
+当 Lead 只需要单一平台数据时使用此流程。目标响应时间：2分钟以内。
 
-### 3.3 Price Monitoring Cron Job Flow
+### 3.3 价格监控定时任务流程
 
 ```mermaid
 graph TD
-    CRON["Cron Trigger<br/>Daily 03:00 UTC+8"] --> LOAD["Load Competitor Links<br/>from competitor_profiles/*.json"]
-    LOAD --> SCRAPE["Scrape Current Prices<br/>playwright-npx / web_fetch<br/>per competitor link"]
-    SCRAPE --> COMPARE["Compare with price_memory.txt<br/>Detect: price drops, stockouts,<br/>new Best Seller badges,<br/>promotional tags"]
-    COMPARE -->|No changes| SILENT["Silent termination<br/>Update scrape_log.jsonl"]
-    COMPARE -->|Changes detected| ALERT["Generate Alert<br/>Product: X<br/>Old Price: $49.99<br/>New Price: $39.99<br/>Change: -20%"]
-    ALERT --> WEBHOOK["Push via Webhook<br/>Feishu / Telegram"]
-    ALERT --> SAVE["Update price_memory.txt<br/>Append to price_history/"]
-    SILENT --> SAVE_LOG["Append timestamp to log"]
+    CRON["定时触发<br/>每天 03:00 UTC+8"] --> LOAD["加载竞品链接<br/>从 competitor_profiles/*.json"]
+    LOAD --> SCRAPE["抓取当前价格<br/>playwright-npx / web_fetch<br/>逐个竞品链接"]
+    SCRAPE --> COMPARE["与 price_memory.txt 比对<br/>检测：降价、缺货、<br/>新增 Best Seller 标识、<br/>促销标签"]
+    COMPARE -->|无变化| SILENT["静默结束<br/>更新 scrape_log.jsonl"]
+    COMPARE -->|检测到变化| ALERT["生成预警<br/>产品：X<br/>原价：$49.99<br/>现价：$39.99<br/>变动：-20%"]
+    ALERT --> WEBHOOK["Webhook 推送<br/>飞书 / Telegram"]
+    ALERT --> SAVE["更新 price_memory.txt<br/>追加至 price_history/"]
+    SILENT --> SAVE_LOG["追加时间戳至日志"]
 
     style CRON fill:#F3E5F5,stroke:#9C27B0
     style ALERT fill:#FFEBEE,stroke:#F44336
 ```
 
-### 3.4 Competitor Tracking Workflow
+### 3.4 竞品追踪工作流
 
 ```mermaid
 graph TD
-    ADD["Lead sends: Track ASIN B0xxxxx"] --> PROFILE["Create/Update<br/>competitor_profiles/{asin}.json<br/>Fields: ASIN, title, brand,<br/>category, initial_price,<br/>initial_rating, initial_reviews"]
-    PROFILE --> DAILY["Added to daily cron scan list"]
-    DAILY --> TREND["Weekly: Generate trend report<br/>Price trajectory (7d/30d)<br/>Review velocity<br/>Rating drift<br/>BSR movement"]
-    TREND --> SEND_LEAD["sessions_send weekly digest<br/>to Lead for strategic decisions"]
+    ADD["Lead 发送：追踪 ASIN B0xxxxx"] --> PROFILE["创建/更新<br/>competitor_profiles/{asin}.json<br/>字段：ASIN、标题、品牌、<br/>品类、初始价格、<br/>初始评分、初始评论数"]
+    PROFILE --> DAILY["加入每日定时扫描列表"]
+    DAILY --> TREND["每周：生成趋势报告<br/>价格走势（7天/30天）<br/>评论增速<br/>评分波动<br/>BSR 排名变化"]
+    TREND --> SEND_LEAD["sessions_send 每周摘要<br/>发送给 Lead 用于战略决策"]
 ```
 
 ---
 
-## 4. Data Schema
+## 4. 数据 Schema
 
-### 4.1 Input: Task from Lead
+### 4.1 输入：来自 Lead 的任务
 
-The Lead agent sends tasks to voc-analyst via `sessions_send` in this format:
+Lead Agent 通过 `sessions_send` 以如下格式向 `voc-analyst` 发送任务：
 
 ```json
 {
@@ -292,7 +290,7 @@ The Lead agent sends tasks to voc-analyst via `sessions_send` in this format:
 }
 ```
 
-### 4.2 Output: Structured VOCReport
+### 4.2 输出：结构化 VOCReport
 
 ```json
 {
@@ -400,55 +398,55 @@ The Lead agent sends tasks to voc-analyst via `sessions_send` in this format:
 }
 ```
 
-### 4.3 Human-Readable Markdown Report (Saved to data/reports/)
+### 4.3 人类可读 Markdown 报告（保存至 data/reports/）
 
 ```markdown
-# VOC Market Analysis: Camping Folding Bed
+# VOC 市场分析报告：露营折叠床
 
-**Report ID**: voc_20260305_camping_folding_bed
-**Date**: 2026-03-05
-**Confidence**: HIGH (4/4 sources returned data)
-**Category**: Camping Folding Bed / Cot
-**Target Market**: US
+**报告 ID**: voc_20260305_camping_folding_bed
+**日期**: 2026-03-05
+**置信度**: HIGH（4/4 数据源均返回数据）
+**品类**: Camping Folding Bed / Cot
+**目标市场**: 美国
 
 ---
 
-## Market Overview
+## 市场概览
 
-| Metric | Value |
+| 指标 | 数值 |
 |--------|-------|
-| Price Range | $29.99 - $89.99 (median $54.99) |
-| Average Rating | 3.8/5 |
-| Reviews Sampled | 12,450 |
-| Market Saturation | MEDIUM |
-| Top Brands | Coleman, KingCamp, MOON LENCE |
+| 价格区间 | $29.99 - $89.99（中位数 $54.99） |
+| 平均评分 | 3.8/5 |
+| 采样评论数 | 12,450 |
+| 市场饱和度 | MEDIUM |
+| 头部品牌 | Coleman, KingCamp, MOON LENCE |
 
-## Top Pain Points (Cross-Validated)
+## 核心痛点（交叉验证后）
 
-### 1. Insufficient Weight Capacity (Severity: 9.2/10)
-- **Sources**: Amazon reviews, r/Camping, YouTube review #1
-- **Frequency**: 68% of negative reviews
-- **Design Opportunity**: Target 450lb+ capacity with reinforced steel frame
-- Key quote: "Broke after two nights, I weigh 220lbs" (Amazon)
+### 1. 承重能力不足（严重度：9.2/10）
+- **来源**: Amazon 评论、r/Camping、YouTube 评测 #1
+- **频率**: 68% 的差评提及此问题
+- **设计机会**: 目标 450 磅以上承重，采用加固钢架
+- 典型引文: "Broke after two nights, I weigh 220lbs"（Amazon）
 
-### 2. Difficult Storage and Portability (Severity: 7.5/10)
-- **Sources**: Amazon reviews, YouTube review #2
-- **Frequency**: 42% of negative reviews
-- **Design Opportunity**: One-fold mechanism with integrated carry bag
+### 2. 收纳与便携性差（严重度：7.5/10）
+- **来源**: Amazon 评论、YouTube 评测 #2
+- **频率**: 42% 的差评提及此问题
+- **设计机会**: 一折式结构，配带肩带的收纳袋
 
-[... additional pain points ...]
+[... 更多痛点 ...]
 
-## Recommendation: ENTER MARKET
-[... rationale ...]
+## 建议：进入该市场
+[... 详细理由 ...]
 
-## Data Sources
-- Amazon: 50 products via Decodo amazon_search
-- Reddit: 35 posts from r/Camping, r/BuyItForLife via Decodo reddit_subreddit
-- YouTube: 3 review videos via Decodo youtube_subtitles
-- Google Maps: 12 suppliers via Apify Google Places
+## 数据来源
+- Amazon: 50 个产品，通过 Decodo amazon_search
+- Reddit: 35 条帖子，来自 r/Camping、r/BuyItForLife，通过 Decodo reddit_subreddit
+- YouTube: 3 个评测视频，通过 Decodo youtube_subtitles
+- Google Maps: 12 个供应商，通过 Apify Google Places
 ```
 
-### 4.4 Internal Data: price_memory.txt Format
+### 4.4 内部数据：price_memory.txt 格式
 
 ```
 # VOC Price Monitor Snapshot
@@ -460,7 +458,7 @@ B0XXXXXXX2|KingCamp Strong Cot|69.99|USD|in_stock|7|Lightning Deal|https://amazo
 B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/B0XXXXXXX3
 ```
 
-### 4.5 Internal Data: scrape_log.jsonl
+### 4.5 内部数据：scrape_log.jsonl
 
 ```jsonl
 {"timestamp":"2026-03-05T14:20:00+08:00","tool":"decodo/amazon_search","query":"camping folding bed","results":50,"status":"success","latency_ms":4200,"request_id":"req_20260305_001"}
@@ -470,12 +468,12 @@ B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/
 
 ---
 
-## 5. Test Scenarios
+## 5. 测试场景
 
-### Test 1: Full Cross-Validation Analysis
+### 测试 1：完整交叉验证分析
 
-- **Name**: End-to-end multi-source category analysis
-- **Input**: Lead sends via sessions_send:
+- **名称**: 端到端多源品类分析
+- **输入**: Lead 通过 sessions_send 发送：
   ```json
   {
     "task_type": "full_analysis",
@@ -489,26 +487,26 @@ B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/
     "request_id": "test_001"
   }
   ```
-- **Expected Output**:
-  - JSON report with all fields populated
-  - `data_sources` has 4 entries, each with `status: "success"`
-  - `pain_points` array has at least 3 items
-  - Each pain point has `source_count >= 2`
-  - `recommendation.verdict` is one of `RECOMMENDED_ENTRY`, `CAUTION`, `AVOID`
-  - `market_overview.price_range.min` and `max` are valid positive numbers
-  - Markdown report saved to `data/reports/portable_blender_{date}.md`
-- **Validation**:
+- **预期输出**:
+  - JSON 报告所有字段均已填充
+  - `data_sources` 包含 4 个条目，每个 `status: "success"`
+  - `pain_points` 数组至少 3 项
+  - 每个痛点 `source_count >= 2`
+  - `recommendation.verdict` 为 `RECOMMENDED_ENTRY`、`CAUTION` 或 `AVOID` 之一
+  - `market_overview.price_range.min` 和 `max` 为有效正数
+  - Markdown 报告已保存至 `data/reports/portable_blender_{date}.md`
+- **验证方法**:
   ```bash
-  # Check JSON is valid
+  # 检查 JSON 是否有效
   python3 -c "import json; d=json.load(open('data/reports/portable_blender_20260305.json')); assert len(d['pain_points']) >= 3; assert all(p['source_count'] >= 2 for p in d['pain_points'][:3]); assert d['confidence'] in ['HIGH','MEDIUM','LOW']; print('PASS')"
-  # Check markdown exists
+  # 检查 Markdown 文件是否存在
   test -f data/reports/portable_blender_20260305.md && echo "PASS" || echo "FAIL"
   ```
 
-### Test 2: Single-Platform Quick Query
+### 测试 2：单平台快速查询
 
-- **Name**: Reddit-only quick sentiment check
-- **Input**:
+- **名称**: 仅 Reddit 的快速情感检测
+- **输入**:
   ```json
   {
     "task_type": "quick_query",
@@ -521,42 +519,42 @@ B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/
     "request_id": "test_002"
   }
   ```
-- **Expected Output**:
-  - Response within 120 seconds
-  - Report contains at least 10 Reddit posts analyzed
-  - Pain points extracted with representative quotes and source URLs
-  - `confidence` marked as `LOW` (only 1 source)
-- **Validation**:
+- **预期输出**:
+  - 120 秒内返回响应
+  - 报告包含至少 10 条已分析的 Reddit 帖子
+  - 提取的痛点附带代表性引文和来源 URL
+  - `confidence` 标记为 `LOW`（仅 1 个数据源）
+- **验证方法**:
   ```bash
   python3 -c "import json,time; d=json.load(open('data/reports/4k_tv_quick_20260305.json')); assert d['data_sources']['reddit']['posts_analyzed'] >= 10; assert d['confidence'] == 'LOW'; assert d['metadata']['execution_time_seconds'] <= 120; print('PASS')"
   ```
 
-### Test 3: Price Monitoring Detection
+### 测试 3：价格监控检测
 
-- **Name**: Price drop detection and alert generation
-- **Input**: Pre-seed `price_memory.txt` with known prices, then run price monitor with one product having a different live price.
+- **名称**: 降价检测与预警生成
+- **输入**: 预先在 `price_memory.txt` 中写入已知价格，然后在某产品实际价格不同的情况下运行价格监控。
   ```
-  # Seed price_memory.txt with:
+  # 在 price_memory.txt 中预设：
   B09V3KXJPB|Ninja BN401 Nutri Pro|79.99|USD|in_stock|5||https://amazon.com/dp/B09V3KXJPB
   ```
-  Then trigger the price monitoring cron prompt.
-- **Expected Output**:
-  - If price changed: Alert JSON generated with old_price, new_price, change_percent
-  - price_memory.txt updated with new price
-  - price_history/{date}_prices.json created with historical entry
-  - Webhook payload formatted for Feishu/Telegram
-- **Validation**:
+  然后触发价格监控定时 Prompt。
+- **预期输出**:
+  - 若价格发生变化：生成包含 old_price、new_price、change_percent 的预警 JSON
+  - price_memory.txt 已更新为新价格
+  - price_history/{date}_prices.json 已创建并包含历史记录
+  - Webhook 推送载荷已按飞书/Telegram 格式生成
+- **验证方法**:
   ```bash
-  # Check price_memory.txt was updated
+  # 检查 price_memory.txt 是否已更新
   grep "B09V3KXJPB" price_memory.txt | awk -F'|' '{if ($3 != "79.99") print "PRICE_CHANGED_DETECTED: PASS"; else print "NO_CHANGE"}'
-  # Check history file exists
+  # 检查历史文件是否存在
   test -f price_history/$(date +%Y%m%d)_prices.json && echo "PASS" || echo "FAIL"
   ```
 
-### Test 4: Graceful Degradation Under Platform Failure
+### 测试 4：平台故障优雅降级
 
-- **Name**: Partial source failure handling
-- **Input**: Same as Test 1, but with an invalid Apify token to simulate Google Maps failure:
+- **名称**: 部分数据源失败的处理
+- **输入**: 与测试 1 相同，但使用无效的 Apify Token 模拟 Google Maps 故障：
   ```json
   {
     "task_type": "full_analysis",
@@ -565,21 +563,21 @@ B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/
     "request_id": "test_004"
   }
   ```
-- **Expected Output**:
-  - Report still generated with 3/4 sources
+- **预期输出**:
+  - 报告仍基于 3/4 数据源生成
   - `data_sources.google_maps.status` = `"error"`
-  - `confidence` downgraded to `MEDIUM` (3 sources instead of 4)
-  - Error logged in `scrape_log.jsonl` with error details
-  - Report still contains pain points from successful sources
-- **Validation**:
+  - `confidence` 降级为 `MEDIUM`（3 个成功源而非 4 个）
+  - 错误已记录至 `scrape_log.jsonl` 并附详细信息
+  - 报告仍包含来自成功数据源的痛点
+- **验证方法**:
   ```bash
   python3 -c "import json; d=json.load(open('data/reports/camping_hammock_20260305.json')); assert d['data_sources']['google_maps']['status'] == 'error'; assert d['confidence'] == 'MEDIUM'; assert len(d['pain_points']) >= 2; print('PASS')"
   ```
 
-### Test 5: Competitor Tracking Addition and Weekly Digest
+### 测试 5：竞品追踪添加与周报
 
-- **Name**: Add competitor ASIN and verify profile creation
-- **Input**:
+- **名称**: 添加竞品 ASIN 并验证档案创建
+- **输入**:
   ```json
   {
     "task_type": "add_competitor",
@@ -588,20 +586,20 @@ B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/
     "request_id": "test_005"
   }
   ```
-- **Expected Output**:
-  - Two files created: `competitor_profiles/B0XXXXXXX1.json` and `B0XXXXXXX2.json`
-  - Each profile has: ASIN, title, brand, current_price, current_rating, review_count, bsr_rank, scrape_date
-  - ASINs added to price_memory.txt for daily monitoring
-- **Validation**:
+- **预期输出**:
+  - 创建两个文件：`competitor_profiles/B0XXXXXXX1.json` 和 `B0XXXXXXX2.json`
+  - 每个档案包含：ASIN、标题、品牌、当前价格、当前评分、评论数、BSR 排名、抓取日期
+  - ASIN 已添加至 price_memory.txt 用于每日监控
+- **验证方法**:
   ```bash
   python3 -c "import json; p1=json.load(open('data/competitor_profiles/B0XXXXXXX1.json')); assert 'title' in p1; assert 'current_price' in p1; assert p1['current_price'] > 0; print('PASS')"
   grep "B0XXXXXXX1" data/price_memory.txt && echo "PASS" || echo "FAIL"
   ```
 
-### Test 6: Empty Data Handling
+### 测试 6：空数据处理
 
-- **Name**: Query with no results returns proper empty report
-- **Input**:
+- **名称**: 无结果查询应返回合规的空报告
+- **输入**:
   ```json
   {
     "task_type": "full_analysis",
@@ -610,89 +608,89 @@ B0XXXXXXX3|MOON LENCE Camping Cot|35.99|USD|low_stock|12||https://amazon.com/dp/
     "request_id": "test_006"
   }
   ```
-- **Expected Output**:
-  - Report generated with `confidence: "LOW"`
+- **预期输出**:
+  - 报告已生成，`confidence: "LOW"`
   - `recommendation.verdict` = `"INSUFFICIENT_DATA"`
   - `pain_points` = `[]`
-  - `market_overview` fields show 0 or null values
-  - No crash or unhandled exception
-- **Validation**:
+  - `market_overview` 各字段为 0 或 null
+  - 无崩溃或未处理异常
+- **验证方法**:
   ```bash
   python3 -c "import json; d=json.load(open('data/reports/quantum_entanglement_dog_collar_20260305.json')); assert d['recommendation']['verdict'] == 'INSUFFICIENT_DATA'; assert d['pain_points'] == []; print('PASS')"
   ```
 
 ---
 
-## 6. Success Metrics
+## 6. 成功指标
 
-### 6.1 Data Quality Metrics
+### 6.1 数据质量指标
 
-| Metric | Target | Measurement Method |
+| 指标 | 目标 | 衡量方法 |
 |--------|:---:|------|
-| **Data Accuracy Rate** | >= 90% | Spot-check 20 random data points per report against source URLs. Calculate (correct / total). |
-| **Source Coverage** | >= 3 platforms per full analysis | Count unique platforms with `status: "success"` in `data_sources`. |
-| **Cross-Validation Hit Rate** | >= 60% of pain points confirmed by 2+ sources | `pain_points.filter(p => p.source_count >= 2).length / pain_points.length` |
-| **URL Validity Rate** | >= 95% | HTTP HEAD check all source URLs in report. `200/total * 100`. |
+| **数据准确率** | >= 90% | 每份报告随机抽检 20 个数据点，与来源 URL 核对。计算（正确数 / 总数）。|
+| **数据源覆盖度** | 每次完整分析 >= 3 个平台 | 统计 `data_sources` 中 `status: "success"` 的平台数。|
+| **交叉验证命中率** | >= 60% 的痛点经 2+ 来源确认 | `pain_points.filter(p => p.source_count >= 2).length / pain_points.length` |
+| **URL 有效率** | >= 95% | 对报告中所有来源 URL 进行 HTTP HEAD 检查。`200/总数 * 100`。|
 
-### 6.2 Performance Metrics
+### 6.2 性能指标
 
-| Metric | Target | Measurement Method |
+| 指标 | 目标 | 衡量方法 |
 |--------|:---:|------|
-| **Full Analysis Response Time** | <= 5 minutes | `metadata.execution_time_seconds <= 300` |
-| **Quick Query Response Time** | <= 2 minutes | `metadata.execution_time_seconds <= 120` |
-| **Price Monitor Cycle Time** | <= 3 minutes for 20 ASINs | Cron job start-to-finish timestamp delta |
-| **Scrape Success Rate** | >= 85% | `success_count / total_scrape_attempts` from `scrape_log.jsonl` |
+| **完整分析响应时间** | <= 5 分钟 | `metadata.execution_time_seconds <= 300` |
+| **快速查询响应时间** | <= 2 分钟 | `metadata.execution_time_seconds <= 120` |
+| **价格监控周期时间** | 20 个 ASIN <= 3 分钟 | 定时任务从开始到结束的时间差 |
+| **爬取成功率** | >= 85% | `success_count / total_scrape_attempts`，来自 `scrape_log.jsonl` |
 
-### 6.3 Report Completeness Score
+### 6.3 报告完整度评分
 
-Formula: `completeness = (filled_fields / total_fields) * 100`
+公式：`completeness = (已填字段 / 总字段) * 100`
 
-| Report Section | Required Fields | Weight |
+| 报告章节 | 必填字段数 | 权重 |
 |------|:---:|:---:|
-| market_overview | 7 fields (price_range, avg_rating, total_reviews, etc.) | 20% |
-| pain_points | At least 3 items, each with 7 fields | 30% |
-| competitor_analysis | At least 3 competitors with 8 fields each | 20% |
-| recommendation | 5 fields (verdict, rationale, positioning, price, risks) | 20% |
-| data_sources | All requested platforms accounted for | 10% |
+| market_overview | 7 个字段（price_range、avg_rating、total_reviews 等） | 20% |
+| pain_points | 至少 3 项，每项 7 个字段 | 30% |
+| competitor_analysis | 至少 3 个竞品，每个 8 个字段 | 20% |
+| recommendation | 5 个字段（verdict、rationale、positioning、price、risks） | 20% |
+| data_sources | 所有请求的平台均已记录 | 10% |
 
-**Target**: Completeness score >= 85% for full analyses.
+**目标**：完整分析的完整度评分 >= 85%。
 
-### 6.4 Cost Metrics
+### 6.4 成本指标
 
-| Metric | Target | Measurement Method |
+| 指标 | 目标 | 衡量方法 |
 |--------|:---:|------|
-| **Cost per Full Analysis** | <= $0.50 USD | Sum of: Kimi K2.5 tokens + Decodo API calls + Apify usage |
-| **Cost per Quick Query** | <= $0.10 USD | Kimi K2.5 tokens + single platform API call |
-| **Monthly Price Monitoring Cost** | <= $15 USD for 50 ASINs | 30 days * playwright/web_fetch calls |
-| **Token Efficiency** | <= 8000 tokens per full report | `metadata.estimated_token_cost` tracked per report |
+| **单次完整分析成本** | <= $0.50 USD | 合计：Kimi K2.5 Token 费 + Decodo API 调用 + Apify 用量 |
+| **单次快速查询成本** | <= $0.10 USD | Kimi K2.5 Token 费 + 单平台 API 调用 |
+| **月度价格监控成本** | 50 个 ASIN <= $15 USD | 30 天 * playwright/web_fetch 调用次数 |
+| **Token 效率** | 每份完整报告 <= 8000 tokens | 通过每份报告的 `metadata.estimated_token_cost` 追踪 |
 
 ---
 
-## 7. Error Handling
+## 7. 错误处理
 
-### 7.1 Platform-Specific Error Scenarios
+### 7.1 平台级错误场景
 
-| Scenario | Detection | Response | Recovery |
+| 场景 | 检测方式 | 响应策略 | 恢复措施 |
 |------|------|------|------|
-| **Amazon rate-limited (429)** | Decodo returns HTTP 429 or empty results | Log error, wait 60s, retry once. If still failing, mark amazon source as `"rate_limited"` | Fall back to cached data if available in `data/raw/amazon/`. Downgrade confidence. |
-| **Reddit API blocked (403)** | reddit-readonly returns 403 or timeout | Switch from Decodo to reddit-readonly skill (free fallback). If both fail, mark as unavailable | Use Brave Search with `site:reddit.com` as last resort |
-| **YouTube subtitles unavailable** | youtube_subtitles returns empty | Log video IDs that failed. Try next video in search results (up to 5 attempts) | Use Brave Search for written reviews as alternative |
-| **Apify Actor timeout** | Actor run exceeds 5 minutes | Cancel actor run, log timeout | Skip Google Maps data, note in report |
-| **Network/DNS failure** | Connection timeout on any request | Retry with exponential backoff: 5s, 15s, 45s | After 3 retries, mark source as `"network_error"` |
+| **Amazon 被限流 (429)** | Decodo 返回 HTTP 429 或空结果 | 记录错误，等待 60 秒，重试一次。仍失败则标记 amazon 源为 `"rate_limited"` | 如有缓存数据（`data/raw/amazon/`）则降级使用。下调置信度。|
+| **Reddit API 被封 (403)** | reddit-readonly 返回 403 或超时 | 从 Decodo 切换到 reddit-readonly Skill（免费备选）。若均失败则标记为不可用 | 最后手段：用 Brave Search 加 `site:reddit.com` 搜索 |
+| **YouTube 字幕不可用** | youtube_subtitles 返回空 | 记录失败的视频 ID，尝试搜索结果中的下一个视频（最多尝试 5 次） | 使用 Brave Search 查找文字评测作为替代 |
+| **Apify Actor 超时** | Actor 运行超过 5 分钟 | 取消 Actor 运行，记录超时 | 跳过 Google Maps 数据，在报告中注明 |
+| **网络/DNS 故障** | 任何请求连接超时 | 指数退避重试：5秒、15秒、45秒 | 3 次重试后标记源为 `"network_error"` |
 
-### 7.2 Data Quality Error Handling
+### 7.2 数据质量错误处理
 
-| Scenario | Detection | Response |
+| 场景 | 检测方式 | 响应策略 |
 |------|------|------|
-| **All sources return empty** | `sum(results) == 0` | Generate report with `verdict: "INSUFFICIENT_DATA"`, confidence `"NONE"`. Suggest alternative keywords to Lead. |
-| **Price data inconsistent** | Price variance > 500% across sources | Flag as potential data error. Do not include outliers in median calculation. Log for manual review. |
-| **Duplicate products detected** | Same ASIN appears multiple times | Deduplicate by ASIN. Keep the most recent scrape. |
-| **Non-English content** | Language detection on scraped text | Skip non-English content unless target market is non-US. Log skipped items. |
+| **所有数据源返回空** | `sum(results) == 0` | 生成 `verdict: "INSUFFICIENT_DATA"`、`confidence: "NONE"` 的报告。向 Lead 建议替代关键词。|
+| **价格数据异常** | 价格偏差 > 500% | 标记为潜在数据错误。不将异常值纳入中位数计算。记录待人工审核。|
+| **检测到重复产品** | 同一 ASIN 出现多次 | 按 ASIN 去重，保留最新的抓取结果。|
+| **非英语内容** | 对抓取文本进行语言检测 | 除非目标市场为非美国，否则跳过非英语内容。记录被跳过的条目。|
 
-### 7.3 Retry Strategy
+### 7.3 重试策略
 
 ```
-Retry Policy:
+重试策略配置:
   max_retries: 3
   backoff_strategy: exponential
   initial_delay: 5 seconds
@@ -701,40 +699,40 @@ Retry Policy:
   retry_on: [429, 500, 502, 503, 504, timeout, connection_error]
   do_not_retry: [400, 401, 403, 404]
 
-After all retries exhausted:
-  - Mark data source as failed in report
-  - Continue with available sources
-  - Adjust confidence level accordingly
-  - Log full error chain to scrape_log.jsonl
+所有重试耗尽后:
+  - 在报告中标记该数据源为失败
+  - 继续使用可用的数据源
+  - 相应下调置信等级
+  - 将完整错误链记录至 scrape_log.jsonl
 ```
 
-### 7.4 Confidence Level Logic
+### 7.4 置信等级逻辑
 
 ```
-4/4 sources successful  -> HIGH
-3/4 sources successful  -> MEDIUM
-2/4 sources successful  -> LOW
-1/4 sources successful  -> LOW (with warning)
-0/4 sources successful  -> NONE (report marked INSUFFICIENT_DATA)
+4/4 数据源成功  -> HIGH
+3/4 数据源成功  -> MEDIUM
+2/4 数据源成功  -> LOW
+1/4 数据源成功  -> LOW（附警告）
+0/4 数据源成功  -> NONE（报告标记为 INSUFFICIENT_DATA）
 ```
 
 ---
 
-## 8. Price Monitoring Automation
+## 8. 价格监控自动化
 
-### 8.1 Cron Schedule Configuration
+### 8.1 Cron 定时配置
 
-The price monitoring task is configured as a recurring prompt triggered by OpenClaw's cron system.
+价格监控任务通过 OpenClaw 的 Cron 系统配置为周期性 Prompt 触发。
 
-**Cron Entry** (in OpenClaw cron config or system crontab):
+**Cron 配置**（在 OpenClaw Cron 配置或系统 crontab 中）：
 
 ```bash
-# Run daily at 03:00 AM UTC+8 (Beijing time)
-# This is when most US sellers make overnight price adjustments
+# 每天北京时间 03:00 执行
+# 此时大多数美国卖家进行隔夜调价
 0 3 * * * openclaw run --workspace ~/.openclaw/workspace-voc --prompt-file ~/.openclaw/workspace-voc/templates/prompt_templates/price_monitor.md
 ```
 
-**price_monitor.md prompt template**:
+**price_monitor.md Prompt 模板**：
 
 ```markdown
 # Task: Execute daily price monitoring sweep
@@ -764,7 +762,7 @@ The price monitoring task is configured as a recurring prompt triggered by OpenC
 }
 ```
 
-### 8.2 price_memory.txt Format
+### 8.2 price_memory.txt 格式说明
 
 ```
 # VOC Price Monitor Snapshot
@@ -778,9 +776,9 @@ B0XXXXXXX1|Coleman ComfortSmart Cot|49.99|USD|in_stock|3||https://amazon.com/dp/
 B0XXXXXXX2|KingCamp Strong Camping Cot|69.99|USD|in_stock|7|Lightning Deal|https://amazon.com/dp/B0XXXXXXX2
 ```
 
-### 8.3 Webhook Alert Integration
+### 8.3 Webhook 预警集成
 
-**Feishu (Lark) Webhook**:
+**飞书（Lark）Webhook**：
 
 ```json
 {
@@ -803,7 +801,7 @@ B0XXXXXXX2|KingCamp Strong Camping Cot|69.99|USD|in_stock|7|Lightning Deal|https
 }
 ```
 
-**Telegram Webhook**:
+**Telegram Webhook**：
 
 ```
 POST https://api.telegram.org/bot{TOKEN}/sendMessage
@@ -814,7 +812,7 @@ POST https://api.telegram.org/bot{TOKEN}/sendMessage
 }
 ```
 
-### 8.4 Historical Data Accumulation Strategy
+### 8.4 历史数据累积策略
 
 ```
 data/price_history/
@@ -825,7 +823,7 @@ data/price_history/
 └── 2026-03-05_prices.json
 ```
 
-Each daily file:
+每个每日文件的结构：
 
 ```json
 {
@@ -844,56 +842,51 @@ Each daily file:
 }
 ```
 
-**Weekly Trend Aggregation**: Every Sunday at 04:00, a secondary cron generates a weekly trend
-digest from the 7 daily snapshots:
-- 7-day price trajectory per ASIN (min, max, avg, direction)
-- BSR rank movement (improved/declined/stable)
-- Review velocity (new reviews per day)
-- Stock status changes (stockout events)
+**每周趋势聚合**：每周日 04:00，二级 Cron 任务从 7 天的每日快照中生成周趋势摘要：
+- 每个 ASIN 的 7 日价格走势（最低、最高、均价、趋势方向）
+- BSR 排名变动（上升/下降/持平）
+- 评论增速（每日新增评论数）
+- 库存状态变化（缺货事件）
 
-**Retention Policy**: Keep daily snapshots for 90 days, then compress to weekly averages.
-Weekly averages retained indefinitely.
+**数据保留策略**：每日快照保留 90 天，之后压缩为周均值。周均值永久保留。
 
 ---
 
-## 9. Integration Points
+## 9. 集成接口
 
-### 9.1 Communication with Lead (via sessions_send)
+### 9.1 与 Lead 的通信（通过 sessions_send）
 
-**Receiving Tasks**:
+**接收任务**：
 ```
 Lead -> voc-analyst (sessions_send):
-  Payload: Task JSON (see Section 4.1)
-  The voc-analyst receives this as an incoming message in its workspace session.
+  载荷: 任务 JSON（见第 4.1 节）
+  voc-analyst 在其工作区会话中作为传入消息接收。
 ```
 
-**Returning Results**:
+**返回结果**：
 ```
 voc-analyst -> Lead (sessions_send):
-  Payload: VOCReport JSON (see Section 4.2)
-  The Lead receives the structured report and routes relevant sections downstream.
+  载荷: VOCReport JSON（见第 4.2 节）
+  Lead 接收结构化报告后，将相关部分路由至下游 Agent。
 ```
 
-**"Dark Track" (sessions_send) vs "Light Track" (Feishu Messages)**:
+**"暗线"（sessions_send） vs "明线"（飞书消息）**：
 
-| Aspect | Dark Track (sessions_send) | Light Track (Feishu) |
+| 维度 | 暗线（sessions_send） | 明线（飞书） |
 |--------|:---:|:---:|
-| Purpose | Actual data exchange between agents | Human-visible progress updates |
-| Content | Full JSON reports, raw data payloads | Summary cards, status updates |
-| Audience | Other agents only | Human operators in Feishu group |
-| Example | Complete VOCReport with 50 data points | "VOC analysis complete. Top pain point: weight capacity. Full report attached." |
-| Trigger | Automatic on task completion | Lead posts summary card to Feishu group |
+| 用途 | Agent 间的实际数据交换 | 人类可见的进度更新 |
+| 内容 | 完整 JSON 报告、原始数据载荷 | 摘要卡片、状态更新 |
+| 受众 | 仅其他 Agent | 飞书群里的人类运营者 |
+| 示例 | 包含 50 个数据点的完整 VOCReport | "VOC 分析完成。头号痛点：承重不足。完整报告已附上。" |
+| 触发方式 | 任务完成时自动发送 | Lead 在飞书群发布摘要卡片 |
 
-**Why dual tracks**: Feishu has Bot-to-Bot Loop Prevention. Agent A @-mentioning Agent B
-in a group chat does not trigger B's backend. So real agent communication MUST go through
-`sessions_send` (dark track), while Feishu messages are purely for human visibility (light
-track).
+**为何需要双轨制**：飞书有 Bot-to-Bot Loop Prevention（防机器人死循环）机制。Agent A 在群里 @Agent B 时，B 的后台收不到推送。因此 Agent 间真实通信必须走 `sessions_send`（暗线），飞书消息纯粹用于人类可见的汇报（明线）。
 
-### 9.2 Data Format for Downstream Agents
+### 9.2 下游 Agent 的数据格式
 
-**VOC -> GEO Optimizer** (routed by Lead):
+**VOC -> GEO 优化师**（由 Lead 路由）：
 
-Lead extracts from the VOCReport and sends to geo-optimizer:
+Lead 从 VOCReport 中提取数据并发送给 geo-optimizer：
 
 ```json
 {
@@ -920,10 +913,9 @@ Lead extracts from the VOCReport and sends to geo-optimizer:
 }
 ```
 
-GEO Optimizer uses the quantitative pain point data to write content that satisfies GEO
-rules (specific numbers, authority citations, no keyword stuffing).
+GEO 优化师利用定量痛点数据撰写符合 GEO 规则的内容（具体数据、权威引文、禁止关键词填充）。
 
-**VOC -> TikTok Director** (routed by Lead):
+**VOC -> TikTok 编导**（由 Lead 路由）：
 
 ```json
 {
@@ -951,10 +943,9 @@ rules (specific numbers, authority citations, no keyword stuffing).
 }
 ```
 
-TikTok Director uses the pain points to design the 25-grid storyboard, ensuring the first
-2 seconds hook addresses the #1 pain point visually.
+TikTok 编导利用痛点数据设计 25 宫格分镜故事板，确保前 2 秒的视觉钩子直击第一大痛点。
 
-**VOC -> Reddit Specialist** (routed by Lead):
+**VOC -> Reddit 专家**（由 Lead 路由）：
 
 ```json
 {
@@ -973,53 +964,52 @@ TikTok Director uses the pain points to design the 25-grid storyboard, ensuring 
 }
 ```
 
-Reddit Specialist uses the specific posts and pain points identified by VOC to craft
-authentic, value-adding comments that naturally mention the product as a solution.
+Reddit 专家利用 VOC 识别的具体帖子和痛点，撰写真诚的、有价值的评论，自然地以解决方案的角度提及产品。
 
 ---
 
-## Appendix A: Skill Router Decision Tree
+## 附录 A：Skill 路由决策树
 
-When VOC agent receives a scraping task, it should follow this priority:
+当 VOC Agent 收到爬取任务时，按以下优先级选择工具：
 
 ```
-1. Does the target have a dedicated Decodo tool? (Amazon, Reddit, YouTube subtitles)
-   YES -> Use Decodo Skill (highest reliability, structured JSON output)
+1. 目标平台是否有对应的 Decodo 工具？（Amazon、Reddit、YouTube 字幕）
+   是 -> 使用 Decodo Skill（可靠性最高，返回结构化 JSON）
 
-2. Does Apify have a pre-built Actor? (Google Maps, TikTok, Instagram)
-   YES -> Use Apify Skill (industrial-grade, cloud-executed)
+2. Apify 是否有预建 Actor？（Google Maps、TikTok、Instagram）
+   是 -> 使用 Apify Skill（工业级，云端执行）
 
-3. Is the target a static page with public JSON endpoints?
-   YES -> Use web_fetch or reddit-readonly
+3. 目标是否为带有公开 JSON 接口的静态页面？
+   是 -> 使用 web_fetch 或 reddit-readonly
 
-4. Does the page require JavaScript rendering?
-   YES -> Is it behind Cloudflare?
-          YES -> Use stealth-browser
-          NO  -> Use playwright-npx
+4. 页面是否需要 JavaScript 渲染？
+   是 -> 是否受 Cloudflare 保护？
+          是 -> 使用 stealth-browser
+          否 -> 使用 playwright-npx
 
-5. Is local resource constrained or need batch processing?
-   YES -> Use Firecrawl (remote sandbox, 500 free/month)
+5. 本地资源是否受限或需要批量处理？
+   是 -> 使用 Firecrawl（远程沙盒，每月免费 500 次）
 
-6. Fallback: Use Brave Search / Tavily / Exa for discovery, then scrape with appropriate tool
+6. 兜底：使用 Brave Search / Tavily / Exa 发现目标，再用合适的工具爬取
 ```
 
-## Appendix B: Environment Variable Checklist
+## 附录 B：环境变量清单
 
 ```bash
-# Required
-DECODO_AUTH_TOKEN=        # Decodo web scraping API token
-BRAVE_API_KEY=            # Brave Search API key
+# 必须
+DECODO_AUTH_TOKEN=        # Decodo 网页爬取 API Token
+BRAVE_API_KEY=            # Brave Search API Key
 
-# Required for full coverage
-APIFY_TOKEN=              # Apify cloud scraping platform token
+# 完整覆盖所需
+APIFY_TOKEN=              # Apify 云端爬取平台 Token
 
-# Optional (enhance capabilities)
-TAVILY_API_KEY=           # Tavily search (China-direct, no VPN)
-EXA_API_KEY=              # Exa intent-based search
-FIRECRAWL_API_KEY=        # Firecrawl remote browser sandbox
+# 可选（增强能力）
+TAVILY_API_KEY=           # Tavily 搜索（国内直连，无需 VPN）
+EXA_API_KEY=              # Exa 意图型搜索
+FIRECRAWL_API_KEY=        # Firecrawl 远程浏览器沙盒
 
-# Webhook endpoints (for price monitoring alerts)
-FEISHU_WEBHOOK_URL=       # Feishu incoming webhook URL
-TELEGRAM_BOT_TOKEN=       # Telegram bot token
-TELEGRAM_CHAT_ID=         # Telegram chat/group ID
+# Webhook 端点（用于价格监控预警）
+FEISHU_WEBHOOK_URL=       # 飞书 Incoming Webhook URL
+TELEGRAM_BOT_TOKEN=       # Telegram Bot Token
+TELEGRAM_CHAT_ID=         # Telegram 群组/频道 ID
 ```

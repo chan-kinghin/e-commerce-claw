@@ -1,0 +1,309 @@
+[
+  {
+    "test_id": "R1",
+    "test_name": "W2 Comment Generation",
+    "description": "Non-promotional comment for camping cot thread (W2 stage). Validates: zero product mentions, addresses OP's problem, actionable advice, spam score < 0.1, 100-200 words.",
+    "agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "task_type": "generate_comment",
+      "account_stage": "W2",
+      "thread_context": {
+        "subreddit": "r/Camping",
+        "post_title": "My camping cot broke on me mid-trip. Looking for something that can hold 250+ lbs. Any recommendations?",
+        "post_body": "I'm a bigger guy (6'2\", 260 lbs) and my old Coleman cot just snapped the frame while I was sleeping. Super embarrassing at the campsite. Need something that won't let me down. Budget is flexible, just want reliability. Going on a week-long trip to Yellowstone next month.",
+        "post_url": "https://reddit.com/r/Camping/comments/test123/my_camping_cot_broke",
+        "post_age_days": 3,
+        "upvotes": 47,
+        "comment_count": 23
+      },
+      "product": {
+        "name": "UltraRest Pro Camping Cot",
+        "key_features": ["450lb capacity", "2-minute setup"],
+        "category": "outdoor/camping"
+      },
+      "request_id": "unit_test_reddit_r1"
+    },
+    "expected_output": {
+      "comment_text": "generated comment",
+      "word_count_range": [100, 200],
+      "product_mentions": 0,
+      "spam_score_max": 0.1,
+      "addresses_op_problem": true
+    },
+    "timeout_seconds": 60,
+    "validation_criteria": [
+      "Zero product name mentions in comment",
+      "Comment addresses OP's specific problem (weight capacity, 250+ lbs)",
+      "Contains actionable advice (e.g., what to look for in a cot)",
+      "Spam score < 0.1",
+      "Word count between 100-200 words",
+      "No direct product links",
+      "Tone matches r/Camping community (helpful, outdoor enthusiast)",
+      "W2 stage compliance: purely value-adding, no promotion"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "R2",
+    "test_name": "W4 Soft Recommendation",
+    "description": "Soft product recommendation for skincare discussion (W4 stage). Validates: product mentioned once naturally, 1+ alternative mentioned, honest trade-off included, subreddit jargon used, spam score < 0.2, no direct links.",
+    "agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "task_type": "generate_comment",
+      "account_stage": "W4",
+      "thread_context": {
+        "subreddit": "r/BuyItForLife",
+        "post_title": "Tired of camping gear that falls apart after one season. What's actually durable?",
+        "post_body": "I've been through 3 camping cots in 2 years. They all claim to be heavy-duty but the frames bend or the fabric rips. I'm not even that heavy (200 lbs). Is there anything out there that actually lasts? Willing to spend more for quality.",
+        "post_url": "https://reddit.com/r/BuyItForLife/comments/test456/tired_of_camping_gear",
+        "post_age_days": 7,
+        "upvotes": 112,
+        "comment_count": 67
+      },
+      "product": {
+        "name": "UltraRest Pro Camping Cot",
+        "key_features": ["450lb capacity", "reinforced steel frame", "600D ripstop fabric"],
+        "category": "outdoor/camping",
+        "price": "$79.99"
+      },
+      "request_id": "unit_test_reddit_r2"
+    },
+    "expected_output": {
+      "comment_text": "generated comment",
+      "product_mention_count": 1,
+      "alternative_mentioned": true,
+      "honest_tradeoff_included": true,
+      "spam_score_max": 0.2,
+      "direct_links": 0,
+      "subreddit_jargon_used": true
+    },
+    "timeout_seconds": 60,
+    "validation_criteria": [
+      "Product name mentioned exactly once, naturally within narrative",
+      "At least 1 alternative product mentioned (shows unbiased perspective)",
+      "Honest trade-off included (e.g., price, weight, or other limitation)",
+      "r/BuyItForLife jargon used (e.g., 'BIFL', 'buy once cry once', durability focus)",
+      "Spam score < 0.2",
+      "No direct product links",
+      "Comment feels like genuine personal experience sharing",
+      "W4 stage compliance: soft recommendation, not hard sell"
+    ],
+    "priority": "P0"
+  },
+  {
+    "test_id": "R3",
+    "test_name": "Traffic Hijacking Post Evaluation",
+    "description": "Score a candidate post for traffic hijacking. Validates: correct score calculation per rubric, 7/10 threshold decision, comment drafted if Go, evaluation logged in JSON format.",
+    "agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "task_type": "evaluate_post",
+      "candidate_post": {
+        "subreddit": "r/Camping",
+        "post_title": "Best camping cot for heavy person?",
+        "post_url": "https://reddit.com/r/Camping/comments/test789/best_camping_cot",
+        "post_age_days": 180,
+        "upvotes": 234,
+        "comment_count": 89,
+        "google_rank_for_query": "best camping cot heavy person",
+        "google_rank_position": 3,
+        "last_comment_age_days": 14
+      },
+      "product": {
+        "name": "UltraRest Pro Camping Cot",
+        "category": "outdoor/camping",
+        "key_features": ["450lb capacity", "reinforced steel frame"]
+      },
+      "voc_pain_points": [
+        "Weight capacity insufficient for heavier users",
+        "Setup takes too long in the field"
+      ],
+      "scoring_rubric": {
+        "google_rank_weight": 3,
+        "relevance_weight": 2,
+        "engagement_weight": 2,
+        "recency_weight": 1,
+        "thread_freshness_weight": 2,
+        "threshold": 7
+      },
+      "request_id": "unit_test_reddit_r3"
+    },
+    "expected_output": {
+      "evaluation_score": "calculated per rubric",
+      "decision": "GO or NO_GO",
+      "comment_draft_if_go": true,
+      "evaluation_logged": true
+    },
+    "timeout_seconds": 120,
+    "validation_criteria": [
+      "Score calculated using all rubric dimensions",
+      "Decision is GO if score >= 7, NO_GO if < 7",
+      "If GO: comment draft provided addressing OP's pain point",
+      "Evaluation logged in JSON format with all scoring dimensions",
+      "Google rank factor weighted correctly (position 3 = high value)",
+      "Thread freshness assessed (last comment 14 days ago)",
+      "Post age evaluated (180 days = established post)"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "R4",
+    "test_name": "Multi-Account Rotation Compliance",
+    "description": "3 accounts at different SOP stages with assigned subreddits. Validates: correct account used per subreddit, W3 account excluded from promo, no subreddit overlap, frequency limits respected.",
+    "agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "task_type": "validate_account_rotation",
+      "accounts": [
+        {
+          "username": "outdoors_mike_23",
+          "stage": "W2",
+          "assigned_subreddits": ["r/Camping", "r/CampingGear"],
+          "posts_today": 1,
+          "daily_limit": 3
+        },
+        {
+          "username": "trail_sarah_01",
+          "stage": "W4",
+          "assigned_subreddits": ["r/BuyItForLife", "r/Ultralight"],
+          "posts_today": 0,
+          "daily_limit": 3
+        },
+        {
+          "username": "gear_review_tom",
+          "stage": "W3",
+          "assigned_subreddits": ["r/CampingAndHiking", "r/WildernessBackpacking"],
+          "posts_today": 2,
+          "daily_limit": 3
+        }
+      ],
+      "task_queue": [
+        { "subreddit": "r/BuyItForLife", "task": "soft_recommendation", "requires_stage": "W4+" },
+        { "subreddit": "r/Camping", "task": "value_comment", "requires_stage": "W2+" },
+        { "subreddit": "r/CampingAndHiking", "task": "value_comment", "requires_stage": "W2+" }
+      ],
+      "request_id": "unit_test_reddit_r4"
+    },
+    "expected_output": {
+      "assignments": [
+        { "task": "soft_recommendation", "subreddit": "r/BuyItForLife", "account": "trail_sarah_01" },
+        { "task": "value_comment", "subreddit": "r/Camping", "account": "outdoors_mike_23" },
+        { "task": "value_comment", "subreddit": "r/CampingAndHiking", "account": "gear_review_tom" }
+      ],
+      "w3_excluded_from_promo": true,
+      "no_subreddit_overlap": true,
+      "frequency_limits_respected": true
+    },
+    "timeout_seconds": 60,
+    "validation_criteria": [
+      "r/BuyItForLife assigned to trail_sarah_01 (W4, only W4+ eligible for soft_recommendation)",
+      "r/Camping assigned to outdoors_mike_23 (W2, assigned subreddit match)",
+      "r/CampingAndHiking assigned to gear_review_tom (W3, assigned subreddit match)",
+      "gear_review_tom (W3) NOT assigned any promotional tasks",
+      "No account used on a subreddit it is not assigned to",
+      "No account exceeds its daily posting limit",
+      "No subreddit assigned to multiple accounts in same task batch"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "R5",
+    "test_name": "Shadowban Detection and Response",
+    "description": "Detect shadowban via 2 independent methods, update registry, halt activity, initiate recovery. Validates: two detection methods used, status updated, 14-day cooldown set, alert logged, subreddit assignments redistributed.",
+    "agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "task_type": "shadowban_check",
+      "account": {
+        "username": "outdoors_mike_23",
+        "stage": "W3",
+        "assigned_subreddits": ["r/Camping", "r/CampingGear"],
+        "last_activity": "2026-03-04T10:30:00Z",
+        "recent_comments": [
+          { "subreddit": "r/Camping", "comment_id": "cmt_001", "posted_at": "2026-03-04T10:30:00Z" },
+          { "subreddit": "r/CampingGear", "comment_id": "cmt_002", "posted_at": "2026-03-03T15:00:00Z" }
+        ]
+      },
+      "detection_methods": ["profile_page_check", "comment_visibility_check"],
+      "request_id": "unit_test_reddit_r5"
+    },
+    "expected_output": {
+      "shadowban_detected": true,
+      "detection_methods_used": 2,
+      "registry_updated": true,
+      "cooldown_days": 14,
+      "alert_logged": true,
+      "subreddits_redistributed": true
+    },
+    "timeout_seconds": 180,
+    "validation_criteria": [
+      "Two independent detection methods used (profile page + comment visibility)",
+      "If shadowban detected: account status updated to 'shadowbanned' in registry",
+      "14-day cooldown period set for the account",
+      "Alert logged with timestamp, account, and detection details",
+      "Subreddit assignments (r/Camping, r/CampingGear) redistributed to other accounts",
+      "All activity halted for shadowbanned account immediately",
+      "Recovery protocol initiated (cooldown timer started)"
+    ],
+    "priority": "P1"
+  },
+  {
+    "test_id": "R6",
+    "test_name": "End-to-End Traffic Hijacking",
+    "description": "Complete workflow from Google search to posted comment for 'portable blender'. Validates: 5+ candidate posts found, 3 evaluated, 1-2 selected (score >= 7), comments address VOC pain points, no direct links, W5 account used, monitoring schedule set.",
+    "agent": "reddit-spec",
+    "input": {
+      "source": "lead",
+      "task_type": "traffic_hijack",
+      "product": {
+        "name": "BlendMax Pro",
+        "category": "portable blender",
+        "key_features": ["6-blade system", "4000mAh battery", "self-cleaning"],
+        "price": "$34.99"
+      },
+      "search_queries": [
+        "best portable blender reddit",
+        "portable blender for smoothies reddit",
+        "travel blender recommendations reddit"
+      ],
+      "target_subreddits": ["r/BuyItForLife", "r/Cooking", "r/MealPrepSunday"],
+      "voc_pain_points": [
+        "Blade not strong enough for ice (38% of negative reviews)",
+        "Battery dies after 3-4 uses (29% of negative reviews)",
+        "Impossible to clean properly (21% of negative reviews)"
+      ],
+      "available_accounts": [
+        {
+          "username": "smoothie_fan_99",
+          "stage": "W5",
+          "assigned_subreddits": ["r/BuyItForLife", "r/Cooking"],
+          "karma": 1250,
+          "posts_today": 0
+        }
+      ],
+      "request_id": "unit_test_reddit_r6"
+    },
+    "expected_output": {
+      "candidate_posts_found_min": 5,
+      "posts_evaluated_min": 3,
+      "posts_selected_range": [1, 2],
+      "selected_post_min_score": 7,
+      "comments_drafted": true,
+      "monitoring_schedule_set": true
+    },
+    "timeout_seconds": 300,
+    "validation_criteria": [
+      "5+ candidate posts found via Google/Brave search",
+      "At least 3 posts evaluated using scoring rubric",
+      "1-2 posts selected with score >= 7/10",
+      "Comments address VOC pain points (ice-crushing, battery, cleaning)",
+      "No direct product links in any comment",
+      "W5 account (smoothie_fan_99) used for posting",
+      "Monitoring schedule set for comment performance tracking",
+      "Comments use cooking/food-prep community jargon naturally"
+    ],
+    "priority": "P1"
+  }
+]

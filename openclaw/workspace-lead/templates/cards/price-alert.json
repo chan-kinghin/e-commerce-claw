@@ -1,0 +1,84 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "config": {
+      "wide_screen_mode": true
+    },
+    "header": {
+      "title": {
+        "tag": "plain_text",
+        "content": "Price Alert: Competitor Price Change Detected"
+      },
+      "template": "red"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Product**: ASIN B09XYZ1234 - Folding Camping Cot Pro\n**Competitor**: OutdoorBrand Co."
+        }
+      },
+      {
+        "tag": "div",
+        "fields": [
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Previous Price**\n$59.99"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Current Price**\n$44.99"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Change**\n-25.0%"
+            }
+          },
+          {
+            "is_short": true,
+            "text": {
+              "tag": "lark_md",
+              "content": "**Detected At**\n2026-03-05 03:12 CST"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Recommendation**: Competitor likely running a Lightning Deal. Consider matching within 48 hours if your margin allows."
+        }
+      },
+      {
+        "tag": "action",
+        "actions": [
+          {
+            "tag": "button",
+            "text": {
+              "tag": "plain_text",
+              "content": "View Full Price History"
+            },
+            "type": "default",
+            "value": {
+              "action": "view_history",
+              "asin": "B09XYZ1234"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

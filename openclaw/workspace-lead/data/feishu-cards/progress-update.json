@@ -1,0 +1,18 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "header": {
+      "title": { "tag": "plain_text", "content": "Progress Update" },
+      "template": "turquoise"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Wave 1 Complete**\n- VOC Analysis: Done (top pain point: weight capacity, 68% of complaints)\n- Reddit Post Search: Done (found 3 high-ranking posts in r/Camping)\n\n**Wave 2 In Progress**\n- GEO Content: Writing blog + Amazon listing...\n- TikTok Video: Generating storyboard...\n- Reddit Comments: Crafting authentic comments..."
+        }
+      }
+    ]
+  }
+}

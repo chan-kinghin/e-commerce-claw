@@ -4,6 +4,7 @@
   "description": "Cross-border e-commerce AI platform - multi-agent orchestration config",
 
   "agents": {
+    "defaultAgent": "lead",
     "list": [
       {
         "id": "lead",
@@ -14,7 +15,8 @@
           "maxTokens": 8192
         },
         "role": "orchestrator",
-        "description": "Lead agent - sole human interface. Decomposes tasks, dispatches via sessions_send, aggregates results."
+        "description": "Lead agent - sole human interface. Decomposes tasks, dispatches via sessions_send, aggregates results.",
+        "default": true
       },
       {
         "id": "voc-analyst",
@@ -67,20 +69,23 @@
     "feishu": {
       "enabled": true,
       "connectionMode": "websocket",
+      "dmPolicy": "open",
       "accounts": {
         "lead":   { "appId": "cli_lead_placeholder",   "appSecret": "REPLACE_WITH_ACTUAL_SECRET" },
         "geo":    { "appId": "cli_geo_placeholder",    "appSecret": "REPLACE_WITH_ACTUAL_SECRET" },
         "reddit": { "appId": "cli_reddit_placeholder", "appSecret": "REPLACE_WITH_ACTUAL_SECRET" },
-        "tiktok": { "appId": "cli_tiktok_placeholder", "appSecret": "REPLACE_WITH_ACTUAL_SECRET" }
+        "tiktok": { "appId": "cli_tiktok_placeholder", "appSecret": "REPLACE_WITH_ACTUAL_SECRET" },
+        "voc":    { "appId": "cli_voc_placeholder",    "appSecret": "REPLACE_WITH_ACTUAL_SECRET" }
       }
     }
   },
 
   "bindings": [
-    { "agentId": "lead",            "match": { "channel": "feishu", "accountId": "lead" } },
-    { "agentId": "geo-optimizer",   "match": { "channel": "feishu", "accountId": "geo" } },
-    { "agentId": "reddit-spec",     "match": { "channel": "feishu", "accountId": "reddit" } },
-    { "agentId": "tiktok-director", "match": { "channel": "feishu", "accountId": "tiktok" } }
+    { "agentId": "lead",            "match": { "channel": "feishu", "accountId": "lead" },   "priority": 1 },
+    { "agentId": "voc-analyst",     "match": { "channel": "feishu", "accountId": "voc" },    "priority": 2 },
+    { "agentId": "geo-optimizer",   "match": { "channel": "feishu", "accountId": "geo" },    "priority": 2 },
+    { "agentId": "reddit-spec",     "match": { "channel": "feishu", "accountId": "reddit" }, "priority": 2 },
+    { "agentId": "tiktok-director", "match": { "channel": "feishu", "accountId": "tiktok" }, "priority": 2 }
   ],
 
   "tools": {
@@ -123,6 +128,22 @@
         "agent": "reddit-spec",
         "promptFile": "~/.openclaw/workspace-reddit/data/monitoring/shadowban-check-prompt.md",
         "description": "Monday 10:00 AM weekly shadowban detection for all active Reddit accounts"
+      },
+      {
+        "id": "weekly-market-scan",
+        "schedule": "0 2 * * 1",
+        "timezone": "Asia/Shanghai",
+        "agent": "voc-analyst",
+        "promptFile": "~/.openclaw/workspace-voc/templates/prompt_templates/weekly_market_scan.md",
+        "description": "Monday 02:00 AM broad market scan for trending categories and emerging competitors"
+      },
+      {
+        "id": "reddit-sop-compliance",
+        "schedule": "0 9 * * 5",
+        "timezone": "Asia/Shanghai",
+        "agent": "reddit-spec",
+        "promptFile": "~/.openclaw/workspace-reddit/data/nurturing/sop-compliance-prompt.md",
+        "description": "Friday 09:00 AM weekly SOP compliance audit for all Reddit accounts"
       }
     ]
   }

@@ -1,0 +1,54 @@
+{
+  "msg_type": "interactive",
+  "card": {
+    "header": {
+      "title": { "tag": "plain_text", "content": "Campaign Complete: Camping Folding Bed" },
+      "template": "green"
+    },
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Executive Summary**\nFull pipeline completed for 'camping folding bed' category. Market analysis identified weight capacity as the #1 pain point (68% of 12,450 reviews). Content deployed across blog, Amazon, Reddit, and TikTok."
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Deliverables**\n\n| Channel | Status | Key Metric |\n|---------|--------|------------|\n| VOC Report | Done | 4/4 sources, HIGH confidence |\n| Blog Post | Done | GEO Score: 87/100, 8 citations |\n| Amazon Listing | Done | GEO Score: 84/100 |\n| TikTok Video | Done | QA Score: 7.8/10, 4 variants |\n| Reddit Comments | Done | 2 comments posted, monitoring started |"
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Key Findings**\n- Price sweet spot: $59.99 - $79.99\n- Top pain point: Weight capacity (target 450lb+)\n- Competitor weakness: Coleman cot sags at 200lb despite 275lb rating\n- Recommended positioning: '450lb capacity, one-fold design, integrated carry bag'"
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "lark_md",
+          "content": "**Next Steps**\n1. Publish blog to independent site\n2. Upload Amazon listing\n3. Distribute TikTok video variants to matrix accounts\n4. Monitor Reddit comment engagement (24h/72h/7d)\n5. Set up daily price monitoring for 5 competitor ASINs"
+        }
+      },
+      {
+        "tag": "note",
+        "elements": [
+          { "tag": "plain_text", "content": "Total execution time: 18 minutes | Estimated cost: $4.20" }
+        ]
+      }
+    ]
+  }
+}

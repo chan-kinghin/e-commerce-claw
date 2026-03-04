@@ -1,0 +1,102 @@
+{
+  "agent_id": "reddit-spec",
+  "version": "1.0",
+  "input_schema": {
+    "reddit_campaign": {
+      "type": "object",
+      "required": ["campaign_type", "product", "target_subreddits"],
+      "properties": {
+        "campaign_type": {
+          "type": "string",
+          "enum": ["traffic_hijack", "search_posts", "account_nurturing", "general"],
+          "description": "Type of Reddit campaign"
+        },
+        "product": {
+          "type": "object",
+          "required": ["name", "category"],
+          "properties": {
+            "name": { "type": "string" },
+            "category": { "type": "string" },
+            "key_features": { "type": "array", "items": { "type": "string" } },
+            "price_range": { "type": "string" }
+          }
+        },
+        "target_subreddits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Subreddits to target (e.g., 'r/Camping')"
+        },
+        "account_id": { "type": "string", "description": "Reddit account to use (null for auto-select)" },
+        "campaign_goals": { "type": "array", "items": { "type": "string" } },
+        "duration_days": { "type": "number", "description": "Campaign duration in days" },
+        "voc_pain_points": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pain points from VOC analysis as text summaries"
+        },
+        "target_posts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string" },
+              "title": { "type": "string" },
+              "subreddit": { "type": "string" },
+              "age_days": { "type": "number" },
+              "current_rank": { "type": "string" }
+            }
+          },
+          "description": "Pre-identified posts for traffic hijacking (from Wave 1 search)"
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "output_schema": {
+    "RedditCampaignResult": {
+      "type": "object",
+      "properties": {
+        "campaign_type": { "type": "string" },
+        "posts_found": { "type": "number", "description": "Number of high-ranking posts discovered (for search_posts type)" },
+        "posts_details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string" },
+              "title": { "type": "string" },
+              "subreddit": { "type": "string" },
+              "age_days": { "type": "number" },
+              "current_rank": { "type": "string" },
+              "estimated_monthly_traffic": { "type": "number" }
+            }
+          }
+        },
+        "comments_posted": { "type": "number" },
+        "comment_details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "post_url": { "type": "string" },
+              "comment_url": { "type": "string" },
+              "subreddit": { "type": "string" },
+              "angle_used": { "type": "string" },
+              "tone_profile": { "type": "string" }
+            }
+          }
+        },
+        "engagement_metrics": {
+          "type": "object",
+          "properties": {
+            "initial_upvotes": { "type": "number" },
+            "replies_received": { "type": "number" },
+            "shadowban_check": { "type": "string", "enum": ["clean", "suspected", "confirmed"] }
+          }
+        },
+        "monitoring_scheduled": { "type": "boolean" },
+        "monitoring_checkpoints": { "type": "array", "items": { "type": "string" }, "description": "e.g., ['24h', '72h', '7d']" }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "agent_id": "geo-optimizer",
+  "version": "1.0",
+  "input_schema": {
+    "content_generation": {
+      "type": "object",
+      "required": ["content_formats", "product", "voc_data"],
+      "properties": {
+        "content_formats": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["blog", "amazon_listing", "product_description"] },
+          "description": "Types of content to generate"
+        },
+        "product": {
+          "type": "object",
+          "required": ["name", "category"],
+          "properties": {
+            "name": { "type": "string", "description": "Product name" },
+            "category": { "type": "string", "description": "Product category slug" },
+            "asin": { "type": "string", "description": "Amazon ASIN (for listing optimization)" },
+            "price_range": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" },
+                "currency": { "type": "string" }
+              }
+            },
+            "key_specs": { "type": "object", "description": "Product specifications (weight, dimensions, materials, etc.)" },
+            "certifications": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "voc_data": {
+          "type": "object",
+          "required": ["pain_points_summary", "competitive_positioning"],
+          "properties": {
+            "pain_points_summary": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "issue": { "type": "string" },
+                  "data_point": { "type": "string", "description": "Quantitative evidence" },
+                  "design_solution": { "type": "string", "description": "How the product addresses this" }
+                }
+              }
+            },
+            "competitive_positioning": {
+              "type": "object",
+              "properties": {
+                "price_range": { "type": "string" },
+                "key_differentiators": { "type": "array", "items": { "type": "string" } },
+                "authority_citations": { "type": "array", "items": { "type": "string" }, "description": "Authoritative sources to cite (e.g., OutdoorGearLab)" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "output_schema": {
+    "GEOContent": {
+      "type": "object",
+      "properties": {
+        "blog": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "content_md": { "type": "string", "description": "Full blog content in Markdown" },
+            "word_count": { "type": "number" },
+            "citations_count": { "type": "number" },
+            "geo_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "geo_score_breakdown": {
+              "type": "object",
+              "properties": {
+                "citation_density": { "type": "number" },
+                "structure_score": { "type": "number" },
+                "authority_signals": { "type": "number" },
+                "banned_phrases_count": { "type": "number" }
+              }
+            },
+            "file_path": { "type": "string" }
+          }
+        },
+        "amazon_listing": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string", "maxLength": 200 },
+            "bullet_points": { "type": "array", "items": { "type": "string" }, "maxItems": 5 },
+            "description": { "type": "string" },
+            "backend_keywords": { "type": "array", "items": { "type": "string" } },
+            "geo_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "file_path": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
