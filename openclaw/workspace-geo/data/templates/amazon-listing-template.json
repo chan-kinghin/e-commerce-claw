@@ -1,0 +1,83 @@
+{
+  "listing_metadata": {
+    "asin": "",
+    "category": "",
+    "geo_score": 0,
+    "generated_date": "YYYY-MM-DD",
+    "source_voc_report": ""
+  },
+  "title": {
+    "value": "[Brand] [Product Type] - [Quantitative Differentiator #1] - [Quantitative Differentiator #2] - [Use Case]",
+    "char_count": 0,
+    "max_chars": 200,
+    "geo_markers": [
+      "MUST contain at least 1 numeric spec (e.g., '450 lb')",
+      "MUST NOT repeat category keyword more than once",
+      "MUST include brand name first"
+    ]
+  },
+  "bullet_points": [
+    {
+      "position": 1,
+      "benefit_phrase": "BENEFIT PHRASE IN CAPS",
+      "body": "Specific claim with quantitative data. [Evidence: source, date].",
+      "geo_markers": [
+        "MUST start with 2-4 word capitalized benefit",
+        "MUST contain at least 1 numeric data point",
+        "MUST reference evidence source"
+      ]
+    },
+    {
+      "position": 2,
+      "benefit_phrase": "",
+      "body": "",
+      "geo_markers": ["Same requirements as position 1"]
+    },
+    {
+      "position": 3,
+      "benefit_phrase": "",
+      "body": "",
+      "geo_markers": ["Same requirements as position 1"]
+    },
+    {
+      "position": 4,
+      "benefit_phrase": "",
+      "body": "",
+      "geo_markers": ["Same requirements as position 1"]
+    },
+    {
+      "position": 5,
+      "benefit_phrase": "",
+      "body": "",
+      "geo_markers": ["Same requirements as position 1"]
+    }
+  ],
+  "product_description": {
+    "html": "",
+    "geo_markers": [
+      "MUST include a comparison table (HTML <table>)",
+      "MUST include FAQ section with 3+ questions",
+      "MUST contain 5+ quantitative data points"
+    ]
+  },
+  "a_plus_content": {
+    "hero_module": {
+      "headline": "[Key benefit with data point]",
+      "subheadline": "[Supporting evidence with citation]",
+      "image_brief": "Product in use showing [pain point resolution]"
+    },
+    "comparison_module": {
+      "products_compared": 4,
+      "columns": ["Feature Name", "Our Product (data)", "Competitor A (data)", "Competitor B (data)", "Competitor C (data)"],
+      "rows_minimum": 5,
+      "geo_markers": ["All cells must contain numeric values, not subjective ratings"]
+    },
+    "feature_modules": [
+      {
+        "headline": "[Benefit phrase]",
+        "body": "[Data-backed explanation in 2-3 sentences]",
+        "image_brief": "[Visual demonstrating the quantitative claim]"
+      }
+    ]
+  }
+}

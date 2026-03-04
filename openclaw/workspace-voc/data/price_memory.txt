@@ -1,0 +1,5 @@
+# VOC Price Monitor Snapshot
+# Format: ASIN|title|price|currency|stock_status|bsr_rank|promo_tag|url
+# Updated: (not yet initialized)
+# stock_status: in_stock | low_stock | out_of_stock
+# promo_tag: (empty) | Lightning Deal | Coupon | Subscribe & Save | Prime Day

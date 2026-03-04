@@ -1,0 +1,77 @@
+{
+  "template_name": "ugc-video",
+  "version": "1.0",
+  "description": "Standard UGC (User-Generated Content) video template. Authentic, handheld-feel product videos optimized for TikTok conversion.",
+  "duration_seconds": 15,
+  "aspect_ratio": "9:16",
+  "resolution": "1080x1920",
+  "audio_mode": "narration",
+  "category_distribution": {
+    "emotional_hook": {
+      "grid_count": 3,
+      "time_range": "0.0-2.0",
+      "grids": "1-3",
+      "purpose": "Grab attention with relatable scenario. First-person POV, breathing movement camera. Never show product or branding.",
+      "required_camera": "BM",
+      "content_rules": [
+        "Must contain motion in first frame (no static cards)",
+        "No brand logos or product names",
+        "First-person POV perspective",
+        "Breathing movement camera mandatory"
+      ]
+    },
+    "pain_point": {
+      "grid_count": 5,
+      "time_range": "2.0-5.0",
+      "grids": "4-8",
+      "purpose": "Show the problem the product solves. Slow push-in, frustration moments. Build emotional investment.",
+      "required_camera": "SPI or TILT",
+      "content_rules": [
+        "Show old/bad solution failing",
+        "Include user frustration cues (sighs, struggles)",
+        "Use close-ups of defects or failures",
+        "Transition to solution tease in final grid"
+      ]
+    },
+    "product_closeup": {
+      "grid_count": 7,
+      "time_range": "5.0-9.0",
+      "grids": "9-15",
+      "purpose": "Product hero shots. Detail textures, key features, tactile interactions. Primary conversion driver.",
+      "required_camera": "CU",
+      "content_rules": [
+        "Tactile demonstrations: pressing, folding, clicking, pouring",
+        "Quantitative claims as text overlay",
+        "At least one direct comparison with competitor/old product",
+        "Show material quality and build details"
+      ]
+    },
+    "usage_scenario": {
+      "grid_count": 6,
+      "time_range": "9.0-12.5",
+      "grids": "16-21",
+      "purpose": "Product in real-world context. Outdoor scene, family using it, before/after comparison.",
+      "required_camera": "PB or PAN",
+      "content_rules": [
+        "Real-world environment (not studio)",
+        "Show product being used by a person",
+        "Include lifestyle aspiration element",
+        "Natural lighting, candid feel"
+      ]
+    },
+    "cta": {
+      "grid_count": 4,
+      "time_range": "12.5-15.0",
+      "grids": "22-25",
+      "purpose": "Price reveal, link in bio, freeze frame with product name. Drive click-through.",
+      "required_camera": "FF",
+      "content_rules": [
+        "Price with anchor (crossed-out original)",
+        "Clear 'link in bio' call to action",
+        "Rapid benefit recap montage",
+        "Loop-friendly ending frame"
+      ]
+    }
+  },
+  "grids": []
+}

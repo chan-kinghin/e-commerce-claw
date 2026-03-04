@@ -1,0 +1,28 @@
+{
+  "agentId": "tiktok-director",
+  "model": {
+    "primary": "doubao-seed-2.0-code",
+    "purpose": "Script generation, storyboard design, multi-modal understanding, QA analysis",
+    "parameters": {
+      "temperature": 0.7,
+      "max_tokens": 4096
+    }
+  },
+  "generation": {
+    "image": {
+      "model": "nano-banana-pro",
+      "fallback": "seedream-5.0",
+      "default_resolution": "1080x1920",
+      "default_format": "png"
+    },
+    "video": {
+      "model": "seedance-1.5-pro",
+      "upgrade_target": "seedance-2.0",
+      "default_duration": "5-10s",
+      "default_resolution": "1080p",
+      "default_aspect_ratio": "9:16",
+      "audio_enabled": true
+    }
+  },
+  "workspace": "~/.openclaw/workspace-tiktok/"
+}

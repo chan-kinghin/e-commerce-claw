@@ -1,0 +1,269 @@
+{
+  "template_name": "25-grid-storyboard",
+  "version": "1.0",
+  "description": "Standard 25-grid storyboard template for 15-second UGC product videos. Each grid maps to a 0.6-second window. Grid distribution: 3 Hook / 5 Pain Point / 7 Product / 6 Scenario / 4 CTA.",
+  "product": "camping-cot-x500",
+  "duration_seconds": 15,
+  "aspect_ratio": "9:16",
+  "resolution": "1080x1920",
+  "audio_mode": "narration",
+  "category_distribution": {
+    "emotional_hook": { "grid_count": 3, "time_range": "0.0-2.0", "grids": "1-3" },
+    "pain_point": { "grid_count": 5, "time_range": "2.0-5.0", "grids": "4-8" },
+    "product_closeup": { "grid_count": 7, "time_range": "5.0-9.0", "grids": "9-15" },
+    "usage_scenario": { "grid_count": 6, "time_range": "9.0-12.5", "grids": "16-21" },
+    "cta": { "grid_count": 4, "time_range": "12.5-15.0", "grids": "22-25" }
+  },
+  "grids": [
+    {
+      "grid_id": 1,
+      "timestamp": "0.0-0.6",
+      "category": "emotional_hook",
+      "visual": "POV walking to campsite, tent blurry in background",
+      "camera": "BM",
+      "text_overlay": null,
+      "audio": "Outdoor ambience, footstep sounds",
+      "purpose": "Establish first-person UGC feel, stop the scroll"
+    },
+    {
+      "grid_id": 2,
+      "timestamp": "0.6-1.2",
+      "category": "emotional_hook",
+      "visual": "Hand reaching for old cot, fabric visibly sagging",
+      "camera": "BM+SPI",
+      "text_overlay": null,
+      "audio": "Disappointed sigh, 'ugh'",
+      "purpose": "Show the problem viscerally, build empathy"
+    },
+    {
+      "grid_id": 3,
+      "timestamp": "1.2-2.0",
+      "category": "emotional_hook",
+      "visual": "Quick cut: new cot being unboxed, hands tearing packaging",
+      "camera": "BM",
+      "text_overlay": null,
+      "audio": "Packaging crinkle sound",
+      "purpose": "Transition from problem to solution tease"
+    },
+    {
+      "grid_id": 4,
+      "timestamp": "2.0-2.6",
+      "category": "pain_point",
+      "visual": "Old cot close-up: springs poking through fabric",
+      "camera": "SPI",
+      "text_overlay": null,
+      "audio": "Narration: 'My back can't take this'",
+      "purpose": "Pain point #1: structural weakness"
+    },
+    {
+      "grid_id": 5,
+      "timestamp": "2.6-3.2",
+      "category": "pain_point",
+      "visual": "Side view: person sinking into old cot, visible sag",
+      "camera": "TILT",
+      "text_overlay": null,
+      "audio": "Creaking metal sound",
+      "purpose": "Pain point #1 reinforcement: weight capacity failure"
+    },
+    {
+      "grid_id": 6,
+      "timestamp": "3.2-3.8",
+      "category": "pain_point",
+      "visual": "Phone showing 1-star review text overlay",
+      "camera": "CU",
+      "text_overlay": null,
+      "audio": "Silent",
+      "purpose": "Social proof of problem - real user complaints"
+    },
+    {
+      "grid_id": 7,
+      "timestamp": "3.8-4.4",
+      "category": "pain_point",
+      "visual": "Hands struggling to fold old cot, frustration visible",
+      "camera": "PAN",
+      "text_overlay": null,
+      "audio": "Frustrated exhale",
+      "purpose": "Pain point #2: difficult to fold"
+    },
+    {
+      "grid_id": 8,
+      "timestamp": "4.4-5.0",
+      "category": "pain_point",
+      "visual": "Old cot crammed into car trunk, barely fitting",
+      "camera": "PB",
+      "text_overlay": null,
+      "audio": "Narration: 'There has to be something better'",
+      "purpose": "Pain point #3: portability, transition to solution"
+    },
+    {
+      "grid_id": 9,
+      "timestamp": "5.0-5.6",
+      "category": "product_closeup",
+      "visual": "New cot unfolded in one motion, satisfying snap",
+      "camera": "CU",
+      "text_overlay": null,
+      "audio": "Click-snap sound effect",
+      "purpose": "Product hero moment: easy setup"
+    },
+    {
+      "grid_id": 10,
+      "timestamp": "5.6-6.2",
+      "category": "product_closeup",
+      "visual": "Hand pressing down on cot surface, showing bounce-back",
+      "camera": "CU+RF",
+      "text_overlay": "450 lbs capacity",
+      "audio": "Narration: '450 pounds capacity'",
+      "purpose": "Key selling point: weight capacity demonstration"
+    },
+    {
+      "grid_id": 11,
+      "timestamp": "6.2-6.8",
+      "category": "product_closeup",
+      "visual": "Close-up of reinforced aluminum frame joint",
+      "camera": "CU",
+      "text_overlay": null,
+      "audio": "Metallic ping sound",
+      "purpose": "Build quality evidence: material detail"
+    },
+    {
+      "grid_id": 12,
+      "timestamp": "6.8-7.4",
+      "category": "product_closeup",
+      "visual": "Fabric texture close-up, water-resistant coating visible",
+      "camera": "CU",
+      "text_overlay": null,
+      "audio": "Finger sliding on fabric sound",
+      "purpose": "Material quality: fabric durability"
+    },
+    {
+      "grid_id": 13,
+      "timestamp": "7.4-8.0",
+      "category": "product_closeup",
+      "visual": "Side-by-side: old cot frame vs new cot frame thickness",
+      "camera": "CU+PAN",
+      "text_overlay": "Aircraft-grade aluminum",
+      "audio": "Narration: 'Aircraft-grade aluminum'",
+      "purpose": "Direct comparison: visual proof of superiority"
+    },
+    {
+      "grid_id": 14,
+      "timestamp": "8.0-8.6",
+      "category": "product_closeup",
+      "visual": "Cot being folded: 3-second fold demonstration",
+      "camera": "CU",
+      "text_overlay": null,
+      "audio": "Mechanical folding sounds",
+      "purpose": "Counter pain point #2: easy fold demo"
+    },
+    {
+      "grid_id": 15,
+      "timestamp": "8.6-9.0",
+      "category": "product_closeup",
+      "visual": "Folded cot next to a water bottle for size comparison",
+      "camera": "CU+PB",
+      "text_overlay": "Fits in your backpack",
+      "audio": "Narration: 'Fits in your backpack'",
+      "purpose": "Counter pain point #3: compact size proof"
+    },
+    {
+      "grid_id": 16,
+      "timestamp": "9.0-9.6",
+      "category": "usage_scenario",
+      "visual": "Person lying on cot at campsite, sunset in background",
+      "camera": "PB",
+      "text_overlay": null,
+      "audio": "Relaxed exhale, ambient nature sounds",
+      "purpose": "Aspirational usage: comfort in nature"
+    },
+    {
+      "grid_id": 17,
+      "timestamp": "9.6-10.2",
+      "category": "usage_scenario",
+      "visual": "Overhead shot: person sleeping comfortably on cot",
+      "camera": "TILT",
+      "text_overlay": null,
+      "audio": "Cricket sounds, gentle breeze",
+      "purpose": "Comfort proof: real sleeping scenario"
+    },
+    {
+      "grid_id": 18,
+      "timestamp": "10.2-10.8",
+      "category": "usage_scenario",
+      "visual": "Morning scene: person sitting up on cot, stretching",
+      "camera": "BM",
+      "text_overlay": null,
+      "audio": "Birds chirping, morning ambience",
+      "purpose": "Morning-after proof: no back pain"
+    },
+    {
+      "grid_id": 19,
+      "timestamp": "10.8-11.4",
+      "category": "usage_scenario",
+      "visual": "Person folding cot in 5 seconds flat, casual smile",
+      "camera": "PAN",
+      "text_overlay": "Ready in 5 seconds",
+      "audio": "Narration: 'Ready in 5 seconds'",
+      "purpose": "Ease of use in real context"
+    },
+    {
+      "grid_id": 20,
+      "timestamp": "11.4-12.0",
+      "category": "usage_scenario",
+      "visual": "Cot being tossed into car trunk with room to spare",
+      "camera": "PB",
+      "text_overlay": null,
+      "audio": "Trunk closing thud",
+      "purpose": "Portability proof: fits easily"
+    },
+    {
+      "grid_id": 21,
+      "timestamp": "12.0-12.5",
+      "category": "usage_scenario",
+      "visual": "Family around campfire, cot visible in background",
+      "camera": "PB",
+      "text_overlay": null,
+      "audio": "Campfire crackle, laughter",
+      "purpose": "Lifestyle context: family camping"
+    },
+    {
+      "grid_id": 22,
+      "timestamp": "12.5-13.0",
+      "category": "cta",
+      "visual": "Price text overlay with strike-through original price",
+      "camera": "FF",
+      "text_overlay": "$49.99 (was $89.99)",
+      "audio": "Price reveal sound effect",
+      "purpose": "Price anchor: discount framing"
+    },
+    {
+      "grid_id": 23,
+      "timestamp": "13.0-13.6",
+      "category": "cta",
+      "visual": "Link in bio text with pointing finger emoji animation",
+      "camera": "FF",
+      "text_overlay": "Link in bio!",
+      "audio": "Narration: 'Link in bio!'",
+      "purpose": "Direct call to action"
+    },
+    {
+      "grid_id": 24,
+      "timestamp": "13.6-14.2",
+      "category": "cta",
+      "visual": "Quick montage: fold, press, carry (3 micro-clips)",
+      "camera": "PAN",
+      "text_overlay": null,
+      "audio": "Upbeat beat drop",
+      "purpose": "Recap key benefits in rapid sequence"
+    },
+    {
+      "grid_id": 25,
+      "timestamp": "14.2-15.0",
+      "category": "cta",
+      "visual": "Final freeze: product beauty shot with brand name",
+      "camera": "FF",
+      "text_overlay": "UltraLight X500",
+      "audio": "Trending sound fadeout",
+      "purpose": "Brand moment, loop-friendly ending"
+    }
+  ]
+}

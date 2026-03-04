@@ -1,0 +1,86 @@
+{
+  "template_name": "manga-drama",
+  "version": "1.0",
+  "description": "Manga drama storyboard template for creative storytelling content. Uses manga-drama skill pipeline: character image generation -> style application -> multi-scene video.",
+  "duration_seconds": 30,
+  "aspect_ratio": "9:16",
+  "resolution": "1080x1920",
+  "audio_mode": "ambient_with_narration",
+  "scene_types": {
+    "protagonist_entrance": {
+      "scene_number": 1,
+      "purpose": "Establishing shot, character introduction. Set the world and introduce the protagonist.",
+      "typical_duration": "6-8s",
+      "camera_guidance": "PB to BM -- start wide to show environment, then move to handheld following character",
+      "audio_guidance": "Ambient environment sounds, optional dramatic music swell",
+      "content_rules": [
+        "Character must be clearly visible and identifiable",
+        "Environment sets the story tone",
+        "Movement required -- character walking, turning, or interacting"
+      ]
+    },
+    "action_scene": {
+      "scene_number": 2,
+      "purpose": "Dynamic movement, conflict or demonstration. The story's rising action.",
+      "typical_duration": "6-8s",
+      "camera_guidance": "SPI + CU -- push in for intensity, close-ups for action detail",
+      "audio_guidance": "Heightened audio: action sounds, faster music, dramatic effects",
+      "content_rules": [
+        "High energy movement or confrontation",
+        "Product can be introduced as tool or discovery",
+        "Speed lines or motion blur for dynamic feel",
+        "Maintain character consistency from scene 1"
+      ]
+    },
+    "emotional_expression": {
+      "scene_number": 3,
+      "purpose": "Close-up on reaction, sentiment peak. The emotional core of the story.",
+      "typical_duration": "4-6s",
+      "camera_guidance": "CU + RF -- tight on face/reaction, rack focus for depth",
+      "audio_guidance": "Quiet moment or emotional music peak, subtle ambient sounds",
+      "content_rules": [
+        "Focus on character facial expression or gesture",
+        "Convey clear emotion: joy, surprise, determination",
+        "Product may be present but character is the focus",
+        "Slower pacing than action scene"
+      ]
+    },
+    "interaction_scene": {
+      "scene_number": 4,
+      "purpose": "Product interaction, before/after comparison. Connect story to commerce.",
+      "typical_duration": "6-8s",
+      "camera_guidance": "CU + PAN -- close-up on product interaction, pan to show transformation",
+      "audio_guidance": "Satisfying interaction sounds, upbeat transition music",
+      "content_rules": [
+        "Character directly interacts with product",
+        "Show transformation or benefit clearly",
+        "Before/after comparison if applicable",
+        "Product features visible and emphasized"
+      ]
+    },
+    "ending_freeze": {
+      "scene_number": 5,
+      "purpose": "Final pose, brand moment, CTA. The story's conclusion and commercial payoff.",
+      "typical_duration": "4-6s",
+      "camera_guidance": "PB to FF -- pull back for full composition, freeze on final pose",
+      "audio_guidance": "Music resolution, trending sound fadeout, CTA narration",
+      "content_rules": [
+        "Character in triumphant or satisfied pose with product",
+        "Brand name and price overlay",
+        "Link in bio call to action",
+        "Loop-friendly ending that connects back to scene 1"
+      ]
+    }
+  },
+  "available_styles": [
+    "japanese",
+    "ghibli",
+    "chinese",
+    "cartoon",
+    "sketch",
+    "watercolor",
+    "manga_comic",
+    "chibi"
+  ],
+  "grids": []
+}

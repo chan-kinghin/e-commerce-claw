@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "last_updated": null,
+  "accounts": {},
+  "_schema": {
+    "accounts": {
+      "<account_id>": {
+        "current_week": "W1|W2|W3|W4|W5",
+        "week_started_at": "ISO-8601 timestamp",
+        "progression_history": [
+          {
+            "from": "W1",
+            "to": "W2",
+            "promoted_at": "ISO-8601 timestamp",
+            "criteria_met": {}
+          }
+        ],
+        "compliance_checks": [
+          {
+            "week": "W1",
+            "checked_at": "ISO-8601 timestamp",
+            "passed": true,
+            "details": {}
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+# Environment secrets - NEVER commit
+openclaw/.env
+.env
+.env.local
+
+# Runtime data
+openclaw/workspace-*/data/output/
+openclaw/workspace-*/logs/*.log
+openclaw/workspace-voc/data/price_history/
+openclaw/workspace-reddit/data/hijacking/comment-drafts/*.md
+openclaw/workspace-reddit/data/nurturing/weekly-reports/*.md
+openclaw/workspace-tiktok/data/projects/*/
+
+# OS
+.DS_Store
+Thumbs.db
